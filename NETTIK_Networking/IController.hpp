@@ -65,7 +65,7 @@ namespace NETTIK
 				NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
 
 			INetworkCodes::msg_t code;
-			code = (INetworkCodes::msg_t)stream;
+			code = (INetworkCodes::msg_t)(*stream);
 
 			printf("debug: (id = %d, content: %s)\n", code, stream);
 			// todo: lookup code in the unordered_map and execute function with
