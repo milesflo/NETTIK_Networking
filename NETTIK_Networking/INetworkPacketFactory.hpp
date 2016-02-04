@@ -44,14 +44,14 @@ namespace NETTIK
 			
 			//! Forces a dispatch of the packet, regardless of 
 			// it's status. Sets the status flag to `dispatched`.
-			__forceinline 
+			inline
 			void _ForceDispatch()
 			{
 				DispatchPacket(this, m_iCode, m_pPeer);
 				m_Status = PacketStatus::kPacket_Dispatched;
 			}
 
-			__forceinline
+			inline
 			void _SetChannel(uint16_t channel)
 			{
 				m_iChannel = channel;
@@ -59,7 +59,7 @@ namespace NETTIK
 
 			//! Silently dispatches a packet, doesn't change the 
 			// status of the packet.
-			__forceinline
+			inline
 			void _SilentDispatch()
 			{
 				DispatchPacket(this, m_iCode, m_pPeer);
