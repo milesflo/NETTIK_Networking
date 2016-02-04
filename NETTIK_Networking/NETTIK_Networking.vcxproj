@@ -40,8 +40,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\protobuf\vsprojects\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\protobuf\vsprojects\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\protobuf\vsprojects\src;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\protobuf\vsprojects\include;$(IncludePath)</IncludePath>
@@ -62,7 +62,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>libprotobuf.lib</AdditionalDependencies>
+      <AdditionalDependencies>protobuf.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
