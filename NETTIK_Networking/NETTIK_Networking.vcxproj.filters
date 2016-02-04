@@ -49,9 +49,6 @@
     <ClCompile Include="INetworkPacketFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IDebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -100,7 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IController.cpp" />
-    <ClCompile Include="IDebug.cpp" />
     <ClCompile Include="INetworkPacketFactory.cpp" />
     <ClCompile Include="NetworkStructures.pb.cc" />
   </ItemGroup>
