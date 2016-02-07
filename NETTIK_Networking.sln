@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NETTIK_Networking", "NETTIK
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NETTIK_NetworkingTests", "NETTIK_NetworkingTests\NETTIK_NetworkingTests.vcxproj", "{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protobuf", "protobuf\protobuf.vcxproj", "{B42B63D0-6C00-4086-A4FC-35BD64BD9812}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,14 +27,6 @@ Global
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Release|Win32.ActiveCfg = Release|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Release|Win32.Build.0 = Release|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Release|x64.ActiveCfg = Release|Win32
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Debug|Win32.Build.0 = Debug|Win32
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Debug|x64.ActiveCfg = Debug|x64
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Debug|x64.Build.0 = Debug|x64
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Release|Win32.ActiveCfg = Release|Win32
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Release|Win32.Build.0 = Release|Win32
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Release|x64.ActiveCfg = Release|x64
-		{B42B63D0-6C00-4086-A4FC-35BD64BD9812}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -240,4 +240,4 @@ _Pvt_Extensions
 .fake/
 
 # Protobuf
-!protobuf/*
+protobuf/
