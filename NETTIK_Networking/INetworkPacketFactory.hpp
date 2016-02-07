@@ -21,6 +21,8 @@ namespace NETTIK
 			kPacket_Dispatched
 		};
 
+		//! Runs protobuf serialisation and allocated message code to
+		// binary header.
 		static void GenerateStream(std::string& out, google::protobuf::Message* msg, INetworkCodes::msg_t code);
 
 		//! Serializes a packet and sends it to the singleton ENET peer (if it exists), 
@@ -29,15 +31,8 @@ namespace NETTIK
 
 	public:
 
-		static INetworkCodes::msg_t GetCode(std::string& data)
-		{
-			INetworkCodes::msg_t result;
-			for (uint32_t i = 0; i < sizeof(INetworkCodes::msg_t); i++)
-				(&result)[i] = data.at(i);
-
-
-			return result;
-		}
+		//! Reads a network code from a packet buffer.
+		static INetworkCodes::msg_t GetCode(std::string& data);
 
 		//! The packet wrapper class for dispatching data to
 		// an ENET peer.
@@ -52,6 +47,9 @@ namespace NETTIK
 			void*                 m_pPeer     = nullptr;
 			uint16_t              m_iChannel  = 1;
 
+			//! Finds the default peer if pPeer is still
+			// a null pointer. Throws an exception if the
+			// controller is invalid or a peer cannot be found.
 			void AllocateDefaultPeer()
 			{
 				if (m_pPeer != nullptr)
@@ -84,6 +82,8 @@ namespace NETTIK
 				m_Status = PacketStatus::kPacket_Dispatched;
 			}
 
+			//! Reads a data stream and removes the network code
+			// from the buffer.
 			inline
 			void _Read(std::string& data)
 			{
@@ -92,6 +92,7 @@ namespace NETTIK
 				ParseFromString(data);
 			}
 
+			//! Assigns the packet channel to use.
 			inline
 			void _SetChannel(uint16_t channel)
 			{

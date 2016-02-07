@@ -16,6 +16,15 @@ void IPacketFactory::GenerateStream(std::string& out, google::protobuf::Message*
 	out += str;
 }
 
+INetworkCodes::msg_t IPacketFactory::GetCode(std::string& data)
+{
+	INetworkCodes::msg_t result;
+	for (uint32_t i = 0; i < sizeof(INetworkCodes::msg_t); i++)
+		(&result)[i] = data.at(i);
+
+
+	return result;
+}
 void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, void* enetPeer)
 {
 	IController* controller = IController::GetPeerSingleton();
