@@ -1,5 +1,6 @@
 #include "INetworkPacketFactory.hpp"
 #include "IController.hpp"
+
 using namespace NETTIK;
 
 void IPacketFactory::GenerateStream(std::string& out, google::protobuf::Message* msg, INetworkCodes::msg_t code)

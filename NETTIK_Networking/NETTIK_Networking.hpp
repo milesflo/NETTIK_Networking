@@ -1,4 +1,5 @@
 #pragma once
+#include <enet/enet.h>
 #include <memory>
 
 /* Internal Protocol Buffer suite */

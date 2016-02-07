@@ -1,11 +1,12 @@
 #pragma once
+#include <enet/enet.h>
 #include <string>
-#include "INetworkCodes.hpp"
-#include "IDebug.hpp"
 #include <functional>
 #include <google\protobuf\message.h>
 #include <unordered_map>
-//! CNETTIK_ENET_PEER is owned by this related .cpp file.
+
+#include "INetworkCodes.hpp"
+#include "IDebug.hpp"
 
 namespace NETTIK
 {
@@ -21,6 +22,14 @@ namespace NETTIK
 		static void SetPeerSingleton(IController* peer);
 		static void DeletePeerSingleton();
 
+	protected:
+
+		ENetAddress m_Address;
+		ENetHost*   m_pHost;
+
+		virtual void InitializeAddress() { }
+		virtual void InitializeHost() = 0;
+
 	public:
 
 		//! Useful for clients as the first peer will be
@@ -33,11 +42,23 @@ namespace NETTIK
 		IController()
 		{
 			SetPeerSingleton(this);
+
+			if (enet_initialize() != 0)
+				NETTIK_EXCEPTION("ENET::initialize failed.");
+
+			InitializeAddress();
+			InitializeHost();
+
 		}
 
 		virtual ~IController()
 		{
 			DeletePeerSingleton();
+
+			if (m_pHost != NULL)
+				enet_host_destroy(m_pHost);
+
+			enet_deinitialize();
 		}
 
 		//! Sends data to the ENET peer.
@@ -96,6 +117,16 @@ namespace NETTIK
 	{
 
 	public:
+
+		virtual void InitializeHost()
+		{
+			m_pHost = enet_host_create(NULL, 1, 0, 0, 0);
+
+			if (m_pHost == NULL)
+				NETTIK_EXCEPTION("Failed creating client host.");
+
+		}
+
 
 		IControllerClient() : IController()
 		{
