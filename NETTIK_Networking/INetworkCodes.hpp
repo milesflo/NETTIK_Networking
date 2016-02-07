@@ -9,8 +9,6 @@ namespace NETTIK
 
 	public:
 
-		//! Don't change the message code data type at this type.
-		//  CHANGE AT YOUR OWN RISK.
 		typedef uint8_t  msg_t;
 
 		enum NetworkCodesShared : msg_t
