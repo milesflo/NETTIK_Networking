@@ -99,6 +99,7 @@
     <ClInclude Include="INetworkCodes.hpp" />
     <ClInclude Include="INetworkPacketFactory.hpp" />
     <ClInclude Include="IDebug.hpp" />
+    <ClInclude Include="IThread.hpp" />
     <ClInclude Include="NETTIK_Networking.hpp" />
     <ClInclude Include="NetworkStructures.pb.h" />
   </ItemGroup>
@@ -108,6 +109,7 @@
   <ItemGroup>
     <ClCompile Include="IController.cpp" />
     <ClCompile Include="INetworkPacketFactory.cpp" />
+    <ClCompile Include="IThread.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp" />
     <ClCompile Include="NetworkStructures.pb.cc" />
   </ItemGroup>

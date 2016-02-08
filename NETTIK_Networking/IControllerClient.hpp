@@ -9,7 +9,7 @@ namespace NETTIK
 
 	public:
 
-		virtual void InitializeHost()
+		void InitializeHost()
 		{
 			m_pHost = enet_host_create(NULL, 1, 0, 0, 0);
 
@@ -19,9 +19,19 @@ namespace NETTIK
 		}
 
 
-		IControllerClient() : IController()
+		IControllerClient(uint32_t rate) : IController(rate)
 		{
+			InitializeAddress();
+			InitializeHost();
+		}
 
+		void Connect(const char* hostname, uint16_t port)
+		{
+			enet_address_set_host(&m_Address, hostname);
+			m_Address.port = port;
+
+			enet_host_connect(m_pHost, &m_Address, 0, 0);
+			printf("connecting...\n");
 		}
 
 		virtual ~IControllerClient()

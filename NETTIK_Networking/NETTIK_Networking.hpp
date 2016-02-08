@@ -13,9 +13,3 @@
 /* Bring in the full interfaces */
 #include "IController.hpp"
 #include "IControllerClient.hpp"
-
-namespace NETTIK
-{
-	typedef std::unique_ptr<IControllerClient> IControllerClient_t;
-	typedef std::unique_ptr<IControllerServer> IControllerServer_t;
-}

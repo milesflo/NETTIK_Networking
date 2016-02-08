@@ -7,6 +7,7 @@
 
 #include "INetworkCodes.hpp"
 #include "IDebug.hpp"
+#include "IThread.hpp"
 
 namespace NETTIK
 {
@@ -16,82 +17,79 @@ namespace NETTIK
 
 	public:
 
-		typedef std::function<void(google::protobuf::Message* message, void* enetPeer)> CallbackFunction_f;
+		using CallbackFunction_f = 
+			std::function<void(google::protobuf::Message* message, void* enetPeer)>;
+
+		using EventFunction_f =
+			std::function<void(ENetEvent& evtFrame)>;
 
 		static IController* GetPeerSingleton();
 		static void SetPeerSingleton(IController* peer);
 		static void DeletePeerSingleton();
+
+		std::vector<
+			ENetPeer*
+		> m_PeerList;
 
 	protected:
 
 		ENetAddress m_Address;
 		ENetHost*   m_pHost;
 
+		bool        m_bRunning = false;
+		bool        m_bConnected = false;
 		virtual void InitializeAddress() { }
-		virtual void InitializeHost() { };
+		virtual void InitializeHost() = 0;
+
+		ENetEvent   m_CurrentEvent;
+		uint32_t    m_iNetworkRate;
+
+		IThread*    m_pThread = nullptr;
 
 	public:
 
+		IController(uint32_t tickRate);
+
+		virtual ~IController();
+
+		inline uint32_t GetNetworkRate(void) const
+		{
+			return m_iNetworkRate;
+		}
+
+		inline void SetNetworkRate(uint32_t netRate)
+		{
+			m_iNetworkRate = netRate;
+		}
+
+		inline bool IsRunning(void) const
+		{
+			return m_bRunning;
+		}
+
 		//! Useful for clients as the first peer will be
 		// the server.
-		void* GetFirstPeer()
+		inline ENetPeer* GetFirstPeer()
 		{
-			return 0; /* todo: implement*/
+			return m_PeerList.front(); /* todo: implement*/
 		}
 
-		IController()
-		{
-			SetPeerSingleton(this);
+		void ProcessNetStack();
 
-			if (enet_initialize() != 0)
-				NETTIK_EXCEPTION("ENET::initialize failed.");
+		void Start();
 
-			InitializeAddress();
-			InitializeHost();
-
-		}
-
-		virtual ~IController()
-		{
-			DeletePeerSingleton();
-
-			if (m_pHost != NULL)
-				enet_host_destroy(m_pHost);
-
-			enet_deinitialize();
-		}
+		void Run();
 
 		//! Sends data to the ENET peer.
-		void Send(std::string& data, void* peer)
-		{
-			// todo: implement sending to ENET peer.
-		}
+		void Send(std::string& data, ENetPeer* peer, uint32_t flags);
 
 		//! Sends data to the first ENET peer.
-		void Send(std::string& data)
-		{
-			Send(data, GetFirstPeer());
-		}
+		// Remember to set flag as reliable for important information.
+		void Send(std::string& data, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED);
 		
 		//! Processes a single data stream and emits
 		// the appropriate function.
-		void ProcessRecv(std::string& data)
-		{
-			const char* stream = data.c_str();
-
-			// If data is too small for the message ID type, then
-			// don't process the data. This could cause a memory violation by
-			// reading too far over the `stream` pointer.
-			if (data.size() < sizeof(INetworkCodes::msg_t))
-				NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
-
-			INetworkCodes::msg_t code;
-			code = (INetworkCodes::msg_t)(*stream);
-
-			printf("debug: (id = %d, content: %s)\n", code, stream);
-			// todo: lookup code in the unordered_map and execute function with
-			// parsed packet.
-		};
+		void ProcessRecv(std::string& data);
 
 	protected: 
 
@@ -105,41 +103,25 @@ namespace NETTIK
 
 		> m_Callbacks;
 
+		std::unordered_map <
+			ENetEventType,
+			EventFunction_f
+
+		> m_EventCallbacks;
+
+	public:
+
 		template <class T>
-		void Listen(INetworkCodes::msg_t code, CallbackFunction_f callback)
+		void ListenPacket(INetworkCodes::msg_t code, CallbackFunction_f callback)
 		{
 			m_Callbacks[code] = make_pair(code, T);
 		}
 
-	};
-
-	
-
-	class IControllerServer : public IController
-	{
-
-	public:
-
-		IControllerServer() : IController()
+		void ListenEvent(ENetEventType evt, EventFunction_f callback)
 		{
-
-		}
-
-		virtual ~IControllerServer()
-		{
-
-		}
-
-
-		void Send(std::string& data, void* peer)
-		{
-
-		}
-
-		void Recv(std::string& data, void* peer)
-		{
-
+			m_EventCallbacks[evt] = callback;
 		}
 
 	};
+
 }

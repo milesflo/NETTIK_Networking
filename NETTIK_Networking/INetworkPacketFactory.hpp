@@ -23,16 +23,27 @@ namespace NETTIK
 
 		//! Runs protobuf serialisation and allocated message code to
 		// binary header.
-		static void GenerateStream(std::string& out, google::protobuf::Message* msg, INetworkCodes::msg_t code);
+		static void GenerateStream(
+			std::string&   out,
+			google::protobuf::Message*  msg,
+			INetworkCodes::msg_t        code
+		);
 
 		//! Serializes a packet and sends it to the singleton ENET peer (if it exists), 
 		// drops the packet if not.
-		static void DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, void* enetPeer);
+		static void DispatchPacket(
+			google::protobuf::Message*  msg,
+			INetworkCodes::msg_t        code,
+			ENetPeer*         enetPeer,
+			uint32_t      flags
+		);
 
 	public:
 
 		//! Reads a network code from a packet buffer.
-		static INetworkCodes::msg_t GetCode(std::string& data);
+		static INetworkCodes::msg_t GetCode(
+			std::string& data
+		);
 
 		//! The packet wrapper class for dispatching data to
 		// an ENET peer.
