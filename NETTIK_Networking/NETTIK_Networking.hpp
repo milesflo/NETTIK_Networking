@@ -12,6 +12,7 @@
 
 /* Bring in the full interfaces */
 #include "IController.hpp"
+#include "IControllerClient.hpp"
 
 namespace NETTIK
 {
