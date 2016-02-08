@@ -1,0 +1,27 @@
+/*
+ * Protocol buffer classes should be implemented here.
+ * Create a new message and use it within the application by referencing its name.
+ *
+ * Please don't put message codes inside message objects
+ * as the codes for these are set by the `INetworkCodes.hpp`.
+ *
+ * Build via batch file located at: 
+		`protobuf-build.bat`
+ *
+ * Jak
+*/
+syntax = "proto2";
+
+message NetVector2
+{
+	optional float x = 1 [ default = 0 ];
+	optional float y = 2 [ default = 0 ];
+}
+
+message NetObject
+{
+	required uint32 id = 1;
+	optional NetVector2 pos = 2;
+	optional NetVector2 vel = 3;
+}
+

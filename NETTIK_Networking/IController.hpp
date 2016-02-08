@@ -18,7 +18,7 @@ namespace NETTIK
 	public:
 
 		using CallbackFunction_f = 
-			std::function<void(google::protobuf::Message* message, void* enetPeer)>;
+			std::function<void(std::string& data, ENetPeer* enetPeer)>;
 
 		using EventFunction_f =
 			std::function<void(ENetEvent& evtFrame)>;
@@ -38,8 +38,14 @@ namespace NETTIK
 
 		bool        m_bRunning = false;
 		bool        m_bConnected = false;
-		virtual void InitializeAddress() { }
-		virtual void InitializeHost() = 0;
+
+		//! Initialises the ENET address data, this
+		// differs per implementation.
+		virtual bool InitializeAddress(const char* hostname, uint16_t port) = 0;
+
+		//! Initialises and establishes the implementation
+		// host.
+		virtual bool InitializeHost() = 0;
 
 		ENetEvent   m_CurrentEvent;
 		uint32_t    m_iNetworkRate;
@@ -78,28 +84,26 @@ namespace NETTIK
 
 		void Start();
 
+		void Stop();
+
 		void Run();
 
 		//! Sends data to the ENET peer.
-		void Send(std::string& data, ENetPeer* peer, uint32_t flags);
+		void Send(std::string& data, ENetPeer* peer, uint32_t flags, uint8_t channel);
 
 		//! Sends data to the first ENET peer.
 		// Remember to set flag as reliable for important information.
-		void Send(std::string& data, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED);
+		void Send(std::string& data, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED, uint8_t channel = 0);
 		
 		//! Processes a single data stream and emits
 		// the appropriate function.
-		void ProcessRecv(std::string& data);
+		void ProcessRecv(std::string& data, ENetPeer* peer);
 
 	protected: 
 
 		std::unordered_map <
 			INetworkCodes::msg_t,
-
-			std::pair <
-				CallbackFunction_f,
-				google::protobuf::Message*
-			>
+			CallbackFunction_f
 
 		> m_Callbacks;
 
@@ -111,17 +115,20 @@ namespace NETTIK
 
 	public:
 
-		template <class T>
-		void ListenPacket(INetworkCodes::msg_t code, CallbackFunction_f callback)
+		inline void on(INetworkCodes::msg_t code, CallbackFunction_f callback)
 		{
-			m_Callbacks[code] = make_pair(code, T);
+			m_Callbacks[code] = callback;
 		}
 
-		void ListenEvent(ENetEventType evt, EventFunction_f callback)
+		inline void on_enet(ENetEventType evt, EventFunction_f callback)
 		{
 			m_EventCallbacks[evt] = callback;
 		}
 
+		inline void FireEvent(ENetEventType evt, ENetEvent& evtFrame);
+
+		// TODO: add "once", "off" and multiple events
+		// SEE: EventEmitters in JS
 	};
 
 }

@@ -25,7 +25,6 @@ void IThread::Start()
 
 	m_bRunning = true;
 
-	printf("Thread created.");
 	m_hThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)_staticProc,
 		static_cast<IThread*>(this), 0, 0);
 }

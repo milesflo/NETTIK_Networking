@@ -96,12 +96,12 @@
   <ItemGroup>
     <ClInclude Include="IController.hpp" />
     <ClInclude Include="IControllerClient.hpp" />
+    <ClInclude Include="IControllerServer.hpp" />
     <ClInclude Include="INetworkCodes.hpp" />
     <ClInclude Include="INetworkPacketFactory.hpp" />
     <ClInclude Include="IDebug.hpp" />
     <ClInclude Include="IThread.hpp" />
     <ClInclude Include="NETTIK_Networking.hpp" />
-    <ClInclude Include="NetworkStructures.pb.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NetworkStructures.proto" />
@@ -111,7 +111,6 @@
     <ClCompile Include="INetworkPacketFactory.cpp" />
     <ClCompile Include="IThread.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp" />
-    <ClCompile Include="NetworkStructures.pb.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

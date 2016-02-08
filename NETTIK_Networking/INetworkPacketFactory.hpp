@@ -34,8 +34,9 @@ namespace NETTIK
 		static void DispatchPacket(
 			google::protobuf::Message*  msg,
 			INetworkCodes::msg_t        code,
-			ENetPeer*         enetPeer,
-			uint32_t      flags
+			ENetPeer*   enetPeer,
+			uint32_t    flags,
+			uint8_t     channel
 		);
 
 	public:
@@ -55,8 +56,9 @@ namespace NETTIK
 
 			INetworkCodes::msg_t  m_iCode;
 			PacketStatus          m_Status;
-			void*                 m_pPeer     = nullptr;
-			uint16_t              m_iChannel  = 1;
+			ENetPeer*             m_pPeer     = nullptr;
+			uint8_t               m_iChannel  = 0;
+			uint32_t              m_Flags = 0;
 
 			//! Finds the default peer if pPeer is still
 			// a null pointer. Throws an exception if the
@@ -72,7 +74,7 @@ namespace NETTIK
 				if (controller == nullptr)
 					NETTIK_EXCEPTION("Failed to get global controller object, nullptr.");
 
-				void* enetPeer = controller->GetFirstPeer();
+				ENetPeer* enetPeer = controller->GetFirstPeer();
 
 				if (enetPeer == nullptr)
 					NETTIK_EXCEPTION("Failed to get first peer from controller object, it is nullptr.");
@@ -82,13 +84,18 @@ namespace NETTIK
 
 		public:
 			
+			void SetFlags(uint32_t flags)
+			{
+				m_Flags = flags;
+			}
+
 			//! Forces a dispatch of the packet, regardless of 
 			// it's status. Sets the status flag to `dispatched`.
 			inline
 			void _ForceDispatch()
 			{
 				AllocateDefaultPeer();
-				DispatchPacket(this, m_iCode, m_pPeer);
+				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
 
 				m_Status = PacketStatus::kPacket_Dispatched;
 			}
@@ -105,7 +112,7 @@ namespace NETTIK
 
 			//! Assigns the packet channel to use.
 			inline
-			void _SetChannel(uint16_t channel)
+			void _SetChannel(uint8_t channel)
 			{
 				m_iChannel = channel;
 			}
@@ -116,7 +123,7 @@ namespace NETTIK
 			void _SilentDispatch()
 			{
 				AllocateDefaultPeer();
-				DispatchPacket(this, m_iCode, m_pPeer);
+				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
 			}
 
 			//! Prevents RAII dispatching (ie. using a singleton-like
@@ -148,9 +155,13 @@ namespace NETTIK
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
+			IPacket(std::string& stream) : T()
+			{
+				_Read(stream);
+			}
 
 			//! Constructs a packet with a desired peer to send to.
-			IPacket(INetworkCodes::msg_t code, void* enetPeer) : m_iCode(code), m_pPeer(enetPeer)
+			IPacket(INetworkCodes::msg_t code, ENetPeer* enetPeer) : m_iCode(code), m_pPeer(enetPeer)
 			{
 
 			}

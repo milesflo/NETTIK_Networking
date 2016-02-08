@@ -3,7 +3,7 @@
 #include <memory>
 
 /* Internal Protocol Buffer suite */
-#include "NetworkStructures.pb.h"
+#include <google/protobuf/stubs/common.h>
 
 /* Important includes for constructing full interfaces */
 #include "IDebug.hpp"
@@ -13,3 +13,4 @@
 /* Bring in the full interfaces */
 #include "IController.hpp"
 #include "IControllerClient.hpp"
+#include "IControllerServer.hpp"

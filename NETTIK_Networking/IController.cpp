@@ -1,35 +1,39 @@
 #include "IController.hpp"
 #include "IDebug.hpp"
-using NETTIK::IController;
+using namespace NETTIK;
 
 //! Global singleton for the ENET peer.
-static IController* g_PeerSingleton = nullptr;
+static IController* s_PeerSingleton = nullptr;
+
+//! Issue message for when an unhandled packet is processed.
+const char* s_issueUnhandledPacket = "Unhandled packet, code: %d, packet length: %d\n";
 
 IController* IController::GetPeerSingleton()
 {
-	return g_PeerSingleton;
+	return s_PeerSingleton;
 }
 
 void IController::DeletePeerSingleton()
 {
 
-	if (g_PeerSingleton == nullptr)
+	if (s_PeerSingleton == nullptr)
 		NETTIK_EXCEPTION("Tried deleting invalid peer.");
 
-	g_PeerSingleton = nullptr;
+	s_PeerSingleton = nullptr;
 }
 
 void IController::SetPeerSingleton(IController* peer)
 {
 	// Deleting should call DeletePeerSingleton.
-	if (g_PeerSingleton != nullptr)
-		delete(g_PeerSingleton);
+	if (s_PeerSingleton != nullptr)
+		delete(s_PeerSingleton);
 
-	g_PeerSingleton = peer;
+	s_PeerSingleton = peer;
 }
 
+//
 // IController member functions:
-
+//
 IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 {
 	SetPeerSingleton(this);
@@ -50,18 +54,16 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 IController::~IController()
 {
-	m_bRunning = false;
+	// Flag the controller as stopped.
+	Stop();
 
-	if (m_pThread != nullptr)
-		delete(m_pThread);
-
-	DeletePeerSingleton();
-
-	if (m_pHost != NULL)
-		enet_host_destroy(m_pHost);
-
+	// We don't need ENET anymore.
 	enet_deinitialize();
-	printf("IController destruct.\n");
+
+	// Delete the global singleton (this!)
+	// (doesn't actually delete the singleton,
+	// just dereferences it)
+	DeletePeerSingleton();
 }
 
 void IController::Start()
@@ -72,6 +74,23 @@ void IController::Start()
 		m_pThread->Start();
 }
 
+void IController::Stop()
+{
+	m_bRunning = false;
+	if (m_pThread != nullptr)
+	{
+		delete(m_pThread);
+		m_pThread = nullptr;
+	}
+
+	if (m_pHost != nullptr)
+	{
+		enet_host_destroy(m_pHost);
+		m_pHost = nullptr;
+	}
+
+}
+
 void IController::Run()
 {
 	while (m_bRunning)
@@ -80,18 +99,22 @@ void IController::Run()
 	}
 }
 
-void IController::Send(std::string& data, ENetPeer* peer, uint32_t flags)
+void IController::Send(std::string& data, ENetPeer* peer, uint32_t flags, uint8_t channel)
 {
 	ENetPacket* packet;
 	packet = enet_packet_create(data.c_str(), data.size() + 1, flags);
+
+	// Packet pointer gets automatically
+	// deleted, future fyi: not a memory leak!
+	enet_peer_send(peer, channel, packet);
 }
 
-void IController::Send(std::string& data, uint32_t flags)
+void IController::Send(std::string& data, uint32_t flags, uint8_t channel)
 {
-	Send(data, GetFirstPeer(), flags);
+	Send(data, GetFirstPeer(), flags, channel);
 }
 
-void IController::ProcessRecv(std::string& data)
+void IController::ProcessRecv(std::string& data, ENetPeer* peer)
 {
 	const char* stream = data.c_str();
 
@@ -104,9 +127,27 @@ void IController::ProcessRecv(std::string& data)
 	INetworkCodes::msg_t code;
 	code = (INetworkCodes::msg_t)(*stream);
 
-	printf("debug: (id = %d, content: %s)\n", code, stream);
 	// todo: lookup code in the unordered_map and execute function with
 	// parsed packet.
+
+	auto it = m_Callbacks.find(code);
+	if (it != m_Callbacks.end())
+	{
+		it->second(data, peer);
+		return;
+	}
+
+#ifdef _DEBUG
+	printf(s_issueUnhandledPacket, code, data.size());
+#else
+	NETTIK_EXCEPTION(s_issueUnhandledPacket, code, data.size());
+#endif
+}
+
+void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
+{
+	if (m_EventCallbacks.find(evt) != m_EventCallbacks.end())
+		m_EventCallbacks[evt](m_CurrentEvent);
 }
 
 void IController::ProcessNetStack()
@@ -119,8 +160,7 @@ void IController::ProcessNetStack()
 		ENetEventType type = m_CurrentEvent.type;
 
 		//! Inform all listeners.
-		if (m_EventCallbacks.find(type) != m_EventCallbacks.end())
-			m_EventCallbacks[type](m_CurrentEvent);
+		FireEvent(type, m_CurrentEvent);
 
 		//! Process event...
 		switch (type)
@@ -139,7 +179,6 @@ void IController::ProcessNetStack()
 
 			if (it != m_PeerList.end())
 				m_PeerList.erase(it);
-
 			m_bConnected = false;
 
 			break;
@@ -147,13 +186,11 @@ void IController::ProcessNetStack()
 
 		case ENET_EVENT_TYPE_RECEIVE:
 		{
-			printf("incoming packet..\n");
-
 			const char* data;
 			data = (const char*)m_CurrentEvent.packet->data;
 
 			// Send for processing.
-			ProcessRecv(std::string(data));
+			ProcessRecv(std::string(data), m_CurrentEvent.peer);
 
 			// Erase all packet information.
 			enet_packet_destroy(m_CurrentEvent.packet);

@@ -26,16 +26,19 @@ INetworkCodes::msg_t IPacketFactory::GetCode(std::string& data)
 
 	return result;
 }
-void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags)
+void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags, uint8_t channel)
 {
+	printf("packet dispatch.\n");
 	IController* controller = IController::GetPeerSingleton();
 
 	// Drop the packet.
 	if (controller == nullptr)
 		return;
 
+	printf("controller valid.\n");
 	std::string m_sBuffer;
 	GenerateStream(m_sBuffer, msg, code);
 
-	controller->Send(m_sBuffer, enetPeer, flags);
+	printf("stream generated.\n");
+	controller->Send(m_sBuffer, enetPeer, flags, channel);
 }

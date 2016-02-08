@@ -28,6 +28,9 @@ namespace NETTIK
 
 			m_sErrorMessage = stream.str();
 			std::cout << m_sErrorMessage << std::endl;
+
+			ToMessage();
+
 		}
 
 		void ToMessage()

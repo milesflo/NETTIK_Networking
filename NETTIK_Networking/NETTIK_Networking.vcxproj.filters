@@ -13,34 +13,43 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{ef10652e-56b6-451e-a4cc-356afff5c913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Packet Factory">
+      <UniqueIdentifier>{8849daa4-7235-442c-a056-fded2f9f2cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Controllers">
+      <UniqueIdentifier>{31a6c664-8f67-4408-89dd-3a678f11920a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="INetworkCodes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="INetworkPacketFactory.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkStructures.pb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IDebug.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NETTIK_Networking.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IThread.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="IDebug.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="INetworkPacketFactory.hpp">
+      <Filter>Header Files\Packet Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="INetworkCodes.hpp">
+      <Filter>Header Files\Packet Factory</Filter>
+    </ClInclude>
     <ClInclude Include="IController.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="IControllerClient.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="IThread.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="IControllerServer.hpp">
+      <Filter>Header Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -49,9 +58,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NetworkStructures.pb.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="INetworkPacketFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
