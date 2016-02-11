@@ -66,6 +66,9 @@
     <Lib>
       <AdditionalDependencies>libprotobuf.lib;enet.lib;ws2_32.lib;winmm.lib</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y "..\Debug\NETTIK_Networking.lib" "..\lib\x86-debug\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -89,6 +92,9 @@
     <Lib>
       <AdditionalDependencies>libprotobuf.lib;enet.lib;ws2_32.lib;winmm.lib</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /Y "..\Release\NETTIK_Networking.lib" "..\lib\x86-release\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
