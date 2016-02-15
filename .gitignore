@@ -239,6 +239,5 @@ _Pvt_Extensions
 .fake/
 
 # Protobuf
-!protobuf/protoc.exe
-!protobuf/compile-nettik.bat
 protobuf/*
+!protobuf/protoc.exe
