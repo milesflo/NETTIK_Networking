@@ -1,13 +1,17 @@
 #pragma once
-#include <enet/enet.h>
+#include <enet\enet.h>
+#include <google\protobuf\message.h>
 #include <string>
 #include <functional>
-#include <google\protobuf\message.h>
 #include <unordered_map>
+#include <memory>
+#include <mutex>
 
 #include "INetworkCodes.hpp"
 #include "IDebug.hpp"
 #include "IThread.hpp"
+#include "IAtomObject.hpp"
+
 
 namespace NETTIK
 {
@@ -30,6 +34,12 @@ namespace NETTIK
 		std::vector<
 			ENetPeer*
 		> m_PeerList;
+
+		std::vector<
+			std::unique_ptr<IAtomObject>
+		> m_AtomObjects;
+
+		std::mutex m_ObjectListMutex;
 
 	protected:
 
@@ -54,6 +64,42 @@ namespace NETTIK
 		IThread*    m_pThread = nullptr;
 
 	public:
+
+		void AddObject(std::unique_ptr<IAtomObject> obj)
+		{
+			// When adding objects, make sure there aren't any loops ongoing.
+			std::lock_guard<std::mutex> _(m_ObjectListMutex);
+
+			obj->SetAllocated(true);
+			m_AtomObjects.push_back(std::move(obj));
+		}
+
+		void RemoveObject(IAtomObject* obj)
+		{
+			// When removing objects, make sure there aren't any loops ongoing too.
+			std::lock_guard<std::mutex> _(m_ObjectListMutex);
+
+			for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end();)
+			{
+				if (it->get() == obj) {
+					(*it)->SetAllocated(false);
+					m_AtomObjects.erase(it);
+					break;
+				}
+			}
+		}
+
+		void Update()
+		{
+			// Same with updating, don't loop if another thread has modified the
+			// object list.
+			std::lock_guard<std::mutex> _(m_ObjectListMutex);
+
+			for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end(); ++it)
+			{
+				(*it)->Update(m_bReplicating);
+			}
+		}
 
 		IController(uint32_t tickRate);
 

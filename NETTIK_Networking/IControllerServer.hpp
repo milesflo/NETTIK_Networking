@@ -13,6 +13,8 @@ namespace NETTIK
 
 	public:
 
+		
+
 		bool InitializeHost()
 		{
 			m_pHost = enet_host_create(&m_Address, m_iPeerLimit, 0, 0, 0);
@@ -32,6 +34,7 @@ namespace NETTIK
 
 		IControllerServer(uint32_t rate) : IController(rate)
 		{
+			m_bReplicating = false;
 		}
 
 		bool Listen(uint16_t port, size_t peerLimit)

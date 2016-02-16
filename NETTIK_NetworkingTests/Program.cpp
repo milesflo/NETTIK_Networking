@@ -83,6 +83,7 @@ IControllerServer* TestServer()
 	
 	s_controller->Listen(1337, 32);
 	s_controller->Start();
+
 	return s_controller;
 }
 

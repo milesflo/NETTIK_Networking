@@ -51,6 +51,9 @@
     <ClInclude Include="IControllerServer.hpp">
       <Filter>Header Files\Controllers</Filter>
     </ClInclude>
+    <ClInclude Include="IAtomObject.hpp">
+      <Filter>Header Files\Controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="NetworkStructures.proto">
@@ -68,6 +71,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IAtomObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

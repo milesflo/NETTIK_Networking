@@ -9,6 +9,18 @@ namespace NETTIK
 
 	public:
 
+		IControllerClient(uint32_t rate) : IController(rate)
+		{
+			if (!InitializeHost())
+				NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
+
+			m_bReplicating = true;
+		}
+
+		~IControllerClient()
+		{
+		}
+
 		bool InitializeHost()
 		{
 			m_pHost = enet_host_create(NULL, 1, 0, 0, 0);
@@ -24,12 +36,6 @@ namespace NETTIK
 			enet_address_set_host(&m_Address, hostname);
 			m_Address.port = port;
 			return true;
-		}
-
-		IControllerClient(uint32_t rate) : IController(rate), m_bReplicating(true)
-		{
-			if (!InitializeHost())
-				NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
 		}
 
 		bool Connect(const char* hostname, uint16_t port)
@@ -64,8 +70,5 @@ namespace NETTIK
 
 		}
 
-		~IControllerClient()
-		{
-		}
 	};
 }
