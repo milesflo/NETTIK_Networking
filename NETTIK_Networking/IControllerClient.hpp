@@ -26,7 +26,7 @@ namespace NETTIK
 			return true;
 		}
 
-		IControllerClient(uint32_t rate) : IController(rate)
+		IControllerClient(uint32_t rate) : IController(rate), m_bReplicating(true)
 		{
 			if (!InitializeHost())
 				NETTIK_EXCEPTION("Failed establishing host, network protcol error.");

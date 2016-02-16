@@ -38,6 +38,7 @@ namespace NETTIK
 
 		bool        m_bRunning = false;
 		bool        m_bConnected = false;
+		bool        m_bReplicating;
 
 		//! Initialises the ENET address data, this
 		// differs per implementation.
