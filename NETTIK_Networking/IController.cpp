@@ -109,6 +109,8 @@ void IController::Update()
 	{
 		(*it)->Update(m_bReplicating);
 	}
+
+	PostUpdate();
 }
 
 void IController::Stop()
