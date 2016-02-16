@@ -116,6 +116,7 @@
   <ItemGroup>
     <ClCompile Include="IAtomObject.cpp" />
     <ClCompile Include="IController.cpp" />
+    <ClCompile Include="IControllerClient.cpp" />
     <ClCompile Include="INetworkPacketFactory.cpp" />
     <ClCompile Include="IThread.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp" />

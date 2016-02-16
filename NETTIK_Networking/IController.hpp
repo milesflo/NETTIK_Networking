@@ -65,45 +65,19 @@ namespace NETTIK
 
 	public:
 
-		void AddObject(std::unique_ptr<IAtomObject> obj)
-		{
-			// When adding objects, make sure there aren't any loops ongoing.
-			std::lock_guard<std::mutex> _(m_ObjectListMutex);
-
-			obj->SetAllocated(true);
-			m_AtomObjects.push_back(std::move(obj));
-		}
-
-		void RemoveObject(IAtomObject* obj)
-		{
-			// When removing objects, make sure there aren't any loops ongoing too.
-			std::lock_guard<std::mutex> _(m_ObjectListMutex);
-
-			for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end();)
-			{
-				if (it->get() == obj) {
-					(*it)->SetAllocated(false);
-					m_AtomObjects.erase(it);
-					break;
-				}
-			}
-		}
-
-		void Update()
-		{
-			// Same with updating, don't loop if another thread has modified the
-			// object list.
-			std::lock_guard<std::mutex> _(m_ObjectListMutex);
-
-			for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end(); ++it)
-			{
-				(*it)->Update(m_bReplicating);
-			}
-		}
-
 		IController(uint32_t tickRate);
-
 		virtual ~IController();
+
+		//! Inserts an object into the sync list.
+		void AddObject(std::unique_ptr<IAtomObject> obj);
+
+		//! Erases an object from the sync list.
+		void RemoveObject(IAtomObject* obj);
+
+		//! Performs a post update, handled by server/client.
+		virtual void PostUpdate() = 0;
+
+		void Update();
 
 		inline uint32_t GetNetworkRate(void) const
 		{
@@ -127,12 +101,16 @@ namespace NETTIK
 			return m_PeerList.front(); /* todo: implement*/
 		}
 
+		//! Performs a single iteration over the network stack.
 		void ProcessNetStack();
 
+		//! Starts the network stack thread.
 		void Start();
 
+		//! Stops the network stack thread and deinitialises ENET.
 		void Stop();
 
+		//! Main thread entry for processing network stack.
 		void Run();
 
 		//! Sends data to the ENET peer.

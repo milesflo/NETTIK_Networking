@@ -74,6 +74,43 @@ void IController::Start()
 		m_pThread->Start();
 }
 
+void IController::AddObject(std::unique_ptr<IAtomObject> obj)
+{
+	// When adding objects, make sure there aren't any loops ongoing.
+	std::lock_guard<std::mutex> _(m_ObjectListMutex);
+
+	obj->SetAllocated(true);
+	m_AtomObjects.push_back(std::move(obj));
+}
+
+void IController::RemoveObject(IAtomObject* obj)
+{
+	// When removing objects, make sure there aren't any loops ongoing too.
+	std::lock_guard<std::mutex> _(m_ObjectListMutex);
+
+	for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end();)
+	{
+		if (it->get() == obj) {
+			(*it)->SetAllocated(false);
+			m_AtomObjects.erase(it);
+			break;
+		}
+	}
+}
+
+
+void IController::Update()
+{
+	// Same with updating, don't loop if another thread has modified the
+	// object list.
+	std::lock_guard<std::mutex> _(m_ObjectListMutex);
+
+	for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end(); ++it)
+	{
+		(*it)->Update(m_bReplicating);
+	}
+}
+
 void IController::Stop()
 {
 	m_bRunning = false;
