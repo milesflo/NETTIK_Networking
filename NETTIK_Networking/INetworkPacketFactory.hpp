@@ -84,9 +84,19 @@ namespace NETTIK
 
 		public:
 			
-			void SetFlags(uint32_t flags)
+			void _SetFlags(uint32_t flags)
 			{
 				m_Flags = flags;
+			}
+
+			void _FlagAsReliable()
+			{
+				m_Flags |= ENET_PACKET_FLAG_RELIABLE;
+			}
+
+			void _FlagAsUnsequenced()
+			{
+				m_Flags |= ENET_PACKET_FLAG_UNSEQUENCED;
 			}
 
 			//! Forces a dispatch of the packet, regardless of 
