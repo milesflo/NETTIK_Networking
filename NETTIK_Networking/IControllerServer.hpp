@@ -13,7 +13,7 @@ namespace NETTIK
 
 	public:
 
-		virtual void PostUpdate() { }
+//		virtual void PostUpdate();
 
 		bool InitializeHost()
 		{

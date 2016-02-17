@@ -13,7 +13,7 @@ namespace NETTIK
 		~IControllerClient();
 
 		//! Dummy function for post updating.
-		virtual void PostUpdate() { }
+//		virtual void PostUpdate();
 
 		//! Creatse the client connection framework.
 		bool InitializeHost();
