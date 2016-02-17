@@ -52,6 +52,7 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 		// Inform listeners because this service call
 		// was done outside of the main procedure.
 		FireEvent(ENET_EVENT_TYPE_CONNECT, m_CurrentEvent);
+		m_bConnected = true;
 		return true;
 	}
 	else

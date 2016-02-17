@@ -44,6 +44,7 @@ namespace NETTIK
 			if (!InitializeAddress(0, port) || !InitializeHost())
 				return false;
 
+			m_bConnected = true;
 			return true;
 		}
 

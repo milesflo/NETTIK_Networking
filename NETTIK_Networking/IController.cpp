@@ -116,6 +116,8 @@ void IController::Update()
 void IController::Stop()
 {
 	m_bRunning = false;
+	m_bConnected = false;
+
 	if (m_pThread != nullptr)
 	{
 		delete(m_pThread);
