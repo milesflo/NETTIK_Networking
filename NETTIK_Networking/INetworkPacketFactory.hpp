@@ -84,16 +84,25 @@ namespace NETTIK
 
 		public:
 			
+			inline
+			void _SetCode(INetworkCodes::msg_t code)
+			{
+				m_iCode = code;
+			}
+
+			inline
 			void _SetFlags(uint32_t flags)
 			{
 				m_Flags = flags;
 			}
 
+			inline
 			void _FlagAsReliable()
 			{
 				m_Flags |= ENET_PACKET_FLAG_RELIABLE;
 			}
 
+			inline
 			void _FlagAsUnsequenced()
 			{
 				m_Flags |= ENET_PACKET_FLAG_UNSEQUENCED;
