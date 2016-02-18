@@ -128,13 +128,13 @@ namespace NETTIK
 
 		std::unordered_map <
 			INetworkCodes::msg_t,
-			CallbackFunction_f
+			std::vector<CallbackFunction_f>
 
 		> m_Callbacks;
 
 		std::unordered_map <
 			ENetEventType,
-			EventFunction_f
+			std::vector<EventFunction_f>
 
 		> m_EventCallbacks;
 
@@ -142,17 +142,17 @@ namespace NETTIK
 
 		inline void on(INetworkCodes::msg_t code, CallbackFunction_f callback)
 		{
-			m_Callbacks[code] = callback;
+			m_Callbacks[code].push_back(callback);
 		}
 
 		inline void on_enet(ENetEventType evt, EventFunction_f callback)
 		{
-			m_EventCallbacks[evt] = callback;
+			m_EventCallbacks[evt].push_back(callback);
 		}
 
 		inline void FireEvent(ENetEventType evt, ENetEvent& evtFrame);
 
-		// TODO: add "once", "off" and multiple events
+		// TODO: add "once", "off"
 		// SEE: EventEmitters in JS
 	};
 

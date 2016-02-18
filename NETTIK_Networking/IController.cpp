@@ -137,6 +137,7 @@ void IController::Run()
 	while (m_bRunning)
 	{
 		ProcessNetStack();
+		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
 }
 
@@ -173,10 +174,13 @@ void IController::ProcessRecv(std::string& data, ENetPeer* peer)
 	// todo: lookup code in the unordered_map and execute function with
 	// parsed packet.
 
-	auto it = m_Callbacks.find(code);
-	if (it != m_Callbacks.end())
+	auto callbacks = m_Callbacks.find(code);
+	if (callbacks != m_Callbacks.end())
 	{
-		it->second(data, peer);
+		for (auto it = callbacks->second.begin(); it != callbacks->second.end(); it++)
+		{
+			(*it)(data, peer);
+		}
 		return;
 	}
 
@@ -189,8 +193,15 @@ void IController::ProcessRecv(std::string& data, ENetPeer* peer)
 
 void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 {
-	if (m_EventCallbacks.find(evt) != m_EventCallbacks.end())
-		m_EventCallbacks[evt](m_CurrentEvent);
+	auto evts = m_EventCallbacks.find(evt);
+
+	if (evts != m_EventCallbacks.end())
+	{		
+		for (auto it = evts->second.begin(); it != evts->second.end(); it++)
+		{
+			(*it)(evtFrame);
+		}
+	}
 }
 
 void IController::ProcessNetStack()
