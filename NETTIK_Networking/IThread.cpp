@@ -11,10 +11,11 @@ IThread::~IThread()
 {
 	if (m_hThread)
 	{
+		m_bRunning = false;
 		if (m_bRunning)
 			TerminateThread(m_hThread, 0);
 
-		CloseHandle(m_hThread);
+//		CloseHandle(m_hThread);
 	}
 }
 
