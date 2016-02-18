@@ -142,6 +142,9 @@ void IController::Run()
 
 void IController::Send(std::string& data, ENetPeer* peer, uint32_t flags, uint8_t channel)
 {
+	if (peer == nullptr)
+		NETTIK_EXCEPTION("Peer supplied to Send() is NULL.");
+
 	ENetPacket* packet;
 	packet = enet_packet_create(data.c_str(), data.size() + 1, flags);
 
@@ -167,7 +170,6 @@ void IController::ProcessRecv(std::string& data, ENetPeer* peer)
 
 	INetworkCodes::msg_t code;
 	code = (INetworkCodes::msg_t)(*stream);
-
 	// todo: lookup code in the unordered_map and execute function with
 	// parsed packet.
 
@@ -206,6 +208,7 @@ void IController::ProcessNetStack()
 		//! Process event...
 		switch (type)
 		{
+
 		case ENET_EVENT_TYPE_CONNECT:
 			m_PeerList.push_back(m_CurrentEvent.peer);
 			m_bConnected = true;
@@ -229,7 +232,6 @@ void IController::ProcessNetStack()
 		{
 			const char* data;
 			data = (const char*)m_CurrentEvent.packet->data;
-
 			// Send for processing.
 			ProcessRecv(std::string(data), m_CurrentEvent.peer);
 
