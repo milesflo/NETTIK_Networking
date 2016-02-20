@@ -23,11 +23,11 @@ namespace NETTIK
 
 		//! Runs protobuf serialisation and allocated message code to
 		// binary header.
-		static void GenerateStream(
-			std::string&   out,
+		static size_t GenerateStream(
+			std::string& stream,
 			google::protobuf::Message*  msg,
 			INetworkCodes::msg_t        code
-		);
+			);
 
 		//! Serializes a packet and sends it to the singleton ENET peer (if it exists), 
 		// drops the packet if not.
@@ -37,27 +37,27 @@ namespace NETTIK
 			ENetPeer*   enetPeer,
 			uint32_t    flags,
 			uint8_t     channel
-		);
+			);
 
 	public:
 
 		//! Reads a network code from a packet buffer.
 		static INetworkCodes::msg_t GetCode(
 			std::string& data
-		);
+			);
 
 		//! The packet wrapper class for dispatching data to
 		// an ENET peer.
 		template <class T>
 		class IPacket : public T
 		{
-			
+
 		private:
 
 			INetworkCodes::msg_t  m_iCode;
 			PacketStatus          m_Status;
-			ENetPeer*             m_pPeer     = nullptr;
-			uint8_t               m_iChannel  = 0;
+			ENetPeer*             m_pPeer = nullptr;
+			uint8_t               m_iChannel = 0;
 			uint32_t              m_Flags = 0;
 
 			//! Finds the default peer if pPeer is still
@@ -83,27 +83,27 @@ namespace NETTIK
 			}
 
 		public:
-			
+
 			inline
-			void _SetCode(INetworkCodes::msg_t code)
+				void _SetCode(INetworkCodes::msg_t code)
 			{
 				m_iCode = code;
 			}
 
 			inline
-			void _SetFlags(uint32_t flags)
+				void _SetFlags(uint32_t flags)
 			{
 				m_Flags = flags;
 			}
 
 			inline
-			void _FlagAsReliable()
+				void _FlagAsReliable()
 			{
 				m_Flags |= ENET_PACKET_FLAG_RELIABLE;
 			}
 
 			inline
-			void _FlagAsUnsequenced()
+				void _FlagAsUnsequenced()
 			{
 				m_Flags |= ENET_PACKET_FLAG_UNSEQUENCED;
 			}
@@ -111,7 +111,7 @@ namespace NETTIK
 			//! Forces a dispatch of the packet, regardless of 
 			// it's status. Sets the status flag to `dispatched`.
 			inline
-			void _ForceDispatch()
+				void _ForceDispatch()
 			{
 				AllocateDefaultPeer();
 				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
@@ -122,16 +122,22 @@ namespace NETTIK
 			//! Reads a data stream and removes the network code
 			// from the buffer.
 			inline
-			void _Read(std::string& data)
+				void _Read(enet_uint8* data, size_t data_length)
 			{
 				_PreventAutoDispatch();
-				data.erase(0, sizeof(INetworkCodes::msg_t));
-				ParseFromString(data);
+
+				enet_uint8* stream_data;
+				stream_data = data + (sizeof(INetworkCodes::msg_t));
+
+				size_t stream_len;
+				stream_len = data_length - sizeof(INetworkCodes::msg_t);
+
+				ParseFromArray(stream_data, stream_len);
 			}
 
 			//! Assigns the packet channel to use.
 			inline
-			void _SetChannel(uint8_t channel)
+				void _SetChannel(uint8_t channel)
 			{
 				m_iChannel = channel;
 			}
@@ -139,7 +145,7 @@ namespace NETTIK
 			//! Silently dispatches a packet, doesn't change the 
 			// status of the packet.
 			inline
-			void _SilentDispatch()
+				void _SilentDispatch()
 			{
 				AllocateDefaultPeer();
 				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
@@ -148,13 +154,13 @@ namespace NETTIK
 			//! Prevents RAII dispatching (ie. using a singleton-like
 			// object)
 			inline
-			void _PreventAutoDispatch()
+				void _PreventAutoDispatch()
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
 
 			inline
-			void _GenerateToString(std::string& out)
+				void _GenerateToString(std::string& out)
 			{
 				_PreventAutoDispatch();
 				GenerateStream(out, this, m_iCode);
@@ -174,9 +180,9 @@ namespace NETTIK
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
-			IPacket(std::string& stream) : T()
+			IPacket(enet_uint8* data, size_t data_len) : T()
 			{
-				_Read(stream);
+				_Read(data, data_len);
 			}
 
 			//! Constructs a packet with a desired peer to send to.

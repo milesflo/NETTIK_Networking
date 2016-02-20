@@ -140,51 +140,65 @@ void IController::Run()
 	}
 }
 
-void IController::Send(std::string& data, ENetPeer* peer, uint32_t flags, uint8_t channel)
+void IController::Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel)
 {
 	if (peer == nullptr)
 		NETTIK_EXCEPTION("Peer supplied to Send() is NULL.");
 
 	ENetPacket* packet;
-	packet = enet_packet_create(data.c_str(), data.size() + 1, flags);
+	packet = enet_packet_create(data, data_len, flags);
+
+	for (unsigned long i = 0; i < data_len; i++)
+	{
+		printf("%1x ", (unsigned char)(*(
+			data + (sizeof(enet_uint8)*i)
+			)));
+	}
+	printf("\n");
 
 	// Packet pointer gets automatically
 	// deleted, future fyi: not a memory leak!
 	enet_peer_send(peer, channel, packet);
 }
 
-void IController::Send(std::string& data, uint32_t flags, uint8_t channel)
+void IController::Send(enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel)
 {
-	Send(data, GetFirstPeer(), flags, channel);
+	Send(data, data_len, GetFirstPeer(), flags, channel);
 }
 
-void IController::ProcessRecv(std::string& data, ENetPeer* peer)
+void IController::ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* peer)
 {
-	const char* stream = data.c_str();
 
 	// If data is too small for the message ID type, then
 	// don't process the data. This could cause a memory violation by
 	// reading too far over the `stream` pointer.
-	if (data.size() < sizeof(INetworkCodes::msg_t))
+	if (data_length < sizeof(INetworkCodes::msg_t))
 		NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
 
 	INetworkCodes::msg_t code;
-	code = (INetworkCodes::msg_t)(*stream);
+	code = (INetworkCodes::msg_t)(*data);
 	// todo: lookup code in the unordered_map and execute function with
 	// parsed packet.
+	for (unsigned long i = 0; i < data_length; i++)
+	{
+		printf("%1x ", (unsigned char)(*(
+			data + (sizeof(enet_uint8)*i)
+			)));
+	}
+	printf("\n");
 
 	auto callbacks = m_Callbacks.find(code);
 	if (callbacks != m_Callbacks.end())
 	{
 		for (auto it = callbacks->second.begin(); it != callbacks->second.end(); it++)
 		{
-			(*it)(data, peer);
+			(*it)(data, data_length, peer);
 		}
 		return;
 	}
 
 #ifdef _DEBUG
-	printf(s_issueUnhandledPacket, code, data.size());
+	printf(s_issueUnhandledPacket, code, data_length);
 #else
 	NETTIK_EXCEPTION(s_issueUnhandledPacket, code, data.size());
 #endif
@@ -208,7 +222,7 @@ void IController::ProcessNetStack()
 	if (m_pHost == nullptr)
 		NETTIK_EXCEPTION("Tried to process network stack on NULL host pointer.");
 
-	while (enet_host_service(m_pHost, &m_CurrentEvent, m_iNetworkRate) > 0)
+	while (enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
 	{
 		ENetEventType type = m_CurrentEvent.type;
 
@@ -240,10 +254,8 @@ void IController::ProcessNetStack()
 
 		case ENET_EVENT_TYPE_RECEIVE:
 		{
-			const char* data;
-			data = (const char*)m_CurrentEvent.packet->data;
 			// Send for processing.
-			ProcessRecv(std::string(data), m_CurrentEvent.peer);
+			ProcessRecv(m_CurrentEvent.packet->data, m_CurrentEvent.packet->dataLength, m_CurrentEvent.peer);
 
 			// Erase all packet information.
 			enet_packet_destroy(m_CurrentEvent.packet);
@@ -252,4 +264,6 @@ void IController::ProcessNetStack()
 		}
 		}
 	}
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(m_iNetworkRate));
 }

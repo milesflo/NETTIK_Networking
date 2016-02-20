@@ -21,8 +21,8 @@ namespace NETTIK
 
 	public:
 
-		using CallbackFunction_f = 
-			std::function<void(std::string& data, ENetPeer* enetPeer)>;
+		using CallbackFunction_f =
+			std::function<void(enet_uint8* data, size_t data_length, ENetPeer* enetPeer)>;
 
 		using EventFunction_f =
 			std::function<void(ENetEvent& evtFrame)>;
@@ -114,17 +114,17 @@ namespace NETTIK
 		void Run();
 
 		//! Sends data to the ENET peer.
-		void Send(std::string& data, ENetPeer* peer, uint32_t flags, uint8_t channel);
+		void Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);
 
 		//! Sends data to the first ENET peer.
 		// Remember to set flag as reliable for important information.
-		void Send(std::string& data, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED, uint8_t channel = 0);
-		
+		void Send(enet_uint8* data, size_t data_len, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED, uint8_t channel = 0);
+
 		//! Processes a single data stream and emits
 		// the appropriate function.
-		void ProcessRecv(std::string& data, ENetPeer* peer);
+		void ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* peer);
 
-	protected: 
+	protected:
 
 		std::unordered_map <
 			INetworkCodes::msg_t,
