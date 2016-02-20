@@ -126,8 +126,11 @@ void IController::Stop()
 
 	if (m_pHost != nullptr)
 	{
-		enet_host_destroy(m_pHost);
+		ENetHost* tmp;
+		tmp = m_pHost;
+
 		m_pHost = nullptr;
+		enet_host_destroy(tmp);
 	}
 
 }
