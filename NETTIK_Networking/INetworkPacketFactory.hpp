@@ -186,10 +186,10 @@ namespace NETTIK
 			}
 
 			//! Constructs a packet with a desired peer to send to.
-			IPacket(INetworkCodes::msg_t code, ENetPeer* enetPeer) : m_iCode(code), m_pPeer(enetPeer)
-			{
+			//IPacket(INetworkCodes::msg_t code, ENetPeer* enetPeer) : m_iCode(code), m_pPeer(enetPeer)
+			//{
 
-			}
+			//}
 
 			//! RAII supported packet dispatching, it's cleaner
 			// to force a dispatch but this lets the front-end developer be lazy.
