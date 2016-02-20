@@ -148,13 +148,13 @@ void IController::Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
 
-	for (unsigned long i = 0; i < data_len; i++)
+	/*for (unsigned long i = 0; i < data_len; i++)
 	{
 		printf("%1x ", (unsigned char)(*(
 			data + (sizeof(enet_uint8)*i)
 			)));
 	}
-	printf("\n");
+	printf("\n");*/
 
 	// Packet pointer gets automatically
 	// deleted, future fyi: not a memory leak!
@@ -179,13 +179,13 @@ void IController::ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* pe
 	code = (INetworkCodes::msg_t)(*data);
 	// todo: lookup code in the unordered_map and execute function with
 	// parsed packet.
-	for (unsigned long i = 0; i < data_length; i++)
+	/*for (unsigned long i = 0; i < data_length; i++)
 	{
 		printf("%1x ", (unsigned char)(*(
 			data + (sizeof(enet_uint8)*i)
 			)));
 	}
-	printf("\n");
+	printf("\n");*/
 
 	auto callbacks = m_Callbacks.find(code);
 	if (callbacks != m_Callbacks.end())
