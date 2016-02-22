@@ -225,7 +225,8 @@ void IController::ProcessNetStack()
 	if (m_pHost == nullptr)
 		NETTIK_EXCEPTION("Tried to process network stack on NULL host pointer.");
 
-	while (enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
+	// Check m_bRunning again on each loop.
+	while (enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0 && m_bRunning)
 	{
 		ENetEventType type = m_CurrentEvent.type;
 
