@@ -37,7 +37,7 @@ uint32_t IThread::_staticProc(void* pData)
 
 	if (self->m_fProcedure)
 		self->m_fProcedure(
-			self->m_pPassedData
+			self->m_pPassedData, self->m_bRunning
 		);
 
 	self->m_bRunning = false;

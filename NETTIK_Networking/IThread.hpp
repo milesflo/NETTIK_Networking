@@ -7,7 +7,7 @@ class IThread
 
 public:
 
-	typedef void(*ThreadProcedure)(void* pData);
+	typedef void(*ThreadProcedure)(void* pData, bool& bThreadStatus);
 
 protected:
 

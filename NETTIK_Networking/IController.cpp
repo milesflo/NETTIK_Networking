@@ -42,12 +42,12 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 		NETTIK_EXCEPTION("ENET initialisation failed.");
 
 
-	m_pThread = new IThread([](void* pData) {
+	m_pThread = new IThread([](void* pData, bool& bThreadStatus) {
 
 		IController* self;
 		self = static_cast<IController*>(pData);
 
-		self->Run();
+		self->Run(bThreadStatus);
 
 	}, this);
 }
@@ -135,9 +135,9 @@ void IController::Stop()
 
 }
 
-void IController::Run()
+void IController::Run(bool& bThreadStatus)
 {
-	while (m_bRunning)
+	while (bThreadStatus && m_bRunning)
 	{
 		ProcessNetStack();
 	}

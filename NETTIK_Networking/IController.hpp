@@ -114,7 +114,7 @@ namespace NETTIK
 		void Stop();
 
 		//! Main thread entry for processing network stack.
-		void Run();
+		void Run(bool& bThreadStatus);
 
 		//! Sends data to the ENET peer.
 		void Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);
