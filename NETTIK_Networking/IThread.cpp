@@ -11,9 +11,9 @@ IThread::~IThread()
 {
 	if (m_hThread)
 	{
-		m_bRunning = false;
 		if (m_bRunning)
 			TerminateThread(m_hThread, 0);
+		m_bRunning = false;
 
 //		CloseHandle(m_hThread);
 	}

@@ -115,6 +115,9 @@ void IController::Update()
 
 void IController::Stop()
 {
+	if (!m_bRunning)
+		return;
+
 	m_bRunning = false;
 	m_bConnected = false;
 
@@ -223,7 +226,7 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 void IController::ProcessNetStack()
 {
 	// Check m_bRunning again on each loop.
-	while (m_pHost != nullptr && enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0 && m_bRunning)
+	while (m_pHost != nullptr && m_bRunning && enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
 	{
 		ENetEventType type = m_CurrentEvent.type;
 
