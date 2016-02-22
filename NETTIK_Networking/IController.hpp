@@ -98,6 +98,9 @@ namespace NETTIK
 		// the server.
 		inline ENetPeer* GetFirstPeer()
 		{
+			if (m_PeerList.size() == 0)
+				return nullptr;
+
 			return m_PeerList.front(); /* todo: implement*/
 		}
 
