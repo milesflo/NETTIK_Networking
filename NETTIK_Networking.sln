@@ -11,6 +11,10 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		DynamicDebug|Win32 = DynamicDebug|Win32
+		DynamicDebug|x64 = DynamicDebug|x64
+		DynamicRelease|Win32 = DynamicRelease|Win32
+		DynamicRelease|x64 = DynamicRelease|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -18,12 +22,24 @@ Global
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Debug|Win32.Build.0 = Debug|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Debug|x64.ActiveCfg = Debug|Win32
+		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.DynamicDebug|Win32.ActiveCfg = DynamicDebug|Win32
+		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.DynamicDebug|Win32.Build.0 = DynamicDebug|Win32
+		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.DynamicDebug|x64.ActiveCfg = DynamicDebug|Win32
+		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.DynamicRelease|Win32.ActiveCfg = DynamicRelease|Win32
+		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.DynamicRelease|Win32.Build.0 = DynamicRelease|Win32
+		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.DynamicRelease|x64.ActiveCfg = DynamicRelease|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Release|Win32.ActiveCfg = Release|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Release|Win32.Build.0 = Release|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Release|x64.ActiveCfg = Release|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Debug|Win32.Build.0 = Debug|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Debug|x64.ActiveCfg = Debug|Win32
+		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.DynamicDebug|Win32.ActiveCfg = DynamicDebug|Win32
+		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.DynamicDebug|Win32.Build.0 = DynamicDebug|Win32
+		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.DynamicDebug|x64.ActiveCfg = DynamicDebug|Win32
+		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.DynamicRelease|Win32.ActiveCfg = DynamicRelease|Win32
+		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.DynamicRelease|Win32.Build.0 = DynamicRelease|Win32
+		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.DynamicRelease|x64.ActiveCfg = DynamicRelease|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Release|Win32.ActiveCfg = Release|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Release|Win32.Build.0 = Release|Win32
 		{4FE2F3E5-0BFC-4364-963A-E99A2AF01513}.Release|x64.ActiveCfg = Release|Win32
