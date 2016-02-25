@@ -1,5 +1,6 @@
 #include "IThread.hpp"
 #include <cstdio>
+using namespace NETTIK;
 
 IThread::IThread(ThreadProcedure proc, void* pData)
 {
