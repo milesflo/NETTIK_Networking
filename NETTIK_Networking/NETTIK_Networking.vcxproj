@@ -73,7 +73,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DynamicDebug|Win32'">
     <IncludePath>..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Debug;..\lib\x86-debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\DynamicDebug;..\lib\x86-debug-dynamic;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\include;$(IncludePath)</IncludePath>
@@ -124,7 +124,7 @@
       <AdditionalDependencies>libprotobuf.lib;enet.lib;ws2_32.lib;winmm.lib</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>copy /Y "..\Debug\NETTIK_Networking.lib" "..\lib\x86-debug-dynamic\"</Command>
+      <Command>copy /Y "..\DynamicDebug\NETTIK_Networking.lib" "..\lib\x86-debug-dynamic\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

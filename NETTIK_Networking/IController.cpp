@@ -225,7 +225,7 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 
 void IController::ProcessNetStack()
 {
-	// Check m_bRunning again on each loop.
+		// Check m_bRunning again on each loop.
 	while (m_pHost != nullptr && m_bRunning && enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
 	{
 		ENetEventType type = m_CurrentEvent.type;
