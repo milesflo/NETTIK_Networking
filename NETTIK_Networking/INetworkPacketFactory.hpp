@@ -1,10 +1,11 @@
 #pragma once
+#include <string>
+#include <enet\enet.h>
 #include <google\protobuf\wire_format.h>
 
 #include "INetworkCodes.hpp"
 #include "IController.hpp"
 
-#include <string>
 #include "IDebug.hpp"
 
 namespace NETTIK
@@ -56,16 +57,16 @@ namespace NETTIK
 
 			INetworkCodes::msg_t  m_iCode;
 			PacketStatus          m_Status;
-			ENetPeer*             m_pPeer = nullptr;
 			uint8_t               m_iChannel = 0;
 			uint32_t              m_Flags = 0;
+			std::vector<ENetPeer*> m_pPeerList;
 
 			//! Finds the default peer if pPeer is still
 			// a null pointer. Throws an exception if the
 			// controller is invalid or a peer cannot be found.
 			void AllocateDefaultPeer()
 			{
-				if (m_pPeer != nullptr)
+				if (m_pPeerList.size() == 0)
 					return;
 
 				IController* controller;
@@ -76,53 +77,65 @@ namespace NETTIK
 
 				ENetPeer* enetPeer = controller->GetFirstPeer();
 
-				if (enetPeer == nullptr)
-					NETTIK_EXCEPTION("Failed to get first peer from controller object, it is nullptr.");
-
-				m_pPeer = enetPeer;
+				if (enetPeer != nullptr)
+					m_pPeerList.push_back(enetPeer);
 			}
 
 		public:
 
-			inline
-				void _SetCode(INetworkCodes::msg_t code)
+			inline void _SetCode(INetworkCodes::msg_t code)
 			{
 				m_iCode = code;
 			}
 
-			inline
-				void _SetFlags(uint32_t flags)
+			inline void _SetFlags(uint32_t flags)
 			{
 				m_Flags = flags;
 			}
 
-			inline
-				void _FlagAsReliable()
+			inline void _FlagAsReliable()
 			{
 				m_Flags |= ENET_PACKET_FLAG_RELIABLE;
 			}
 
-			inline
-				void _FlagAsUnsequenced()
+			inline void _FlagAsUnsequenced()
 			{
 				m_Flags |= ENET_PACKET_FLAG_UNSEQUENCED;
 			}
 
+			inline void _PeerAdd(ENetPeer* peer)
+			{    
+				m_pPeerList.push_back(peer);
+			}
+
+			inline void _PeerSet(ENetPeer* peer)
+			{
+				m_pPeerList.clear();
+				_Peeradd(peer);
+			}
+
+			//! Assigns the packet channel to use.
+			inline void _SetChannel(uint8_t channel)
+			{
+				m_iChannel = channel;
+			}
+
+
 			//! Forces a dispatch of the packet, regardless of 
 			// it's status. Sets the status flag to `dispatched`.
-			inline
-				void _ForceDispatch()
+			inline void _ForceDispatch()
 			{
 				AllocateDefaultPeer();
-				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
+
+				for (uint32_t i = 0; i < m_pPeerList.size(); i++)
+					DispatchPacket(this, m_iCode, m_pPeerList.at(i), m_Flags, m_iChannel);
 
 				m_Status = PacketStatus::kPacket_Dispatched;
 			}
 
 			//! Reads a data stream and removes the network code
 			// from the buffer.
-			inline
-				void _Read(enet_uint8* data, size_t data_length)
+			inline void _Read(enet_uint8* data, size_t data_length)
 			{
 				_PreventAutoDispatch();
 
@@ -135,17 +148,9 @@ namespace NETTIK
 				ParseFromArray(stream_data, stream_len);
 			}
 
-			//! Assigns the packet channel to use.
-			inline
-				void _SetChannel(uint8_t channel)
-			{
-				m_iChannel = channel;
-			}
-
 			//! Silently dispatches a packet, doesn't change the 
 			// status of the packet.
-			inline
-				void _SilentDispatch()
+			inline void _SilentDispatch()
 			{
 				AllocateDefaultPeer();
 				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
@@ -153,14 +158,12 @@ namespace NETTIK
 
 			//! Prevents RAII dispatching (ie. using a singleton-like
 			// object)
-			inline
-				void _PreventAutoDispatch()
+			inline void _PreventAutoDispatch()
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
 
-			inline
-				void _GenerateToString(std::string& out)
+			inline void _GenerateToString(std::string& out)
 			{
 				_PreventAutoDispatch();
 				GenerateStream(out, this, m_iCode);
