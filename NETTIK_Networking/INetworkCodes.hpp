@@ -9,7 +9,7 @@ namespace NETTIK
 
 	public:
 
-		typedef uint8_t  msg_t;
+		typedef uint16_t  msg_t;
 
 		enum NetworkCodesShared : msg_t
 		{

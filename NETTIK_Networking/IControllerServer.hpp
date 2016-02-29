@@ -6,51 +6,19 @@ namespace NETTIK
 
 	class IControllerServer : public IController
 	{
-
 	private:
 
 		size_t m_iPeerLimit;
 
 	public:
 
-//		virtual void PostUpdate();
+		IControllerServer(uint32_t rate);
+		virtual ~IControllerServer();
 
-		bool InitializeHost()
-		{
-			m_pHost = enet_host_create(&m_Address, m_iPeerLimit, 0, 0, 0);
+		bool InitializeHost();
+		bool InitializeAddress(const char* hostname, uint16_t port);
 
-			if (m_pHost == NULL)
-				return false;
-
-			return true;
-		}
-
-		bool InitializeAddress(const char* hostname, uint16_t port)
-		{
-			m_Address.host = ENET_HOST_ANY;
-			m_Address.port = port;
-			return true;
-		}
-
-		IControllerServer(uint32_t rate) : IController(rate)
-		{
-			m_bReplicating = false;
-		}
-
-		bool Listen(uint16_t port, size_t peerLimit)
-		{
-			m_iPeerLimit = peerLimit;
-
-			if (!InitializeAddress(0, port) || !InitializeHost())
-				return false;
-
-			m_bConnected = true;
-			return true;
-		}
-
-		~IControllerServer()
-		{
-		}
+		bool Listen(uint16_t port, size_t peerLimit);
 
 	};
 }

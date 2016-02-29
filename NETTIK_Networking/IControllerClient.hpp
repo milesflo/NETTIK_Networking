@@ -10,10 +10,7 @@ namespace NETTIK
 	public:
 
 		IControllerClient(uint32_t rate);
-		~IControllerClient();
-
-		//! Dummy function for post updating.
-//		virtual void PostUpdate();
+		virtual ~IControllerClient();
 
 		//! Creatse the client connection framework.
 		bool InitializeHost();

@@ -1,16 +1,29 @@
 #include "IControllerClient.hpp"
 using namespace NETTIK;
 
+IControllerClient::~IControllerClient()
+{
+
+}
+
 IControllerClient::IControllerClient(uint32_t rate) : IController(rate)
 {
 	if (!InitializeHost())
 		NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
 
-	m_bReplicating = true;
-}
+	on(NETTIK_DISCONNECT_SHUTDOWN, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+		printf("notice: server shutting down\n");
+	});
 
-IControllerClient::~IControllerClient()
-{
+	on(NETTIK_DISCONNECT_KICK, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+		printf("notice: you were kicked\n");
+	});
+
+	on(NETTIK_DISCONNECT_BAN, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+		printf("notice: you were banned\n");
+	});
+
+	m_bReplicating = true;
 }
 
 bool IControllerClient::InitializeHost()

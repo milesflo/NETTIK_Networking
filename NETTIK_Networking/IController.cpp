@@ -127,6 +127,11 @@ void IController::Stop()
 		m_pThread = nullptr;
 	}
 
+	printf("disconnecting peers.");
+	// Close all connections (including server connection if peer).
+	for (auto it = m_PeerList.begin(); it != m_PeerList.end(); it++)
+		enet_peer_disconnect_now(*it, DISCONNECT_REASONS::NETTIK_DISCONNECT_SHUTDOWN);
+
 	if (m_pHost != nullptr)
 	{
 		ENetHost* tmp;
@@ -183,8 +188,6 @@ void IController::ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* pe
 
 	INetworkCodes::msg_t code;
 	code = (INetworkCodes::msg_t)(*data);
-	// todo: lookup code in the unordered_map and execute function with
-	// parsed packet.
 	/*for (unsigned long i = 0; i < data_length; i++)
 	{
 		printf("%1x ", (unsigned char)(*(
@@ -205,8 +208,6 @@ void IController::ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* pe
 
 #ifdef _DEBUG
 	printf(s_issueUnhandledPacket, code, data_length);
-#else
-	NETTIK_EXCEPTION(s_issueUnhandledPacket, code, data.size());
 #endif
 }
 
@@ -225,15 +226,15 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 
 void IController::ProcessNetStack()
 {
-		// Check m_bRunning again on each loop.
+	// Check m_bRunning again on each loop.
 	while (m_pHost != nullptr && m_bRunning && enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
 	{
 		ENetEventType type = m_CurrentEvent.type;
 
-		//! Inform all listeners.
+		// Inform all listeners.
 		FireEvent(type, m_CurrentEvent);
 
-		//! Process event...
+		// Process event...
 		switch (type)
 		{
 
@@ -244,7 +245,7 @@ void IController::ProcessNetStack()
 
 		case ENET_EVENT_TYPE_DISCONNECT:
 		{
-			//! Don't use this variable in a server container.
+			// Don't use this variable in a server container.
 			// I don't like this, but it kinda does the job.
 			// Juts ignore bConnected if working with the server.
 			auto it = std::find(m_PeerList.begin(), m_PeerList.end(), m_CurrentEvent.peer);

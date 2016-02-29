@@ -66,7 +66,7 @@ namespace NETTIK
 			// controller is invalid or a peer cannot be found.
 			void AllocateDefaultPeer()
 			{
-				if (m_pPeerList.size() == 0)
+				if (m_pPeerList.size() != 0)
 					return;
 
 				IController* controller;
@@ -127,6 +127,12 @@ namespace NETTIK
 			{
 				AllocateDefaultPeer();
 
+#ifdef _DEBUG
+				if (m_pPeerList.size() == 0)
+				{
+					printf("warning: PeerList.Size == 0 from %s\n", __FUNCTION__);
+				}
+#endif
 				for (uint32_t i = 0; i < m_pPeerList.size(); i++)
 					DispatchPacket(this, m_iCode, m_pPeerList.at(i), m_Flags, m_iChannel);
 

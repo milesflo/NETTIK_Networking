@@ -21,6 +21,13 @@ namespace NETTIK
 
 	public:
 
+		enum DISCONNECT_REASONS : NETTIK::INetworkCodes::msg_t
+		{
+			NETTIK_DISCONNECT_SHUTDOWN = 0xFFFF,
+			NETTIK_DISCONNECT_KICK = 0xFFFE,
+			NETTIK_DISCONNECT_BAN = 0xFFFD
+		};
+
 		using CallbackFunction_f =
 			std::function<void(enet_uint8* data, size_t data_length, ENetPeer* enetPeer)>;
 
@@ -153,7 +160,7 @@ namespace NETTIK
 			m_EventCallbacks[evt].push_back(callback);
 		}
 
-		inline void FireEvent(ENetEventType evt, ENetEvent& evtFrame);
+		void FireEvent(ENetEventType evt, ENetEvent& evtFrame);
 
 		// TODO: add "once", "off"
 		// SEE: EventEmitters in JS
