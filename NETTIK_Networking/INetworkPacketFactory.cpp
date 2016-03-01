@@ -29,6 +29,7 @@ INetworkCodes::msg_t IPacketFactory::GetCode(std::string& data)
 
 	return result;
 }
+
 void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags, uint8_t channel)
 {
 	IController* controller = IController::GetPeerSingleton();
@@ -42,4 +43,15 @@ void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCode
 	stream_len = GenerateStream(stream, msg, code);
 
 	controller->Send((enet_uint8*)stream.c_str(), stream_len, enetPeer, flags, channel);
+}
+
+ENetPeer* IPacketFactory::GetFirstPeer()
+{
+	IController* controller;
+	controller = IController::GetPeerSingleton();
+
+	if (controller == nullptr)
+		NETTIK_EXCEPTION("Failed to get global controller object, nullptr.");
+
+	return controller->GetFirstPeer();
 }

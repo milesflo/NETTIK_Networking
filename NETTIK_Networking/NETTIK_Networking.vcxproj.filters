@@ -24,9 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="NETTIK_Networking.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,8 +48,8 @@
     <ClInclude Include="IControllerServer.hpp">
       <Filter>Header Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="IAtomObject.hpp">
-      <Filter>Header Files\Controllers</Filter>
+    <ClInclude Include="CEntities.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -73,13 +70,13 @@
     <ClCompile Include="IThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IAtomObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IControllerClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IControllerServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CEntities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

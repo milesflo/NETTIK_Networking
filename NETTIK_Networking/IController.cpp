@@ -54,6 +54,10 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 IController::~IController()
 {
+	// Clear entity managers
+	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end();)
+		m_EntManagers.erase(it);
+
 	// Flag the controller as stopped.
 	Stop();
 
@@ -74,40 +78,17 @@ void IController::Start()
 		m_pThread->Start();
 }
 
-void IController::AddObject(std::unique_ptr<IAtomObject> obj)
-{
-	// When adding objects, make sure there aren't any loops ongoing.
-	std::lock_guard<std::mutex> _(m_ObjectListMutex);
-
-	obj->SetAllocated(true);
-	m_AtomObjects.push_back(std::move(obj));
-}
-
-void IController::RemoveObject(IAtomObject* obj)
-{
-	// When removing objects, make sure there aren't any loops ongoing too.
-	std::lock_guard<std::mutex> _(m_ObjectListMutex);
-
-	for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end();)
-	{
-		if (it->get() == obj) {
-			(*it)->SetAllocated(false);
-			m_AtomObjects.erase(it);
-			break;
-		}
-	}
-}
-
-
 void IController::Update()
 {
-	// Same with updating, don't loop if another thread has modified the
-	// object list.
-	std::lock_guard<std::mutex> _(m_ObjectListMutex);
+	std::vector<IPacketFactory::INetworkPacket*> messageQueue;
 
-	for (auto it = m_AtomObjects.begin(); it != m_AtomObjects.end(); ++it)
+	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); it++)
+		(*it).second->Update(messageQueue);
+
+	for (auto it = messageQueue.begin(); it != messageQueue.end(); )
 	{
-		(*it)->Update(m_bReplicating);
+		// TODO: Dispatch
+		delete(*it);
 	}
 
 	PostUpdate();
@@ -127,7 +108,6 @@ void IController::Stop()
 		m_pThread = nullptr;
 	}
 
-	printf("disconnecting peers.");
 	// Close all connections (including server connection if peer).
 	for (auto it = m_PeerList.begin(); it != m_PeerList.end(); it++)
 		enet_peer_disconnect_now(*it, DISCONNECT_REASONS::NETTIK_DISCONNECT_SHUTDOWN);

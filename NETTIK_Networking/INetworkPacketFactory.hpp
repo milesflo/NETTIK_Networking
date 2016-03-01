@@ -4,7 +4,6 @@
 #include <google\protobuf\wire_format.h>
 
 #include "INetworkCodes.hpp"
-#include "IController.hpp"
 
 #include "IDebug.hpp"
 
@@ -40,7 +39,15 @@ namespace NETTIK
 			uint8_t     channel
 			);
 
+		static ENetPeer* GetFirstPeer();
+
 	public:
+
+		class INetworkPacket
+		{
+		public:
+			virtual ~INetworkPacket() { };
+		};
 
 		//! Reads a network code from a packet buffer.
 		static INetworkCodes::msg_t GetCode(
@@ -50,7 +57,7 @@ namespace NETTIK
 		//! The packet wrapper class for dispatching data to
 		// an ENET peer.
 		template <class T>
-		class IPacket : public T
+		class NetPacket : public T, INetworkPacket
 		{
 
 		private:
@@ -64,21 +71,13 @@ namespace NETTIK
 			//! Finds the default peer if pPeer is still
 			// a null pointer. Throws an exception if the
 			// controller is invalid or a peer cannot be found.
+
 			void AllocateDefaultPeer()
 			{
 				if (m_pPeerList.size() != 0)
 					return;
 
-				IController* controller;
-				controller = IController::GetPeerSingleton();
-
-				if (controller == nullptr)
-					NETTIK_EXCEPTION("Failed to get global controller object, nullptr.");
-
-				ENetPeer* enetPeer = controller->GetFirstPeer();
-
-				if (enetPeer != nullptr)
-					m_pPeerList.push_back(enetPeer);
+				m_pPeerList.push_back(GetFirstPeer());
 			}
 
 		public:
@@ -178,18 +177,18 @@ namespace NETTIK
 			//! Constructs a packet with the peer being the first
 			// item in the internal connection stack. Useful for client -> server as
 			// the server is the only connected peer.
-			IPacket(INetworkCodes::msg_t code) : m_iCode(code), T()
+			NetPacket(INetworkCodes::msg_t code) : m_iCode(code), T(), INetworkPacket()
 			{
 				m_Status = PacketStatus::kPacket_Pending;
 			}
 
 			//! Constructs a packet when no packet code is supplied.
 			// Usually the case when the packet is incoming.
-			IPacket() : T()
+			NetPacket() : T()
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
-			IPacket(enet_uint8* data, size_t data_len) : T()
+			NetPacket(enet_uint8* data, size_t data_len) : T()
 			{
 				_Read(data, data_len);
 			}
@@ -203,13 +202,12 @@ namespace NETTIK
 			//! RAII supported packet dispatching, it's cleaner
 			// to force a dispatch but this lets the front-end developer be lazy.
 			// This also allocates to the stack, so be careful to overuse this.
-			~IPacket()
+			~NetPacket()
 			{
 				if (m_Status == PacketStatus::kPacket_Pending)
 					_ForceDispatch();
 			}
 		};
-
 
 	};
 

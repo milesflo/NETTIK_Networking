@@ -4,14 +4,15 @@
 #include <string>
 #include <functional>
 #include <unordered_map>
+#include <vector>
 #include <memory>
 #include <mutex>
 
 #include "INetworkCodes.hpp"
 #include "IDebug.hpp"
 #include "IThread.hpp"
-#include "IAtomObject.hpp"
-
+#include "INetworkPacketFactory.hpp"
+#include "CEntities.h"
 
 namespace NETTIK
 {
@@ -38,15 +39,8 @@ namespace NETTIK
 		static void SetPeerSingleton(IController* peer);
 		static void DeletePeerSingleton();
 
-		std::vector<
-			ENetPeer*
-		> m_PeerList;
-
-		std::vector<
-			std::unique_ptr<IAtomObject>
-		> m_AtomObjects;
-
-		std::mutex m_ObjectListMutex;
+		std::vector<ENetPeer*> m_PeerList;
+		std::unordered_map<std::string, CEntities*> m_EntManagers;
 
 	protected:
 
@@ -70,16 +64,32 @@ namespace NETTIK
 
 		IThread*    m_pThread = nullptr;
 
+		CEntities* CreateEntityManager(std::string name)
+		{
+			CEntities* mgr;
+			mgr = new CEntities;
+			mgr->SetName(name);
+
+			m_EntManagers.insert(make_pair(name, mgr));
+			return mgr;
+		}
+
+		void DestroyEntityManager(std::string name)
+		{
+			auto it = m_EntManagers.find(name);
+			if (it != m_EntManagers.end())
+				m_EntManagers.erase(it);
+		}
+
+		void DestroyEntityManager(CEntities* mgr)
+		{
+			DestroyEntityManager(mgr->GetName());
+		}
+
 	public:
 
 		IController(uint32_t tickRate);
 		virtual ~IController();
-
-		//! Inserts an object into the sync list.
-		void AddObject(std::unique_ptr<IAtomObject> obj);
-
-		//! Erases an object from the sync list.
-		void RemoveObject(IAtomObject* obj);
 
 		//! Performs a post update, handled by server/client.
 		virtual void PostUpdate() = 0;
