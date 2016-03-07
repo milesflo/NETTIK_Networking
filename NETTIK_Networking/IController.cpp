@@ -13,6 +13,14 @@ IController* IController::GetPeerSingleton()
 	return s_PeerSingleton;
 }
 
+std::string IController::GetIPAddress(ENetAddress& addr)
+{
+	char buffer[32];
+	enet_address_get_host_ip(&addr, buffer, 32);
+
+	return std::string(buffer);
+}
+
 void IController::DeletePeerSingleton()
 {
 
@@ -54,10 +62,6 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 IController::~IController()
 {
-	// Clear entity managers
-	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end();)
-		m_EntManagers.erase(it);
-
 	// Flag the controller as stopped.
 	Stop();
 
@@ -70,6 +74,43 @@ IController::~IController()
 	DeletePeerSingleton();
 }
 
+VirtualInstance* IController::CreateInstance(std::string name)
+{
+	VirtualInstance_ptr vinstance(new VirtualInstance(name, this));
+	m_Instances[name] = std::move(vinstance);
+
+	return m_Instances[name].get();
+}
+
+void IController::DeleteInstance(std::string name)
+{
+	auto it = m_Instances.find(name);
+	if (it != m_Instances.end())
+		m_Instances.erase(it);
+}
+
+void IController::DeleteInstance(VirtualInstance* instance)
+{
+	DeleteInstance(instance->GetName());
+}
+
+VirtualInstance* IController::GetInstance(std::string name)
+{
+	auto it = m_Instances.find(name);
+	if (it != m_Instances.end())
+		return (*it).second.get();
+	else
+		return nullptr;
+}
+
+std::unordered_map<std::string, VirtualInstance*> IController::GetInstances()
+{
+	std::unordered_map<std::string, VirtualInstance*> instances_clone;
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); it++)
+		instances_clone[it->first] = it->second.get();
+	return instances_clone;
+}
+
 void IController::Start()
 {
 	m_bRunning = true;
@@ -80,10 +121,7 @@ void IController::Start()
 
 void IController::Update()
 {
-	std::vector<IPacketFactory::INetworkPacket*> messageQueue;
-
-	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); it++)
-		(*it).second->Update(messageQueue);
+	std::vector<IPacketFactory::CBasePacket*> messageQueue;
 
 	for (auto it = messageQueue.begin(); it != messageQueue.end(); )
 	{
@@ -131,7 +169,7 @@ void IController::Run(bool& bThreadStatus)
 	}
 }
 
-void IController::Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel)
+void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel)
 {
 	if (peer == nullptr)
 		NETTIK_EXCEPTION("Peer supplied to Send() is NULL.");
@@ -152,12 +190,12 @@ void IController::Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32
 	enet_peer_send(peer, channel, packet);
 }
 
-void IController::Send(enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel)
+void IController::Send(const enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel)
 {
 	Send(data, data_len, GetFirstPeer(), flags, channel);
 }
 
-void IController::ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* peer)
+void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPeer* peer)
 {
 
 	// If data is too small for the message ID type, then

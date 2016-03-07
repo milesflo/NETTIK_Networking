@@ -12,7 +12,10 @@
 #include "IDebug.hpp"
 #include "IThread.hpp"
 #include "INetworkPacketFactory.hpp"
-#include "CEntities.h"
+#include "VirtualInstance.h"
+#define DEFINE_SERVER(bServer) \
+	bool IsServer() { return bServer; }
+
 
 namespace NETTIK
 {
@@ -30,7 +33,7 @@ namespace NETTIK
 		};
 
 		using CallbackFunction_f =
-			std::function<void(enet_uint8* data, size_t data_length, ENetPeer* enetPeer)>;
+			std::function<void(const enet_uint8* data, size_t data_length, ENetPeer* enetPeer)>;
 
 		using EventFunction_f =
 			std::function<void(ENetEvent& evtFrame)>;
@@ -40,7 +43,7 @@ namespace NETTIK
 		static void DeletePeerSingleton();
 
 		std::vector<ENetPeer*> m_PeerList;
-		std::unordered_map<std::string, CEntities*> m_EntManagers;
+		std::unordered_map<std::string, VirtualInstance_ptr> m_Instances;
 
 	protected:
 
@@ -64,27 +67,6 @@ namespace NETTIK
 
 		IThread*    m_pThread = nullptr;
 
-		CEntities* CreateEntityManager(std::string name)
-		{
-			CEntities* mgr;
-			mgr = new CEntities;
-			mgr->SetName(name);
-
-			m_EntManagers.insert(make_pair(name, mgr));
-			return mgr;
-		}
-
-		void DestroyEntityManager(std::string name)
-		{
-			auto it = m_EntManagers.find(name);
-			if (it != m_EntManagers.end())
-				m_EntManagers.erase(it);
-		}
-
-		void DestroyEntityManager(CEntities* mgr)
-		{
-			DestroyEntityManager(mgr->GetName());
-		}
 
 	public:
 
@@ -94,18 +76,25 @@ namespace NETTIK
 		//! Performs a post update, handled by server/client.
 		virtual void PostUpdate() = 0;
 
+		//! Returns if the controller is a server or not.
+		virtual bool IsServer() = 0;
+
+		//! Performs a tick, calls PostUpdate.
 		void Update();
 
+		//! Returns rate that messages get processed.
 		inline uint32_t GetNetworkRate(void) const
 		{
 			return m_iNetworkRate;
 		}
 
+		//! Sets the rate that messages get processed.
 		inline void SetNetworkRate(uint32_t netRate)
 		{
 			m_iNetworkRate = netRate;
 		}
 
+		//! Returns if the controller is running or not.
 		inline bool IsRunning(void) const
 		{
 			return m_bRunning;
@@ -121,6 +110,8 @@ namespace NETTIK
 			return m_PeerList.front(); /* todo: implement*/
 		}
 
+		static std::string GetIPAddress(ENetAddress& addr);
+
 		//! Performs a single iteration over the network stack.
 		void ProcessNetStack();
 
@@ -134,15 +125,23 @@ namespace NETTIK
 		void Run(bool& bThreadStatus);
 
 		//! Sends data to the ENET peer.
-		void Send(enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);
+		void Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);
 
 		//! Sends data to the first ENET peer.
 		// Remember to set flag as reliable for important information.
-		void Send(enet_uint8* data, size_t data_len, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED, uint8_t channel = 0);
+		void Send(const enet_uint8* data, size_t data_len, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED, uint8_t channel = 0);
 
 		//! Processes a single data stream and emits
 		// the appropriate function.
-		void ProcessRecv(enet_uint8* data, size_t data_length, ENetPeer* peer);
+		void ProcessRecv(const enet_uint8* data, size_t data_length, ENetPeer* peer);
+
+		VirtualInstance* CreateInstance(std::string name);
+		VirtualInstance* GetInstance(std::string name);
+
+		std::unordered_map<std::string, VirtualInstance*> GetInstances();
+
+		void DeleteInstance(std::string name);
+		void DeleteInstance(VirtualInstance* instance);
 
 	protected:
 

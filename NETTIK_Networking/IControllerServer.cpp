@@ -22,7 +22,7 @@ IControllerServer::IControllerServer(uint32_t rate) : IController(rate)
 {
 	m_bReplicating = false;
 
-	on(NETTIK_DISCONNECT_SHUTDOWN, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+	on(NETTIK_DISCONNECT_SHUTDOWN, [](const enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
 		// client clean shutdown
 	});
 }

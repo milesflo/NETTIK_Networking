@@ -11,15 +11,15 @@ IControllerClient::IControllerClient(uint32_t rate) : IController(rate)
 	if (!InitializeHost())
 		NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
 
-	on(NETTIK_DISCONNECT_SHUTDOWN, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+	on(NETTIK_DISCONNECT_SHUTDOWN, [](const enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
 		printf("notice: server shutting down\n");
 	});
 
-	on(NETTIK_DISCONNECT_KICK, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+	on(NETTIK_DISCONNECT_KICK, [](const enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
 		printf("notice: you were kicked\n");
 	});
 
-	on(NETTIK_DISCONNECT_BAN, [](enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
+	on(NETTIK_DISCONNECT_BAN, [](const enet_uint8* data, size_t data_length, ENetPeer* enetPeer) {
 		printf("notice: you were banned\n");
 	});
 

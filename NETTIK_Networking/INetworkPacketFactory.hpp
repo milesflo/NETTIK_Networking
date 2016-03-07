@@ -2,10 +2,16 @@
 #include <string>
 #include <enet\enet.h>
 #include <google\protobuf\wire_format.h>
-
 #include "INetworkCodes.hpp"
-
 #include "IDebug.hpp"
+
+#define DEFINE_GETSET(Type, MemberName, FaceName) \
+	Type Get##FaceName() const { \
+		return MemberName; \
+	} \
+	void Set##FaceName(Type value) { \
+		MemberName = value; \
+	}\
 
 namespace NETTIK
 {
@@ -29,6 +35,13 @@ namespace NETTIK
 			INetworkCodes::msg_t        code
 			);
 
+		static size_t GenerateRaw(
+			std::string& stream,
+			const enet_uint8* buffer,
+			const size_t buffer_len,
+			INetworkCodes::msg_t code
+			);
+
 		//! Serializes a packet and sends it to the singleton ENET peer (if it exists), 
 		// drops the packet if not.
 		static void DispatchPacket(
@@ -39,93 +52,86 @@ namespace NETTIK
 			uint8_t     channel
 			);
 
+		static void DispatchRaw(
+			const enet_uint8* buffer,
+			const size_t buffer_len,
+			INetworkCodes::msg_t code,
+			ENetPeer* enetPeer,
+			uint32_t flags,
+			uint8_t channel
+			);
+
 		static ENetPeer* GetFirstPeer();
 
 	public:
-
-		class INetworkPacket
-		{
-		public:
-			virtual ~INetworkPacket() { };
-		};
 
 		//! Reads a network code from a packet buffer.
 		static INetworkCodes::msg_t GetCode(
 			std::string& data
 			);
 
-		//! The packet wrapper class for dispatching data to
-		// an ENET peer.
-		template <class T>
-		class NetPacket : public T, INetworkPacket
+		class CBasePacket
 		{
-
-		private:
-
+		protected:
 			INetworkCodes::msg_t  m_iCode;
 			PacketStatus          m_Status;
 			uint8_t               m_iChannel = 0;
 			uint32_t              m_Flags = 0;
 			std::vector<ENetPeer*> m_pPeerList;
 
+		public:
+
+			DEFINE_GETSET(INetworkCodes::msg_t, m_iCode, Code);
+			DEFINE_GETSET(uint32_t, m_Flags, Flags);
+			DEFINE_GETSET(uint8_t, m_iChannel, Channel);
+
 			//! Finds the default peer if pPeer is still
 			// a null pointer. Throws an exception if the
 			// controller is invalid or a peer cannot be found.
+			void AllocateDefaultPeer();
 
-			void AllocateDefaultPeer()
-			{
-				if (m_pPeerList.size() != 0)
-					return;
-
-				m_pPeerList.push_back(GetFirstPeer());
-			}
-
-		public:
-
-			inline void _SetCode(INetworkCodes::msg_t code)
-			{
-				m_iCode = code;
-			}
-
-			inline void _SetFlags(uint32_t flags)
-			{
-				m_Flags = flags;
-			}
-
-			inline void _FlagAsReliable()
+			void SetReliable()
 			{
 				m_Flags |= ENET_PACKET_FLAG_RELIABLE;
 			}
 
-			inline void _FlagAsUnsequenced()
+			void SetUnsequenced()
 			{
 				m_Flags |= ENET_PACKET_FLAG_UNSEQUENCED;
 			}
 
-			inline void _PeerAdd(ENetPeer* peer)
-			{    
+			void AddPeer(ENetPeer* peer)
+			{
 				m_pPeerList.push_back(peer);
 			}
 
-			inline void _PeerSet(ENetPeer* peer)
+			void SetPeer(ENetPeer* peer)
 			{
 				m_pPeerList.clear();
-				_Peeradd(peer);
+				AddPeer(peer);
 			}
 
-			//! Assigns the packet channel to use.
-			inline void _SetChannel(uint8_t channel)
-			{
-				m_iChannel = channel;
-			}
+			CBasePacket() { }
+			virtual ~CBasePacket() { };
+		};
 
+		class CRawPacket : public CBasePacket
+		{
+			CRawPacket() { }
+		};
+
+		//! The packet wrapper class for dispatching data to
+		// an ENET peer.
+		template <class T>
+		class CProtoPacket : public T, public CBasePacket
+		{
+		public:
 
 			//! Forces a dispatch of the packet, regardless of 
 			// it's status. Sets the status flag to `dispatched`.
-			inline void _ForceDispatch()
+			void Dispatch()
 			{
 				AllocateDefaultPeer();
-
 #ifdef _DEBUG
 				if (m_pPeerList.size() == 0)
 				{
@@ -140,12 +146,12 @@ namespace NETTIK
 
 			//! Reads a data stream and removes the network code
 			// from the buffer.
-			inline void _Read(enet_uint8* data, size_t data_length)
+			void Read(const enet_uint8* data, size_t data_length)
 			{
-				_PreventAutoDispatch();
+				Disable();
 
 				enet_uint8* stream_data;
-				stream_data = data + (sizeof(INetworkCodes::msg_t));
+				stream_data = const_cast<enet_uint8*>(data) + (sizeof(INetworkCodes::msg_t));
 
 				size_t stream_len;
 				stream_len = data_length - sizeof(INetworkCodes::msg_t);
@@ -155,7 +161,7 @@ namespace NETTIK
 
 			//! Silently dispatches a packet, doesn't change the 
 			// status of the packet.
-			inline void _SilentDispatch()
+			void DispatchSilent()
 			{
 				AllocateDefaultPeer();
 				DispatchPacket(this, m_iCode, m_pPeer, m_Flags, m_iChannel);
@@ -163,34 +169,35 @@ namespace NETTIK
 
 			//! Prevents RAII dispatching (ie. using a singleton-like
 			// object)
-			inline void _PreventAutoDispatch()
+			void Disable()
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
 
-			inline void _GenerateToString(std::string& out)
+			void GenerateToString(std::string& out)
 			{
-				_PreventAutoDispatch();
+				Disable();
 				GenerateStream(out, this, m_iCode);
 			}
 
 			//! Constructs a packet with the peer being the first
 			// item in the internal connection stack. Useful for client -> server as
 			// the server is the only connected peer.
-			NetPacket(INetworkCodes::msg_t code) : m_iCode(code), T(), INetworkPacket()
+			CProtoPacket(INetworkCodes::msg_t code) : T(), CBasePacket()
 			{
+				SetCode(code);
 				m_Status = PacketStatus::kPacket_Pending;
 			}
 
 			//! Constructs a packet when no packet code is supplied.
 			// Usually the case when the packet is incoming.
-			NetPacket() : T()
+			CProtoPacket() : T(), CBasePacket()
 			{
 				m_Status = PacketStatus::kPacket_Disabled;
 			}
-			NetPacket(enet_uint8* data, size_t data_len) : T()
+			CProtoPacket(const enet_uint8* data, size_t data_len) : T(), CBasePacket()
 			{
-				_Read(data, data_len);
+				Read(data, data_len);
 			}
 
 			//! Constructs a packet with a desired peer to send to.
@@ -202,10 +209,10 @@ namespace NETTIK
 			//! RAII supported packet dispatching, it's cleaner
 			// to force a dispatch but this lets the front-end developer be lazy.
 			// This also allocates to the stack, so be careful to overuse this.
-			~NetPacket()
+			~CProtoPacket()
 			{
 				if (m_Status == PacketStatus::kPacket_Pending)
-					_ForceDispatch();
+					Dispatch();
 			}
 		};
 

@@ -51,11 +51,12 @@
     <ClInclude Include="CEntities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NetworkStructures.proto">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="EntityMessages.pb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="INetworkPacketFactory.cpp">
@@ -79,5 +80,16 @@
     <ClCompile Include="CEntities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EntityMessages.pb.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EntityMessages.proto">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

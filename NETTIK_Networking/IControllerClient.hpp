@@ -8,6 +8,7 @@ namespace NETTIK
 	{
 
 	public:
+		DEFINE_SERVER(true);
 
 		IControllerClient(uint32_t rate);
 		virtual ~IControllerClient();

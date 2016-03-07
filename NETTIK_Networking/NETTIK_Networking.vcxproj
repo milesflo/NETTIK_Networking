@@ -181,6 +181,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CEntities.h" />
+    <ClInclude Include="EntityMessages.pb.h" />
     <ClInclude Include="IController.hpp" />
     <ClInclude Include="IControllerClient.hpp" />
     <ClInclude Include="IControllerServer.hpp" />
@@ -189,18 +190,21 @@
     <ClInclude Include="IDebug.hpp" />
     <ClInclude Include="IThread.hpp" />
     <ClInclude Include="NETTIK_Networking.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NetworkStructures.proto" />
+    <ClInclude Include="VirtualInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CEntities.cpp" />
+    <ClCompile Include="EntityMessages.pb.cc" />
     <ClCompile Include="IController.cpp" />
     <ClCompile Include="IControllerClient.cpp" />
     <ClCompile Include="IControllerServer.cpp" />
     <ClCompile Include="INetworkPacketFactory.cpp" />
     <ClCompile Include="IThread.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp" />
+    <ClCompile Include="VirtualInstance.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EntityMessages.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
