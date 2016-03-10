@@ -4,55 +4,6 @@
 using namespace NETTIK;
 using namespace std;
 
-enum NetClientCodes
-{
-
-};
-
-enum NetServerCodes
-{
-
-};
-
-class CObject
-{
-
-protected:
-
-	using ScriptProcedure = 
-		std::function<void(CObject*)>;
-
-	using SyncProcedure =
-		std::function<void(CObject*)>;
-
-	uint32_t m_Id;
-	bool     m_bServerEntity;  // True if is processed on this instance
-	bool     m_bScripted;      // True if scripted (ie. moving on client, but exists across clients)
-
-	ScriptProcedure m_Script;
-	
-public:
-	
-	CObject() : m_bServerEntity(false) { }
-	CObject(bool serverEntFlag) : m_bServerEntity(serverEntFlag) { }
-
-	virtual ~CObject() { }
-
-	virtual void ReadPacket(NetObject& packet)
-	{
-		// Make sure this is the right packet.
-		if (m_Id != packet.id())
-			NETTIK_EXCEPTION("Sync called with incorrect object id.");
-
-	}
-
-	//NetObject MakePacket()
-	//{
-
-	//}
-
-};
-
 IControllerClient* TestClient()
 {
 

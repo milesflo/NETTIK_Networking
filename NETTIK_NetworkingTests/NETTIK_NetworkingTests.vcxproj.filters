@@ -26,6 +26,12 @@
     <ClInclude Include="ProtoData.pb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tests_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITestHarness.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ProtoData.proto">

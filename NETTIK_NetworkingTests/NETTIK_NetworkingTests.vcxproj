@@ -166,7 +166,9 @@
     <ClCompile Include="ProtoData.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ITestHarness.h" />
     <ClInclude Include="ProtoData.pb.h" />
+    <ClInclude Include="tests_server.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProtoData.proto" />
