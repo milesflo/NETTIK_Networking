@@ -57,6 +57,9 @@
     <ClInclude Include="VirtualInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CVector3.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="INetworkPacketFactory.cpp">
@@ -84,6 +87,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VirtualInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

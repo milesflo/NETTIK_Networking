@@ -17,7 +17,8 @@ private:
 
 	NETTIK::IController* m_ParentController;
 	std::string          m_sName;
-
+	
+	uint32_t             m_iSequenceID = 0;
 public:
 
 	// Gets instance's name.
@@ -26,7 +27,8 @@ public:
 		return m_sName;
 	}
 
-	void Update();
+	void DoPostUpdate();
+	void DoSnapshot(bool bForced = false, ENetPeer* peer = nullptr);
 
 	void DestroyEntityManager(std::string name);
 	void DestroyEntityManager(IEntityManager* mgr);

@@ -121,13 +121,16 @@ void IController::Start()
 
 void IController::Update()
 {
+	if (!m_bRunning)
+		return;
 	std::vector<IPacketFactory::CBasePacket*> messageQueue;
 
-	for (auto it = messageQueue.begin(); it != messageQueue.end(); )
-	{
-		// TODO: Dispatch
-		delete(*it);
-	}
+	//for (auto it = messageQueue.begin(); it != messageQueue.end(); )
+	//{
+	//	// TODO: Dispatch
+	//	delete(*it);
+	//	it = messageQueue.erase(it);
+	//}
 
 	PostUpdate();
 }
@@ -136,9 +139,14 @@ void IController::Stop()
 {
 	if (!m_bRunning)
 		return;
-
+	printf("Stop().\n");
 	m_bRunning = false;
 	m_bConnected = false;
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end();)
+	{
+		it = m_Instances.erase(it);
+	}
 
 	if (m_pThread != nullptr)
 	{
@@ -147,8 +155,11 @@ void IController::Stop()
 	}
 
 	// Close all connections (including server connection if peer).
-	for (auto it = m_PeerList.begin(); it != m_PeerList.end(); it++)
+	for (auto it = m_PeerList.begin(); it != m_PeerList.end();)
+	{
 		enet_peer_disconnect_now(*it, DISCONNECT_REASONS::NETTIK_DISCONNECT_SHUTDOWN);
+		it = m_PeerList.erase(it);
+	}
 
 	if (m_pHost != nullptr)
 	{
