@@ -163,12 +163,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="ProtoData.pb.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ITestHarness.h" />
-    <ClInclude Include="ProtoData.pb.h" />
+    <ClInclude Include="tests_client.h" />
     <ClInclude Include="tests_server.h" />
+    <ClInclude Include="tests_shared.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProtoData.proto" />

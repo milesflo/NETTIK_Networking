@@ -62,6 +62,7 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 IController::~IController()
 {
+	printf("yo.\n");
 	// Flag the controller as stopped.
 	Stop();
 
@@ -123,37 +124,42 @@ void IController::Update()
 {
 	if (!m_bRunning)
 		return;
-	std::vector<IPacketFactory::CBasePacket*> messageQueue;
 
-	//for (auto it = messageQueue.begin(); it != messageQueue.end(); )
-	//{
-	//	// TODO: Dispatch
-	//	delete(*it);
-	//	it = messageQueue.erase(it);
-	//}
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+	{
+		VirtualInstance* instance;
+		instance = it->second.get();
+
+		instance->DoSnapshot(true);
+		instance->DoSnapshot(false);
+	}
 
 	PostUpdate();
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
+
 }
 
+#include <fstream>
 void IController::Stop()
 {
+	std::ofstream file("pls.txt", std::ios::app | std::ios::out);
 	if (!m_bRunning)
 		return;
-	printf("Stop().\n");
+	file << "IController stopping..." << std::endl;
+
 	m_bRunning = false;
 	m_bConnected = false;
 
-	for (auto it = m_Instances.begin(); it != m_Instances.end();)
-	{
-		it = m_Instances.erase(it);
-	}
-
+	file << "Thread terminating..." << std::endl;
 	if (m_pThread != nullptr)
 	{
 		delete(m_pThread);
 		m_pThread = nullptr;
 	}
 
+	file << "Disconnecting peers (" << m_PeerList.size() << ")" << std::endl;
 	// Close all connections (including server connection if peer).
 	for (auto it = m_PeerList.begin(); it != m_PeerList.end();)
 	{
@@ -161,6 +167,7 @@ void IController::Stop()
 		it = m_PeerList.erase(it);
 	}
 
+	file << "Local host cleanup..." << std::endl;
 	if (m_pHost != nullptr)
 	{
 		ENetHost* tmp;
@@ -170,6 +177,8 @@ void IController::Stop()
 		enet_host_destroy(tmp);
 	}
 
+	file << "cya" << std::endl;
+	file.close();
 }
 
 void IController::Run(bool& bThreadStatus)

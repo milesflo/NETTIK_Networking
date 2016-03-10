@@ -67,7 +67,6 @@ namespace NETTIK
 
 		IThread*    m_pThread = nullptr;
 
-		std::recursive_mutex m_Mutex;
 	public:
 
 		IController(uint32_t tickRate);

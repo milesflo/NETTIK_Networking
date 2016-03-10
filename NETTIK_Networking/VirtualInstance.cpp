@@ -5,7 +5,11 @@ using namespace NETTIK;
 
 void VirtualInstance::DoPostUpdate()
 {
+	// Process pending ent manager deletions.
+	for (auto it = m_PendingDeletes.begin(); it != m_PendingDeletes.end(); )
+		it = m_PendingDeletes.erase(it);
 
+	// Process ent managers still in list.
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{
 		it->second->ProcessDeletes();
@@ -14,7 +18,7 @@ void VirtualInstance::DoPostUpdate()
 
 }
 
-void VirtualInstance::DoSnapshot(bool bForced, ENetPeer* peer)
+void VirtualInstance::DoSnapshot(bool bReliableFlag, bool bForced, ENetPeer* peer)
 {
 	size_t max_value = 0;
 	uint16_t num_updates = 0;
@@ -22,7 +26,7 @@ void VirtualInstance::DoSnapshot(bool bForced, ENetPeer* peer)
 	std::vector<unsigned char> header;
 
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
-		it->second->GetSnapshot(max_value, num_updates, buffers, bForced);
+		it->second->GetSnapshot(max_value, num_updates, buffers, bReliableFlag, bForced);
 
 	if (num_updates == 0)
 		return;
@@ -62,8 +66,7 @@ void VirtualInstance::DoSnapshot(bool bForced, ENetPeer* peer)
 void VirtualInstance::DestroyEntityManager(std::string name)
 {
 	auto it = m_EntManagers.find(name);
-	if (it != m_EntManagers.end())
-		m_EntManagers.erase(it);
+	m_PendingDeletes.push_back(it);
 }
 
 void VirtualInstance::DestroyEntityManager(IEntityManager* mgr)

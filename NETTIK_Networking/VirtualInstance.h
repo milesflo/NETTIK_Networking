@@ -19,6 +19,8 @@ private:
 	std::string          m_sName;
 	
 	uint32_t             m_iSequenceID = 0;
+	typedef typename std::unordered_map<std::string, IEntityManager*>::iterator mgrvec_it;
+	std::vector<mgrvec_it> m_PendingDeletes;
 public:
 
 	// Gets instance's name.
@@ -28,7 +30,7 @@ public:
 	}
 
 	void DoPostUpdate();
-	void DoSnapshot(bool bForced = false, ENetPeer* peer = nullptr);
+	void DoSnapshot(bool bReliableFlag, bool bForced = false, ENetPeer* peer = nullptr);
 
 	void DestroyEntityManager(std::string name);
 	void DestroyEntityManager(IEntityManager* mgr);

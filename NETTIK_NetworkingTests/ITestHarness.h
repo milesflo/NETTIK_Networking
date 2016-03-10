@@ -14,11 +14,30 @@ struct ITestResult
 
 class ITestHarness
 {
-private:
+protected:
 	bool m_bResultLocked = false;
+
+protected:
+	void* m_Object;
 
 public:
 	ITestResult result;
+
+	virtual void Run() = 0;
+
+	template <typename _PtrInstance>
+	inline _PtrInstance* GetObjectPointer() { return static_cast<_PtrInstance*>(m_Object); }
+
+	template <typename _PtrInstance>
+	inline void SetObjectPointer(_PtrInstance* object) { m_Object = static_cast<void*>(object); }
+
+	virtual ~ITestHarness() { }
+};
+
+template <typename _PtrInstance>
+class TestHarness : public ITestHarness
+{
+public:
 
 	void Failed(std::string what)
 	{
@@ -42,11 +61,7 @@ public:
 		m_bResultLocked = true;
 	}
 
-	//! Returns test results.
-	virtual void Run() = 0;
-
-	virtual ~ITestHarness()
+	virtual ~TestHarness()
 	{
-
 	}
 };

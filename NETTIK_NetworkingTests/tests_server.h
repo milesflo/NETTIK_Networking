@@ -1,6 +1,7 @@
 #pragma once
 #include "NETTIK_Networking.hpp"
 #include "ITestHarness.h"
+#include "tests_shared.h"
 
 //NETTIK::IController* controller = nullptr;
 
@@ -18,38 +19,48 @@ public:
 	}
 };
 
-class Tests_Server : public ITestHarness
+class Tests_Server : public TestHarness<NETTIK::IControllerServer>
 {
 private:
-	NETTIK::IControllerServer* m_pController = nullptr;
 
 public:
 
 	Tests_Server()
 	{
-		m_pController = new Server();
+		SetObjectPointer<NETTIK::IControllerServer>(new Server());
 	}
 
 	void Run()
 	{
-		if (!m_pController)
+		NETTIK::IControllerServer* server;
+		server = GetObjectPointer<NETTIK::IControllerServer>();
+
+		if (!server)
 			return Failed("m_pController nullptr");
 
-		if (!m_pController->Listen(1337, 32))
+		if (!server->Listen(1337, 32))
 			return Failed("Binding to hostname or port failed.");
-		
-		m_pController->Start();
 
-		while (m_pController->IsRunning())
+		server->on_enet(ENET_EVENT_TYPE_CONNECT, [](ENetEvent& frame) {
+			std::cout << "client connected!" << std::endl;
+		});
+
+		CEntity* test = new CEntity;
+
+		server->CreateInstance("game")->CreateEntityManager<CEntity>("ents")->SERVER_Add(test);
+		server->Start();
+
+		while (server->IsRunning())
 		{
-			// filler
+			server->Update();
 		}
-
+		
 		Success();
 	}
 
 	~Tests_Server()
 	{
-		delete(m_pController);
+		printf("dELETE.\n");
+		delete(m_Object);
 	}
 };

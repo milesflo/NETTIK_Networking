@@ -165,7 +165,7 @@ public:
 
 	virtual void ProcessDeletes() = 0; 
 	virtual void PostUpdate() = 0;
-	virtual void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bForced) = 0;
+	virtual void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced) = 0;
 
 	virtual uint32_t SERVER_Add(void* object) = 0;
 	virtual bool SERVER_Remove(uint32_t entityCode) = 0;
@@ -202,11 +202,11 @@ public:
 			(*it)->Update();
 	}
 
-	void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bForced = false)
+	void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced = false)
 	{
 		for (auto it = m_Objects.begin(); it != m_Objects.end(); ++it)
 		{
-			(*it)->GetObjectSnapshot(max_value, num_updates, buffers, bForced);
+			(*it)->TakeObjectSnapshot(max_value, num_updates, buffers, bReliableFlag, bForced);
 		}
 	}
 
