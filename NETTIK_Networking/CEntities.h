@@ -3,17 +3,16 @@
 #include <string>
 #include <memory>
 #include <mutex>
-#include <unordered_map>
 #include <inttypes.h>
+
+// TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
 #include "CVector3.h"
 #include "INetworkPacketFactory.hpp"
 #include "EntityMessages.pb.h"
-#define DEFINE_NETOBJECT(typeName, typeID) \
-	uint32_t    GetNetObject_Type() const { return typeID; } \
-	std::string GetNetObject_Name() const { return typeName; } \
-	\
-	\
-	static constexpr uint32_t  GetNetObject_Type_STATIC() { return typeID; }
+
+// Network entity specific objects
+#include "NetObject.h"
+#include "NetVar.h"
 
 extern uint32_t m_TotalEntities;
 
@@ -30,57 +29,8 @@ namespace NETID_Reserved
 	};
 };
 
-class INetVar;
-class VirtualInstance;
-
-class INetObject
-{
-public:
-	uint32_t          m_NetCode;
-	std::unordered_map<std::string, INetVar*> m_Vars;
-	bool              m_Active = true;
-	// These are set by DEFINE_NETOBJECT.
-	virtual uint32_t      GetNetObject_Type() const = 0;
-	virtual std::string   GetNetObject_Name() const = 0;
-	
-	// Snapshotting
-	// - size_t result is the LARGEST update element (for padding)
-	void GetObjectSnapshot(size_t& max_value, uint16_t& num_update, std::vector<std::vector<unsigned char>>& buffers, bool bForced = false);
-
-	// Accessors for ENET peer if this has one assigned.
-	ENetPeer* m_pPeer = nullptr;
-	VirtualInstance* m_pInstance = nullptr;
-	std::recursive_mutex m_Mutex;
-
-public:
-	virtual ~INetObject() { };
-};
-
-
-class INetVar
-{
-protected:
-	INetObject* m_pParent;
-	const char* m_Name;
-public:
-	virtual size_t Snapshot(std::vector<unsigned char>& buffer, bool bForced) = 0;
-	
-	inline const char* GetName() const { return m_Name; }
-	inline INetObject* GetParent() const { return m_pParent; }
-
-	INetVar(INetObject* parent, const char* name) : m_Name(name), m_pParent(parent)
-	{
-		m_pParent->m_Vars[m_Name] = this;
-	}
-
-	virtual ~INetVar()
-	{
-//		m_pParent->m_Vars.erase(m_Name);
-	}
-};
-
 template< class VarType >
-class CNetVarBase : public INetVar
+class CNetVarBase : public NetVar
 {
 private:
 	bool        m_bChanged;
@@ -111,7 +61,7 @@ public:
 		m_bChanged = from.m_bChanged;
 	}
 
-	size_t Snapshot(std::vector<unsigned char>& buffer, bool bForced)
+	size_t TakeVariableSnapshot(std::vector<unsigned char>& buffer, bool bForced)
 	{
 		// Variable hasn't changed and snapshot isn't forced.
 		if (!bForced && !m_bChanged)
@@ -120,6 +70,9 @@ public:
 		if (!m_Data)
 			return 0;
 
+		// This is slow AF.
+		// TODO: Pass character buffer and fill and update
+		// an index of the current stream length.
 		uint32_t code;
 		code = NETID_Reserved::RTTI_Object::OBJECT_DAT;
 
@@ -144,7 +97,7 @@ public:
 		return sizeof(NETTIK::INetworkCodes::msg_t) + sizeof(uint32_t) + (sizeof(m_Name) / sizeof(char)) + sizeof(VarType);
 	}
 
-	CNetVarBase(INetObject* parent, const char* name) : INetVar(parent, name)
+	CNetVarBase(NetObject* parent, const char* name, bool reliable) : NetVar(parent, name, reliable)
 	{
 		m_Data = new VarType;
 	}
@@ -168,7 +121,7 @@ public:
 class CNetVar_Vector3 : public CNetVarBase<NETTIK::CVector3>
 {
 public:
-	CNetVar_Vector3(INetObject* parent, const char* name) : CNetVarBase(parent, name)
+	CNetVar_Vector3(NetObject* parent, const char* name, bool reliable) : CNetVarBase(parent, name, reliable)
 	{
 
 	}
@@ -184,16 +137,14 @@ public:
 	virtual ~CNetVar_Vector3() { }
 };
 
-#define CNetVar(type, name) \
-	CNetVarBase<type> name = CNetVarBase<type>(this, #name)
-#define CNetVarVector3(name) \
-	CNetVar_Vector3 name = CNetVar_Vector3(this, #name)
+#define CNetVar(type, name, reliable)    CNetVarBase<type> name = CNetVarBase<type>(this, #name, reliable)
+#define CNetVarVector3(name, reliable)   CNetVar_Vector3   name = CNetVar_Vector3(this, #name, reliable)
 
-class NetObject_Test : public INetObject
+class NetObject_Test : public NetObject
 {
 public:
-	DEFINE_NETOBJECT("NetObject_Test", 0xFF);
-	CNetVar(int, m_iTest);
+	DEFINE_NETOBJECT("NetObject_Test");
+	CNetVar(int, m_iTest, true);
 
 	NetObject_Test()
 	{

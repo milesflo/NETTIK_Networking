@@ -190,7 +190,9 @@
     <ClInclude Include="INetworkPacketFactory.hpp" />
     <ClInclude Include="IDebug.hpp" />
     <ClInclude Include="IThread.hpp" />
+    <ClInclude Include="NetObject.h" />
     <ClInclude Include="NETTIK_Networking.hpp" />
+    <ClInclude Include="NetVar.h" />
     <ClInclude Include="VirtualInstance.h" />
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +204,9 @@
     <ClCompile Include="IControllerServer.cpp" />
     <ClCompile Include="INetworkPacketFactory.cpp" />
     <ClCompile Include="IThread.cpp" />
+    <ClCompile Include="NetObject.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp" />
+    <ClCompile Include="NetVar.cpp" />
     <ClCompile Include="VirtualInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
