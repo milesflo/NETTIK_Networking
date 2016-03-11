@@ -191,6 +191,7 @@
     <ClInclude Include="INetworkPacketFactory.hpp" />
     <ClInclude Include="IDebug.hpp" />
     <ClInclude Include="IThread.hpp" />
+    <ClInclude Include="LockableVector.h" />
     <ClInclude Include="NetObject.h" />
     <ClInclude Include="NETTIK_Networking.hpp" />
     <ClInclude Include="NetVar.h" />

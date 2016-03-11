@@ -28,11 +28,12 @@ public:
 	// Accessors for ENET peer if this has one assigned.
 	ENetPeer* m_pPeer = nullptr;
 	VirtualInstance* m_pInstance = nullptr;
-	std::recursive_mutex m_Mutex;
 
 	virtual void Update() = 0;
 
 public:
+	std::recursive_mutex m_Mutex;
+
 	virtual ~NetObject() { };
 };
 

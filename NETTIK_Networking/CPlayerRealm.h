@@ -14,6 +14,7 @@ private:
 	> m_PlayerList;
 
 	std::list<uint32_t> m_FreeList;
+	std::vector<uint32_t> m_DeletionQueue;
 
 public:
 
@@ -45,12 +46,24 @@ public:
 		return m_PlayerList[new_ID].get();
 	}
 
+	void ProcessRealmDeletes()
+	{
+		for (auto it = m_DeletionQueue.begin(); it != m_DeletionQueue.end(); )
+		{
+			auto sub_it = m_PlayerList.find(*it);
+			if (sub_it != m_PlayerList.end())
+				m_PlayerList.erase(sub_it); // delete realm object
+
+			it = m_DeletionQueue.erase(it);
+		}
+	}
+
 	bool Remove(uint32_t id)
 	{
 		auto it = m_PlayerList.find(id);
 		if (it == m_PlayerList.end())
 			return false;
-
+		
 		m_FreeList.push_back(it->second->m_RealmID);
 		m_PlayerList.erase(it);
 

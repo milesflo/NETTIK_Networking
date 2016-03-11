@@ -126,11 +126,6 @@ void IController::Update()
 	if (!m_bRunning)
 		return;
 
-	PostUpdate();
-
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
-
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
 	{
 		VirtualInstance* instance;
@@ -139,6 +134,11 @@ void IController::Update()
 		instance->DoSnapshot(true);
 		instance->DoSnapshot(false);
 	}
+
+	PostUpdate();
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
 
 }
 
@@ -150,25 +150,25 @@ void IController::Stop()
 	m_bRunning = false;
 	m_bConnected = false;
 
-	printf("\threading\n");
+	printf("\\threading\n");
 	if (m_pThread != nullptr)
 	{
 		delete(m_pThread);
 		m_pThread = nullptr;
 	}
 
-	printf("\replication\n");
-	if (!m_bReplicating)
-	{
+	printf("\\replication\n");
+//	if (!m_bReplicating)
+//	{
 		// Close all connections.
 		for (auto it = m_PeerList.begin(); it != m_PeerList.end();)
 		{
 			enet_peer_disconnect_now(*it, DISCONNECT_REASONS::NETTIK_DISCONNECT_SHUTDOWN);
 			it = m_PeerList.erase(it);
 		}
-	}
+//	}
 
-	printf("\host\n");
+	printf("\\host\n");
 	if (m_pHost != nullptr)
 	{
 		ENetHost* tmp;

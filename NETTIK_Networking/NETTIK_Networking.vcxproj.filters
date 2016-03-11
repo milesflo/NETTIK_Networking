@@ -69,6 +69,9 @@
     <ClInclude Include="CPlayerRealm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LockableVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="INetworkPacketFactory.cpp">

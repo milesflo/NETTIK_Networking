@@ -29,6 +29,8 @@ public:
 	CNetVar(int, m_Health, true);
 	CNetVarVector3(m_Pos, false);
 
+	char _debug_memory[1024 * 56];
+
 	void Update()
 	{
 
@@ -72,7 +74,7 @@ private:
 public:
 	void PostUpdate()
 	{
-
+		m_Realm.ProcessRealmDeletes();
 	}
 
 	Server() : IControllerServer(0)

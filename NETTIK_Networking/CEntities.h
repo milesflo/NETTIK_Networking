@@ -5,6 +5,7 @@
 #include <mutex>
 #include <algorithm>
 #include <inttypes.h>
+#include "LockableVector.h"
 
 // TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
 #include "CVector3.h"
@@ -164,7 +165,6 @@ public:
 	virtual void SetName(std::string name) = 0;
 	virtual std::string GetName() const = 0;
 
-	virtual void ProcessDeletes() = 0; 
 	virtual void PostUpdate() = 0;
 	virtual void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced) = 0;
 
@@ -178,41 +178,29 @@ template <typename EntityType>
 class CEntities : public IEntityManager
 {
 private:
-	std::vector<EntityType*> m_Objects;
-	std::vector<EntityType*> m_PendingDeletes;
+	LockableVector<EntityType*> m_Objects;
 	std::string m_name;
 	VirtualInstance* m_pBaseInstance;
 
-
-	std::recursive_mutex m_Mutex;
 public:
-
-	void ProcessDeletes()
-	{
-		for (auto it = m_PendingDeletes.begin(); it != m_PendingDeletes.end();)
-		{
-			auto sub_it = std::find(m_Objects.begin(), m_Objects.end(), (*it));
-			if (sub_it != m_Objects.end())
-				m_Objects.erase(sub_it);
-
-			it = m_PendingDeletes.erase(it);
-		}
-	}
 
 	void PostUpdate()
 	{
-		for (auto it = m_Objects.begin(); it != m_Objects.end(); ++it)
+		m_Objects.safe_lock();
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
 			(*it)->Update();
+		m_Objects.safe_unlock();
 	}
 
 	void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced = false)
 	{
-		m_Mutex.lock();
-		for (auto it = m_Objects.begin(); it != m_Objects.end(); ++it)
+//		printf("snapshot.\n");
+		m_Objects.safe_lock();
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
 		{
 			(*it)->TakeObjectSnapshot(max_value, num_updates, buffers, bReliableFlag, bForced);
 		}
-		m_Mutex.unlock();
+		m_Objects.safe_unlock();
 	}
 
 	inline void SetName(std::string name)
@@ -232,10 +220,11 @@ public:
 
 		object->m_NetCode = (m_TotalEntities++);
 		object->m_pInstance = m_pBaseInstance;
-		m_Mutex.lock();
-		m_Objects.push_back(object);
-
-		for (auto it = m_Objects.begin(); it != m_Objects.end(); it++)
+		
+		m_Objects.safe_lock();
+		m_Objects.get()->push_back(object);
+		
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); it++)
 		{
 			// Inform this object to player.
 			if (object->m_pPeer)
@@ -249,14 +238,16 @@ public:
 				//object->Serialize((*it)->m_pPeer);
 			}
 		}
-		m_Mutex.unlock();
 
+		m_Objects.safe_unlock();
 		return object->m_NetCode;
 	}
 
 	bool SERVER_Remove(uint32_t code)
 	{
-		for (auto it = m_Objects.begin(); it != m_Objects.end();)
+		m_Objects.safe_lock();
+
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 		{
 			if ((*it)->m_NetCode == code)
 			{
@@ -265,13 +256,16 @@ public:
 					// Delete all entities on peer.
 				}
 
-				m_PendingDeletes.push_back((*it));
+				m_Objects.get()->erase(it);
+				m_Objects.safe_unlock();
+
 				return true;
 			}
 			else
 				it++;
 		}
 
+		m_Objects.safe_unlock();
 		return false;
 	}
 

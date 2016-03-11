@@ -19,8 +19,5 @@ public:
 
 	NetVar(NetObject* parent, const char* name, bool reliable);
 
-	virtual ~NetVar()
-	{
-//		m_pParent->m_Vars.erase(m_Name);
-	}
+	virtual ~NetVar();
 };

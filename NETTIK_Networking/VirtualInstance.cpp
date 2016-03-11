@@ -15,7 +15,6 @@ void VirtualInstance::DoPostUpdate()
 	// Process ent managers still in list.
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{
-		it->second->ProcessDeletes();
 		it->second->PostUpdate();
 	}
 
