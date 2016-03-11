@@ -6,13 +6,13 @@ namespace NETTIK
 
 	class IControllerServer : public IController
 	{
-	private:
+	public:
 		DEFINE_SERVER(true);
 
 		size_t m_iPeerLimit;
 
 	public:
-
+		IControllerServer();
 		IControllerServer(uint32_t rate);
 		virtual ~IControllerServer();
 

@@ -13,6 +13,8 @@ class NetObject
 {
 public:
 	uint32_t          m_NetCode;
+	uint32_t          m_RealmID;
+
 	std::unordered_map<std::string, NetVar*> m_Vars;
 	bool              m_Active = true;
 	// These are set by DEFINE_NETOBJECT.

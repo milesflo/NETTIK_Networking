@@ -70,7 +70,24 @@ namespace NETTIK
 	public:
 
 		IController(uint32_t tickRate);
-		virtual ~IController();
+		virtual ~IController()
+		{
+
+			printf("~IController()\n");
+
+			// Flag the controller as stopped.
+			Stop();
+
+			// We don't need ENET anymore.
+			printf("~ENET()\n");
+			enet_deinitialize();
+
+			// Delete the global singleton (this!)
+			// (doesn't actually delete the singleton,
+			// just dereferences it)
+			DeletePeerSingleton();
+			printf("~PeerSingleton()\n");
+		}
 
 		//! Performs a post update, handled by server/client.
 		virtual void PostUpdate() = 0;

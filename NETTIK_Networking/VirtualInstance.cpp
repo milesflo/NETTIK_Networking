@@ -7,8 +7,11 @@ void VirtualInstance::DoPostUpdate()
 {
 	// Process pending ent manager deletions.
 	for (auto it = m_PendingDeletes.begin(); it != m_PendingDeletes.end(); )
+	{
+		delete((*it)->second);
+		m_EntManagers.erase(*it);
 		it = m_PendingDeletes.erase(it);
-
+	}
 	// Process ent managers still in list.
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{

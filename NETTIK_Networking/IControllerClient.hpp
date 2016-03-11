@@ -6,10 +6,10 @@ namespace NETTIK
 
 	class IControllerClient : public IController
 	{
-
 	public:
 		DEFINE_SERVER(true);
 
+		IControllerClient();
 		IControllerClient(uint32_t rate);
 		virtual ~IControllerClient();
 

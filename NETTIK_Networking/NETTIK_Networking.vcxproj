@@ -181,6 +181,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CEntities.h" />
+    <ClInclude Include="CPlayerRealm.h" />
     <ClInclude Include="CVector3.h" />
     <ClInclude Include="EntityMessages.pb.h" />
     <ClInclude Include="IController.hpp" />
@@ -197,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CEntities.cpp" />
+    <ClCompile Include="CPlayerRealm.cpp" />
     <ClCompile Include="CVector3.cpp" />
     <ClCompile Include="EntityMessages.pb.cc" />
     <ClCompile Include="IController.cpp" />

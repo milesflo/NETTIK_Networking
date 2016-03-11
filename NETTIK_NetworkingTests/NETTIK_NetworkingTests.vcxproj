@@ -166,9 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ITestHarness.h" />
-    <ClInclude Include="tests_client.h" />
-    <ClInclude Include="tests_server.h" />
-    <ClInclude Include="tests_shared.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProtoData.proto" />

@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <algorithm>
 #include <inttypes.h>
 
 // TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
@@ -178,8 +179,7 @@ class CEntities : public IEntityManager
 {
 private:
 	std::vector<EntityType*> m_Objects;
-	typedef typename std::vector<EntityType*>::iterator entvec_it;
-	std::vector<entvec_it> m_PendingDeletes;
+	std::vector<EntityType*> m_PendingDeletes;
 	std::string m_name;
 	VirtualInstance* m_pBaseInstance;
 
@@ -191,7 +191,10 @@ public:
 	{
 		for (auto it = m_PendingDeletes.begin(); it != m_PendingDeletes.end();)
 		{
-			m_Objects.erase(*it);
+			auto sub_it = std::find(m_Objects.begin(), m_Objects.end(), (*it));
+			if (sub_it != m_Objects.end())
+				m_Objects.erase(sub_it);
+
 			it = m_PendingDeletes.erase(it);
 		}
 	}
@@ -204,10 +207,12 @@ public:
 
 	void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced = false)
 	{
+		m_Mutex.lock();
 		for (auto it = m_Objects.begin(); it != m_Objects.end(); ++it)
 		{
 			(*it)->TakeObjectSnapshot(max_value, num_updates, buffers, bReliableFlag, bForced);
 		}
+		m_Mutex.unlock();
 	}
 
 	inline void SetName(std::string name)
@@ -227,6 +232,7 @@ public:
 
 		object->m_NetCode = (m_TotalEntities++);
 		object->m_pInstance = m_pBaseInstance;
+		m_Mutex.lock();
 		m_Objects.push_back(object);
 
 		for (auto it = m_Objects.begin(); it != m_Objects.end(); it++)
@@ -243,6 +249,7 @@ public:
 				//object->Serialize((*it)->m_pPeer);
 			}
 		}
+		m_Mutex.unlock();
 
 		return object->m_NetCode;
 	}
@@ -258,7 +265,7 @@ public:
 					// Delete all entities on peer.
 				}
 
-				m_PendingDeletes.push_back(it);
+				m_PendingDeletes.push_back((*it));
 				return true;
 			}
 			else

@@ -17,25 +17,15 @@ class ITestHarness
 protected:
 	bool m_bResultLocked = false;
 
-protected:
-	void* m_Object;
-
 public:
 	ITestResult result;
-
-	virtual void Run() = 0;
-
-	template <typename _PtrInstance>
-	inline _PtrInstance* GetObjectPointer() { return static_cast<_PtrInstance*>(m_Object); }
-
-	template <typename _PtrInstance>
-	inline void SetObjectPointer(_PtrInstance* object) { m_Object = static_cast<void*>(object); }
-
+	virtual void Test() = 0;
+	virtual void StopTest() = 0;
 	virtual ~ITestHarness() { }
 };
 
-template <typename _PtrInstance>
-class TestHarness : public ITestHarness
+template <typename T>
+class TestHarness : public ITestHarness, public T
 {
 public:
 
@@ -61,7 +51,13 @@ public:
 		m_bResultLocked = true;
 	}
 
+	TestHarness() : ITestHarness(), T()
+	{
+
+	}
+
 	virtual ~TestHarness()
 	{
+		printf("~harness\n");
 	}
 };

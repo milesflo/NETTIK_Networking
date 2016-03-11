@@ -66,6 +66,9 @@
     <ClInclude Include="NetVar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CPlayerRealm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="INetworkPacketFactory.cpp">
@@ -102,6 +105,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NetVar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayerRealm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,16 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tests_server.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ITestHarness.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tests_client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tests_shared.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

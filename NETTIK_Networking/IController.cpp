@@ -60,20 +60,21 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 	}, this);
 }
 
-IController::~IController()
-{
-	printf("yo.\n");
-	// Flag the controller as stopped.
-	Stop();
-
-	// We don't need ENET anymore.
-	enet_deinitialize();
-
-	// Delete the global singleton (this!)
-	// (doesn't actually delete the singleton,
-	// just dereferences it)
-	DeletePeerSingleton();
-}
+//
+//IController::~IController()
+//{
+//	printf("yo.\n");
+//	// Flag the controller as stopped.
+//	Stop();
+//
+//	// We don't need ENET anymore.
+//	enet_deinitialize();
+//
+//	// Delete the global singleton (this!)
+//	// (doesn't actually delete the singleton,
+//	// just dereferences it)
+//	DeletePeerSingleton();
+//}
 
 VirtualInstance* IController::CreateInstance(std::string name)
 {
@@ -125,6 +126,11 @@ void IController::Update()
 	if (!m_bRunning)
 		return;
 
+	PostUpdate();
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
+
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
 	{
 		VirtualInstance* instance;
@@ -134,40 +140,35 @@ void IController::Update()
 		instance->DoSnapshot(false);
 	}
 
-	PostUpdate();
-
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
-
 }
 
-#include <fstream>
 void IController::Stop()
 {
-	std::ofstream file("pls.txt", std::ios::app | std::ios::out);
 	if (!m_bRunning)
 		return;
-	file << "IController stopping..." << std::endl;
 
 	m_bRunning = false;
 	m_bConnected = false;
 
-	file << "Thread terminating..." << std::endl;
+	printf("\threading\n");
 	if (m_pThread != nullptr)
 	{
 		delete(m_pThread);
 		m_pThread = nullptr;
 	}
 
-	file << "Disconnecting peers (" << m_PeerList.size() << ")" << std::endl;
-	// Close all connections (including server connection if peer).
-	for (auto it = m_PeerList.begin(); it != m_PeerList.end();)
+	printf("\replication\n");
+	if (!m_bReplicating)
 	{
-		enet_peer_disconnect_now(*it, DISCONNECT_REASONS::NETTIK_DISCONNECT_SHUTDOWN);
-		it = m_PeerList.erase(it);
+		// Close all connections.
+		for (auto it = m_PeerList.begin(); it != m_PeerList.end();)
+		{
+			enet_peer_disconnect_now(*it, DISCONNECT_REASONS::NETTIK_DISCONNECT_SHUTDOWN);
+			it = m_PeerList.erase(it);
+		}
 	}
 
-	file << "Local host cleanup..." << std::endl;
+	printf("\host\n");
 	if (m_pHost != nullptr)
 	{
 		ENetHost* tmp;
@@ -177,8 +178,6 @@ void IController::Stop()
 		enet_host_destroy(tmp);
 	}
 
-	file << "cya" << std::endl;
-	file.close();
 }
 
 void IController::Run(bool& bThreadStatus)
