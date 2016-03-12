@@ -35,7 +35,7 @@ template< class VarType >
 class CNetVarBase : public NetVar
 {
 private:
-	bool        m_bChanged;
+	bool        m_bChanged = true;
 
 protected:
 	VarType*     m_Data = nullptr;
@@ -96,12 +96,13 @@ public:
 			buffer.push_back(((unsigned char*)(m_Data))[i]);
 
 		m_bChanged = false;
-		return sizeof(NETTIK::INetworkCodes::msg_t) + sizeof(uint32_t) + (sizeof(m_Name) / sizeof(char)) + sizeof(VarType);
+		return buffer.size();
 	}
 
 	CNetVarBase(NetObject* parent, const char* name, bool reliable) : NetVar(parent, name, reliable)
 	{
-		m_Data = new VarType;
+		m_Data = new VarType();
+		*m_Data = VarType();
 	}
 
 
@@ -230,12 +231,17 @@ public:
 			if (object->m_pPeer)
 			{
 				//(*it)->Serialize(object->m_pPeer);
+
+				m_pBaseInstance->DoSnapshot(true, true, object->m_pPeer);
+				m_pBaseInstance->DoSnapshot(false, true, object->m_pPeer);
 			}
 
 			// Tell this object of this new object.
 			if ((*it)->m_pPeer)
 			{
 				//object->Serialize((*it)->m_pPeer);
+				m_pBaseInstance->DoSnapshot(true, true, (*it)->m_pPeer);
+				m_pBaseInstance->DoSnapshot(false, true, (*it)->m_pPeer);
 			}
 		}
 

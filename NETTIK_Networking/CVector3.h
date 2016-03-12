@@ -6,7 +6,7 @@ namespace NETTIK
 	class CVector3
 	{
 	public:
-		CVector3() { }
+		CVector3() { x = 0.0f; y = 0.0f; z = 0.0f; }
 		CVector3(const CVector3 & in) { x = in.x; y = in.y; z = in.z; }
 		CVector3(float inX, float inY, float inZ) { x = inX; y = inY; z = inZ; }
 		~CVector3() { }

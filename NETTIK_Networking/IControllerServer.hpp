@@ -12,6 +12,10 @@ namespace NETTIK
 		size_t m_iPeerLimit;
 
 	public:
+
+		//! Update routines.
+		void ControllerUpdate();
+
 		IControllerServer();
 		IControllerServer(uint32_t rate);
 		virtual ~IControllerServer();

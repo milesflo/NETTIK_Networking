@@ -40,6 +40,11 @@ bool IControllerClient::InitializeAddress(const char* hostname, uint16_t port)
 	return true;
 }
 
+void IControllerClient::ControllerUpdate()
+{
+	PostUpdate();
+}
+
 bool IControllerClient::Connect(const char* hostname, uint16_t port)
 {
 	if (!InitializeAddress(hostname, port))
@@ -52,6 +57,10 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 
 	on_enet(ENET_EVENT_TYPE_DISCONNECT, [this](ENetEvent& evtFrame) {
 		this->Stop();
+	});
+
+	on(NETID_Reserved::RTTI_Object::SNAPSHOT, [this](const enet_uint8* data, size_t data_len, ENetPeer* peer) {
+		printf("snapshot\n");
 	});
 
 	if (enet_host_service(m_pHost, &m_CurrentEvent, 5000) > 0 &&

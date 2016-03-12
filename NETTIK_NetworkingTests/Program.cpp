@@ -27,7 +27,10 @@ public:
 	DEFINE_NETOBJECT("Player");
 
 	CNetVar(int, m_Health, true);
+	CNetVar(double, m_WalkSpeed, true);
+
 	CNetVarVector3(m_Pos, false);
+	CNetVarVector3(m_Rot, false);
 
 	char _debug_memory[1024 * 56];
 
@@ -106,7 +109,7 @@ public:
 			player = m_Realm.Add(frame.peer);
 
 			instance->GetEntityManager<CPlayer>("players")->SERVER_Add(player);
-			printf("Realm player added.");
+			printf("Realm player added.\n");
 		});
 	}
 	virtual ~Server()

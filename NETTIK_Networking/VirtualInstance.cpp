@@ -49,17 +49,53 @@ void VirtualInstance::DoSnapshot(bool bReliableFlag, bool bForced, ENetPeer* pee
 	// | count |
 	for (size_t i = 0; i < sizeof(uint16_t); i++)
 		header.push_back(((unsigned char*)(&num_updates))[i]);
+	
+	// | buffer max |
+	for (size_t i = 0; i < sizeof(size_t); i++)
+		header.push_back(((unsigned char*)(&max_value))[i]);
+
+	// Padd all update frames to the max value.
+	for (auto it = buffers.begin(); it != buffers.end(); ++it)
+	{
+		std::vector<unsigned char>* buffer;
+		buffer = &(*it);
+
+		if (buffer->size() < max_value)
+		{
+			uint32_t padsize;
+			padsize = max_value -buffer->size();
+
+			for (uint32_t i = 0; i < padsize; ++i)
+				buffer->push_back(0);
+		}
+
+		// Copy contents into header.
+		for (size_t i = 0; i < buffer->size(); ++i)
+			header.push_back(buffer->at(i));
+	}
+
+	IController* controller;
+	controller = IController::GetPeerSingleton();
+
+	if (controller == nullptr)
+		NETTIK_EXCEPTION("Tried snapshotting invalid network controller.");
+
+	uint32_t flags;
+	flags = bReliableFlag ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
 
 	if (peer == nullptr)
 	{
 		// This is a routine snapshot to broadcast to container peers.
 		m_iSequenceID++;
-		// Controller -> Broadcast ( header, buffer )
+		controller->Broadcast(&header[0], header.size(), flags, 0);
+		printf("Broadcast.\n");
 	}
 	else
 	{
 		// This is a specific snapshot to resync a plsyer, don't do any tick logic.
 		// Controller -> Send ( peer, header, buffer )
+		controller->Send(&header[0], header.size(), peer, flags, 0);
+		printf("Sending to peer.\n");
 	}
 
 

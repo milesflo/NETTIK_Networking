@@ -13,6 +13,9 @@ namespace NETTIK
 		IControllerClient(uint32_t rate);
 		virtual ~IControllerClient();
 
+		//! Update routines.
+		void ControllerUpdate();
+
 		//! Creatse the client connection framework.
 		bool InitializeHost();
 		bool InitializeAddress(const char* hostname, uint16_t port);

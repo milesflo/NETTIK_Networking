@@ -95,6 +95,9 @@ namespace NETTIK
 		//! Returns if the controller is a server or not.
 		virtual bool IsServer() = 0;
 
+		//! Performs a controller type update.
+		virtual void ControllerUpdate() = 0;
+
 		//! Performs a tick, calls PostUpdate.
 		void Update();
 
@@ -139,6 +142,9 @@ namespace NETTIK
 
 		//! Main thread entry for processing network stack.
 		void Run(bool& bThreadStatus);
+
+		//! Broadcasts data to all connected ENET peers.
+		void Broadcast(const enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel);
 
 		//! Sends data to the ENET peer.
 		void Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);

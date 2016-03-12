@@ -40,6 +40,24 @@ bool IControllerServer::Listen(uint16_t port, size_t peerLimit)
 	return true;
 }
 
+void IControllerServer::ControllerUpdate()
+{
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+	{
+		VirtualInstance* instance;
+		instance = it->second.get();
+
+		instance->DoSnapshot(true);
+		instance->DoSnapshot(false);
+	}
+
+	PostUpdate();
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
+
+}
 IControllerServer::~IControllerServer()
 {
 

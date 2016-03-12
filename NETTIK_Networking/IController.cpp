@@ -126,20 +126,7 @@ void IController::Update()
 	if (!m_bRunning)
 		return;
 
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-	{
-		VirtualInstance* instance;
-		instance = it->second.get();
-
-		instance->DoSnapshot(true);
-		instance->DoSnapshot(false);
-	}
-
-	PostUpdate();
-
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
-
+	ControllerUpdate();
 }
 
 void IController::Stop()
@@ -196,17 +183,23 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
 
-	/*for (unsigned long i = 0; i < data_len; i++)
+	for (size_t i = 0; i < data_len; ++i)
 	{
-		printf("%1x ", (unsigned char)(*(
-			data + (sizeof(enet_uint8)*i)
-			)));
-	}
-	printf("\n");*/
+		printf("%1x ", (unsigned char)data[i]);
+	};  printf("\n");
 
-	// Packet pointer gets automatically
-	// deleted, future fyi: not a memory leak!
+	printf("Sending %d\n", *(INetworkCodes::msg_t*)(data));
+	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 	enet_peer_send(peer, channel, packet);
+}
+
+void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel)
+{
+	ENetPacket* packet;
+	packet = enet_packet_create(data, data_len, flags);
+
+	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
+	enet_host_broadcast(m_pHost, channel, packet);
 }
 
 void IController::Send(const enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel)
@@ -225,13 +218,10 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 
 	INetworkCodes::msg_t code;
 	code = (INetworkCodes::msg_t)(*data);
-	/*for (unsigned long i = 0; i < data_length; i++)
+	for (unsigned long i = 0; i < data_length; i++)
 	{
-		printf("%1x ", (unsigned char)(*(
-			data + (sizeof(enet_uint8)*i)
-			)));
-	}
-	printf("\n");*/
+		printf("%1x ", (unsigned char)data[i]);
+	};  printf("\n");
 
 	auto callbacks = m_Callbacks.find(code);
 	if (callbacks != m_Callbacks.end())
