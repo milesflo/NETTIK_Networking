@@ -3,11 +3,14 @@
 #include <unordered_map>
 #include <inttypes.h>
 #include <mutex>
+
+#include "SnapshotStream.h"
 #define DEFINE_NETOBJECT(typeName) \
 	std::string GetNetObject_Name() const { return typeName; }
 
 class NetVar;
 class VirtualInstance;
+class IEntityManager;
 
 class NetObject
 {
@@ -23,17 +26,22 @@ public:
 	// Snapshotting
 	// - size_t result is the LARGEST update element (for padding)
 	// TODO: Pass reliable flag for generating reliable/unsequenced snapshots.
-	void TakeObjectSnapshot(size_t& max_value, uint16_t& num_update, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced = false);
+	void TakeObjectSnapshot(size_t& max_value, uint16_t& num_update, SnapshotStream& buffers, bool bReliableFlag, bool bForced = false);
 
 	// Accessors for ENET peer if this has one assigned.
 	ENetPeer* m_pPeer = nullptr;
 	VirtualInstance* m_pInstance = nullptr;
+	IEntityManager*  m_pManager = nullptr;
 
 	virtual void Update() = 0;
 
 public:
 	std::recursive_mutex m_Mutex;
 
-	virtual ~NetObject() { };
+	void DestroyNetworkedEntity();
+
+	virtual ~NetObject()
+	{
+	};
 };
 

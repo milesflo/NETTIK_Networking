@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "CEntities.h"
+#include "SnapshotStream.h"
 
 namespace NETTIK
 {
@@ -30,7 +31,7 @@ public:
 	}
 
 	void DoPostUpdate();
-	void DoSnapshot(bool bReliableFlag, bool bForced = false, ENetPeer* peer = nullptr);
+	void DoSnapshot(SnapshotStream& collection, bool bReliableFlag, bool bForced = false);
 
 	void DestroyEntityManager(std::string name);
 	void DestroyEntityManager(IEntityManager* mgr);

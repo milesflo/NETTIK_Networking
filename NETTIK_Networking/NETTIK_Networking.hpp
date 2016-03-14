@@ -14,3 +14,7 @@
 #include "IController.hpp"
 #include "IControllerClient.hpp"
 #include "IControllerServer.hpp"
+
+/* Some macros in here */
+#include "CNetVarBase.h"
+#include "CNetVarVector.h"

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "SnapshotStream.h"
 
 class NetObject;
 class NetVar
@@ -11,7 +12,7 @@ protected:
 	bool        m_Reliable;
 
 public:
-	virtual size_t TakeVariableSnapshot(std::vector<unsigned char>& buffer, bool bForced) = 0;
+	virtual size_t TakeVariableSnapshot(SnapshotStream& buffers, bool bForced) = 0;
 
 	inline const char*  GetName()     const { return m_Name; }
 	inline NetObject*   GetParent()   const { return m_pParent; }

@@ -48,8 +48,19 @@ void IControllerServer::ControllerUpdate()
 		VirtualInstance* instance;
 		instance = it->second.get();
 
-		instance->DoSnapshot(true);
-		instance->DoSnapshot(false);
+		SnapshotStream reliableStream;
+		SnapshotStream unreliableStream;
+
+		instance->DoSnapshot(reliableStream, true, false);
+		instance->DoSnapshot(unreliableStream, false, false);
+
+		if (reliableStream.modified())
+			BroadcastStream(reliableStream, true);
+
+		if (unreliableStream.modified())
+			BroadcastStream(unreliableStream, false);
+
+
 	}
 
 	PostUpdate();

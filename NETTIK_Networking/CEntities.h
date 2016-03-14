@@ -8,6 +8,7 @@
 #include "LockableVector.h"
 
 // TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
+#include "IEntityManager.h"
 #include "CVector3.h"
 #include "INetworkPacketFactory.hpp"
 #include "EntityMessages.pb.h"
@@ -15,10 +16,12 @@
 // Network entity specific objects
 #include "NetObject.h"
 #include "NetVar.h"
+#include "CNetVarBase.h"
+#include "SnapshotStream.h"
 
 extern uint32_t m_TotalEntities;
 
-// Reserved network IDs
+// Reserved network IDs for entity manipulation.
 namespace NETID_Reserved
 {
 	enum RTTI_Object
@@ -31,158 +34,23 @@ namespace NETID_Reserved
 	};
 };
 
-template< class VarType >
-class CNetVarBase : public NetVar
+// Forward delcare some stuff.
+namespace NETTIK
 {
-private:
-	bool        m_bChanged = true;
+	class IController;
+	class IControllerServer;
+}
 
-protected:
-	VarType*     m_Data = nullptr;
-
-	bool SetGuard(VarType& data)
-	{
-		if (!m_pParent->m_Active)
-			return false;
-
-		if (m_Data == nullptr)
-			return false;
-
-		if (*m_Data == data)
-			return false;
-		m_bChanged = true;
-
-		return true;
-	}
-
-public:
-
-	CNetVarBase(const CNetVarBase& from)
-	{
-		m_Name = from.m_Name;
-		m_bChanged = from.m_bChanged;
-	}
-
-	size_t TakeVariableSnapshot(std::vector<unsigned char>& buffer, bool bForced)
-	{
-		// Variable hasn't changed and snapshot isn't forced.
-		if (!bForced && !m_bChanged)
-			return 0;
-
-		if (!m_Data)
-			return 0;
-
-		// This is slow AF.
-		// TODO: Pass character buffer and fill and update
-		// an index of the current stream length.
-		uint32_t code;
-		code = NETID_Reserved::RTTI_Object::OBJECT_DAT;
-
-		// | netmsg code |
-		for (size_t i = 0; i < sizeof(NETTIK::INetworkCodes::msg_t); i++)
-			buffer.push_back(((unsigned char*)(&code))[i]);
-
-		// | network id |
-		for (size_t i = 0; i < sizeof(uint32_t); i++)
-			buffer.push_back(((unsigned char*)(&m_pParent->m_NetCode))[i]);
-
-		// | varname |
-		for (size_t i = 0; i < strlen(m_Name); i++)
-			buffer.push_back((((m_Name)[i])));
-		buffer.push_back(0); // NULL terminate
-
-		// | data buffer ....
-		for (size_t i = 0; i < sizeof(VarType); i++)
-			buffer.push_back(((unsigned char*)(m_Data))[i]);
-
-		m_bChanged = false;
-		return buffer.size();
-	}
-
-	CNetVarBase(NetObject* parent, const char* name, bool reliable) : NetVar(parent, name, reliable)
-	{
-		m_Data = new VarType();
-		*m_Data = VarType();
-	}
-
-
-	virtual ~CNetVarBase()
-	{
-		delete(m_Data);
-		m_Data = nullptr;
-	}
-
-	virtual void Set(VarType data)
-	{
-		if (!SetGuard(data))
-			return;
-
-		*m_Data = data;
-	}
-};
-
-class CNetVar_Vector3 : public CNetVarBase<NETTIK::CVector3>
-{
-public:
-	CNetVar_Vector3(NetObject* parent, const char* name, bool reliable) : CNetVarBase(parent, name, reliable)
-	{
-
-	}
-
-	void Set(float x, float y, float z)
-	{
-		NETTIK::CVector3 compose(x, y, z);
-		if (!SetGuard(compose))
-			return;
-
-		*m_Data = compose;
-	}
-	virtual ~CNetVar_Vector3() { }
-};
-
-#define CNetVar(type, name, reliable)    CNetVarBase<type> name = CNetVarBase<type>(this, #name, reliable)
-#define CNetVarVector3(name, reliable)   CNetVar_Vector3   name = CNetVar_Vector3(this, #name, reliable)
-
-class NetObject_Test : public NetObject
-{
-public:
-	DEFINE_NETOBJECT("NetObject_Test");
-	CNetVar(int, m_iTest, true);
-
-	NetObject_Test()
-	{
-		printf("NetObject::Test - Constructed new object.\n");
-	}
-
-	virtual ~NetObject_Test()
-	{
-		printf("NetObject::Test - Destructed object.\n");
-	}
-};
-
-class IEntityManager
-{
-public:
-	virtual void SetName(std::string name) = 0;
-	virtual std::string GetName() const = 0;
-
-	virtual void PostUpdate() = 0;
-	virtual void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced) = 0;
-
-	virtual uint32_t SERVER_Add(void* object) = 0;
-	virtual bool SERVER_Remove(uint32_t entityCode) = 0;
-
-	virtual ~IEntityManager() { }
-};
 
 template <typename EntityType>
 class CEntities : public IEntityManager
 {
 private:
 	LockableVector<EntityType*> m_Objects;
-	std::string m_name;
+	std::string      m_name;
 	VirtualInstance* m_pBaseInstance;
 
+	NETTIK::IController*   m_pGlobalController;
 public:
 
 	void PostUpdate()
@@ -193,13 +61,13 @@ public:
 		m_Objects.safe_unlock();
 	}
 
-	void GetSnapshot(size_t& max_value, uint16_t& num_updates, std::vector<std::vector<unsigned char>>& buffers, bool bReliableFlag, bool bForced = false)
+	void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& stream, bool bReliableFlag, bool bForced = false)
 	{
 //		printf("snapshot.\n");
 		m_Objects.safe_lock();
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
 		{
-			(*it)->TakeObjectSnapshot(max_value, num_updates, buffers, bReliableFlag, bForced);
+			(*it)->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
 		}
 		m_Objects.safe_unlock();
 	}
@@ -214,7 +82,7 @@ public:
 		return m_name;
 	}
 
-	uint32_t SERVER_Add(void* _ObjectPtr)
+	uint32_t Add(void* _ObjectPtr)
 	{
 		EntityType* object;
 		object = static_cast<EntityType*>(_ObjectPtr);
@@ -223,33 +91,54 @@ public:
 		object->m_pInstance = m_pBaseInstance;
 		
 		m_Objects.safe_lock();
-		m_Objects.get()->push_back(object);
-		
+
+		NETTIK::IControllerServer* server;
+		server = dynamic_cast<IControllerServer*>(m_pGlobalController);
+
+		if (!server)
+			NETTIK_EXCEPTION("Cannot stream objects if controller isn't a server service.");
+
+		SnapshotStream reliableStream;
+		SnapshotStream unreliableStream;
+
+		m_pBaseInstance->DoSnapshot(reliableStream, true, true);
+		m_pBaseInstance->DoSnapshot(unreliableStream, false, true);
+	
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); it++)
 		{
-			// Inform this object to player.
-			if (object->m_pPeer)
-			{
-				//(*it)->Serialize(object->m_pPeer);
-
-				m_pBaseInstance->DoSnapshot(true, true, object->m_pPeer);
-				m_pBaseInstance->DoSnapshot(false, true, object->m_pPeer);
-			}
 
 			// Tell this object of this new object.
 			if ((*it)->m_pPeer)
 			{
 				//object->Serialize((*it)->m_pPeer);
-				m_pBaseInstance->DoSnapshot(true, true, (*it)->m_pPeer);
-				m_pBaseInstance->DoSnapshot(false, true, (*it)->m_pPeer);
+
+				if (reliableStream.modified())
+					server->SendStream(reliableStream, true, (*it)->m_pPeer);
+
+				if (unreliableStream.modified())
+					server->SendStream(unreliableStream, false, (*it)->m_pPeer);
 			}
 		}
+
+		// Inform this object to player.
+		if (object->m_pPeer)
+		{
+			//(*it)->Serialize(object->m_pPeer);
+
+			if (reliableStream.modified())
+				server->SendStream(reliableStream, true, object->m_pPeer);
+
+			if (unreliableStream.modified())
+				server->SendStream(unreliableStream, false, object->m_pPeer);
+		}
+
+		m_Objects.get()->push_back(object);
 
 		m_Objects.safe_unlock();
 		return object->m_NetCode;
 	}
 
-	bool SERVER_Remove(uint32_t code)
+	bool Remove(uint32_t code)
 	{
 		m_Objects.safe_lock();
 
@@ -285,6 +174,7 @@ public:
 		if (!controller)
 			throw std::runtime_error("IController not found.");
 
+		m_pGlobalController = controller;
 	}
 
 	virtual ~CEntities()

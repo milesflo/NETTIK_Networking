@@ -181,12 +181,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CEntities.h" />
+    <ClInclude Include="CNetVarBase.h" />
+    <ClInclude Include="CNetVarVector.h" />
+    <ClInclude Include="Constraints.h" />
     <ClInclude Include="CPlayerRealm.h" />
     <ClInclude Include="CVector3.h" />
     <ClInclude Include="EntityMessages.pb.h" />
     <ClInclude Include="IController.hpp" />
     <ClInclude Include="IControllerClient.hpp" />
     <ClInclude Include="IControllerServer.hpp" />
+    <ClInclude Include="IEntityManager.h" />
     <ClInclude Include="INetworkCodes.hpp" />
     <ClInclude Include="INetworkPacketFactory.hpp" />
     <ClInclude Include="IDebug.hpp" />
@@ -195,6 +199,9 @@
     <ClInclude Include="NetObject.h" />
     <ClInclude Include="NETTIK_Networking.hpp" />
     <ClInclude Include="NetVar.h" />
+    <ClInclude Include="SnapshotEntList.h" />
+    <ClInclude Include="SnapshotHeader.h" />
+    <ClInclude Include="SnapshotStream.h" />
     <ClInclude Include="VirtualInstance.h" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +217,7 @@
     <ClCompile Include="NetObject.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp" />
     <ClCompile Include="NetVar.cpp" />
+    <ClCompile Include="SnapshotHeader.cpp" />
     <ClCompile Include="VirtualInstance.cpp" />
   </ItemGroup>
   <ItemGroup>

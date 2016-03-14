@@ -26,11 +26,9 @@ class CPlayer : public NetObject
 public:
 	DEFINE_NETOBJECT("Player");
 
-	CNetVar(int, m_Health, true);
-	CNetVar(double, m_WalkSpeed, true);
+	DEFINE_NetVar(char, m_Char, true);
+	DEFINE_NetVar(int, m_Int, false);
 
-	CNetVarVector3(m_Pos, false);
-	CNetVarVector3(m_Rot, false);
 
 	char _debug_memory[1024 * 56];
 
@@ -41,8 +39,8 @@ public:
 
 	CPlayer() : NetObject()
 	{
-		m_Health.Set(100);
-		m_Pos.Set(0.0f, 0.0f, 0.0f);
+		m_Char.Set(0xff);
+		m_Int.Set(0xff00ff00);
 	}
 
 	virtual ~CPlayer()
@@ -92,7 +90,7 @@ public:
 			player = m_Realm.GetPlayer(frame.peer);
 			if (player)
 			{
-				instance->GetEntityManager<CPlayer>("players")->SERVER_Remove(player->m_NetCode);
+				instance->GetEntityManager<CPlayer>("players")->Remove(player->m_NetCode);
 				m_Realm.Remove(player->m_RealmID);
 				
 				printf("Realm player left.\n");
@@ -108,7 +106,7 @@ public:
 			CPlayer* player;
 			player = m_Realm.Add(frame.peer);
 
-			instance->GetEntityManager<CPlayer>("players")->SERVER_Add(player);
+			instance->GetEntityManager<CPlayer>("players")->Add(player);
 			printf("Realm player added.\n");
 		});
 	}
@@ -122,11 +120,15 @@ bool StartClient()
 {
 	Client* client = new Client();
 	service = client;
+
+	cout << "Attempting to bind address..." << endl;
 	if (!client->Connect("127.0.0.1", 1337))
 		return false;
 
+	cout << "Starting thread..." << endl;
 	client->Start();
 
+	cout << "Running process..." << endl;
 	while (client->IsRunning())
 	{
 		client->Update();
@@ -141,11 +143,14 @@ bool StartServer()
 	Server* server = new Server();
 	service = server;
 
+	cout << "Attempting to bind address..." << endl;
 	if (!server->Listen(1337, 32))
 		return false;
 
+	cout << "Starting thread..." << endl;
 	server->Start();
 
+	cout << "Running process..." << endl;
 	while (server->IsRunning())
 	{
 		server->Update();
@@ -167,18 +172,25 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		mode = argv[1][0];
 
+	bool result;
+
 	switch (mode)
 	{
 	case 's':
-		assert(StartServer() && "Server failed.");
+		cout << "Running server..." << endl;
+		result = StartServer();
+		assert(result && "Server failed.");
 		break;
 	case 'c':
-		assert(StartClient() && "Client failed.");
+		cout << "Running client..." << endl;
+		result = StartClient();
+		assert(result && "Client failed.");
 		break;
 	default:
 		cout << "Unknown network mode." << endl;
 		return 0;
 	}
 
+	cout << "Application finished." << endl;
 	return 0;
 }

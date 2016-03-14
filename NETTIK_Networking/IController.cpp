@@ -6,7 +6,7 @@ using namespace NETTIK;
 static IController* s_PeerSingleton = nullptr;
 
 //! Issue message for when an unhandled packet is processed.
-const char* s_issueUnhandledPacket = "Unhandled packet, code: %d, packet length: %d\n";
+const char* s_issueUnhandledPacket = "Unhandled packet, code: %u, packet length: %d\n";
 
 IController* IController::GetPeerSingleton()
 {
@@ -137,14 +137,14 @@ void IController::Stop()
 	m_bRunning = false;
 	m_bConnected = false;
 
-	printf("\\threading\n");
+	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
 	if (m_pThread != nullptr)
 	{
 		delete(m_pThread);
 		m_pThread = nullptr;
 	}
 
-	printf("\\replication\n");
 //	if (!m_bReplicating)
 //	{
 		// Close all connections.
@@ -155,14 +155,10 @@ void IController::Stop()
 		}
 //	}
 
-	printf("\\host\n");
 	if (m_pHost != nullptr)
 	{
-		ENetHost* tmp;
-		tmp = m_pHost;
-
+		enet_host_destroy(m_pHost);
 		m_pHost = nullptr;
-		enet_host_destroy(tmp);
 	}
 
 }
@@ -180,6 +176,9 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 	if (peer == nullptr)
 		NETTIK_EXCEPTION("Peer supplied to Send() is NULL.");
 
+	if (!m_bRunning)
+		return;
+
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
 
@@ -195,6 +194,9 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 
 void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t flags, uint8_t channel)
 {
+	if (!m_bRunning)
+		return;
+
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
 
@@ -210,6 +212,8 @@ void IController::Send(const enet_uint8* data, size_t data_len, uint32_t flags, 
 void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPeer* peer)
 {
 
+	if (!m_bRunning)
+		return;
 	// If data is too small for the message ID type, then
 	// don't process the data. This could cause a memory violation by
 	// reading too far over the `stream` pointer.
@@ -217,7 +221,7 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 		NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
 
 	INetworkCodes::msg_t code;
-	code = (INetworkCodes::msg_t)(*data);
+	code = *(INetworkCodes::msg_t*)(data);
 	for (unsigned long i = 0; i < data_length; i++)
 	{
 		printf("%1x ", (unsigned char)data[i]);
@@ -240,6 +244,9 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 
 void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 {
+
+	if (!m_bRunning)
+		return;
 	auto evts = m_EventCallbacks.find(evt);
 
 	if (evts != m_EventCallbacks.end())
@@ -253,6 +260,9 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 
 void IController::ProcessNetStack()
 {
+
+	if (!m_bRunning)
+		return;
 	// Check m_bRunning again on each loop.
 	while (m_pHost != nullptr && m_bRunning && enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
 	{

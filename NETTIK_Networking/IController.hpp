@@ -85,8 +85,9 @@ namespace NETTIK
 			// Delete the global singleton (this!)
 			// (doesn't actually delete the singleton,
 			// just dereferences it)
-			DeletePeerSingleton();
 			printf("~PeerSingleton()\n");
+			DeletePeerSingleton();
+			printf("~done\n");
 		}
 
 		//! Performs a post update, handled by server/client.

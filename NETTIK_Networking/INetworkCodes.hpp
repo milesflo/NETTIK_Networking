@@ -9,6 +9,7 @@ namespace NETTIK
 
 	public:
 
+		// 14.03.16: Take consideration into data alignment when using this datatype.
 		typedef uint16_t  msg_t;
 
 		enum NetworkCodesShared : msg_t
