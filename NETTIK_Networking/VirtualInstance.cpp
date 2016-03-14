@@ -24,7 +24,16 @@ void VirtualInstance::DoPostUpdate()
 void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, bool bForced)
 {
 	size_t max_value = 0;
-	uint16_t num_updates = 0;
+	if (stream.get()->size() > 1)
+	{
+		for (auto it = stream.get()->begin(); it != stream.get()->end(); ++it)
+		{
+			if (it->size() > max_value)
+				max_value = it->size();
+		}
+	}
+
+	uint16_t num_updates = stream.get()->size() - 1;
 
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 		it->second->GetSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
@@ -32,21 +41,10 @@ void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, boo
 	if (num_updates == 0)
 		return;
 
-	printf("num updates: %d (%d) | max value: %d\n", stream.get()->size() - 1, num_updates, max_value);
-
 	NETTIK::INetworkCodes::msg_t code;
-	code = NETID_Reserved::RTTI_Object::SNAPSHOT;
+	code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
 
-	SnapshotStream::Stream& header = stream.header();
-
-	SnapshotHeader generator(header);
-	generator.set_code(code);
-	generator.set_sequence(m_iSequenceID);
-	generator.set_count(num_updates);
-	generator.set_max(max_value);
-	generator.write();
-
-	generator.copy_from(stream, max_value);
+	SnapshotHeader::Generate(stream, m_iSequenceID, num_updates, max_value);
 }
 
 void VirtualInstance::DestroyEntityManager(std::string name)

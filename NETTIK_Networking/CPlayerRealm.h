@@ -81,7 +81,7 @@ public:
 
 	TypeName* GetPlayer(ENetPeer* peer)
 	{
-		for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); it++)
+		for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 		{
 			if ((*it).second->m_pPeer == peer)
 				return (*it).second.get();

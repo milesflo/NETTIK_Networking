@@ -14,6 +14,9 @@ protected:
 public:
 	virtual size_t TakeVariableSnapshot(SnapshotStream& buffers, bool bForced) = 0;
 
+	//! Internal setting of anonymous data.
+	virtual void Set(unsigned char* ptr, size_t size) = 0;
+
 	inline const char*  GetName()     const { return m_Name; }
 	inline NetObject*   GetParent()   const { return m_pParent; }
 	inline bool const   GetReliable() const { return m_Reliable; }

@@ -27,20 +27,22 @@ public:
 	DEFINE_NETOBJECT("Player");
 
 	DEFINE_NetVar(char, m_Char, true);
-	DEFINE_NetVar(int, m_Int, false);
+	DEFINE_NetVar(uint32_t, m_Int, false);
 
 
 	char _debug_memory[1024 * 56];
 
 	void Update()
 	{
-
+		// Debugging 
+		if (m_NetCode == 0)
+			m_Int.Set(rand() % UINT32_MAX);
 	}
 
 	CPlayer() : NetObject()
 	{
 		m_Char.Set(0xff);
-		m_Int.Set(0xff00ff00);
+		m_Int.Set(123);
 	}
 
 	virtual ~CPlayer()
@@ -80,17 +82,14 @@ public:
 
 	Server() : IControllerServer(0)
 	{
-		VirtualInstance* instance = CreateInstance("world");
-		instance->CreateEntityManager<CPlayer>("players");
-
-		on_enet(ENET_EVENT_TYPE_DISCONNECT, [this, instance](ENetEvent& frame)
+		on_enet(ENET_EVENT_TYPE_DISCONNECT, [this](ENetEvent& frame)
 		{
 			printf("Client disconnected.\n");
 			CPlayer* player;
 			player = m_Realm.GetPlayer(frame.peer);
 			if (player)
 			{
-				instance->GetEntityManager<CPlayer>("players")->Remove(player->m_NetCode);
+				GetInstance("world")->GetEntityManager<CPlayer>("players")->Remove(player->m_NetCode);
 				m_Realm.Remove(player->m_RealmID);
 				
 				printf("Realm player left.\n");
@@ -99,14 +98,14 @@ public:
 				printf("Player object missing.\n");
 		});
 
-		on_enet(ENET_EVENT_TYPE_CONNECT, [this, instance](ENetEvent& frame)
+		on_enet(ENET_EVENT_TYPE_CONNECT, [this](ENetEvent& frame)
 		{
 			printf("Client connected.\n");
 
 			CPlayer* player;
 			player = m_Realm.Add(frame.peer);
 
-			instance->GetEntityManager<CPlayer>("players")->Add(player);
+			GetInstance("world")->GetEntityManager<CPlayer>("players")->Add(player);
 			printf("Realm player added.\n");
 		});
 	}
@@ -116,10 +115,17 @@ public:
 	}
 };
 
+void SetupSharedResources(IController* controller)
+{
+	VirtualInstance* instance = controller->CreateInstance("world");
+	instance->CreateEntityManager<CPlayer>("players");
+}
+
 bool StartClient()
 {
 	Client* client = new Client();
 	service = client;
+	SetupSharedResources(client);
 
 	cout << "Attempting to bind address..." << endl;
 	if (!client->Connect("127.0.0.1", 1337))
@@ -142,6 +148,7 @@ bool StartServer()
 {
 	Server* server = new Server();
 	service = server;
+	SetupSharedResources(server);
 
 	cout << "Attempting to bind address..." << endl;
 	if (!server->Listen(1337, 32))

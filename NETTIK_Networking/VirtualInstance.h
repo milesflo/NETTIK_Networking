@@ -5,6 +5,7 @@
 #include <memory>
 #include "CEntities.h"
 #include "SnapshotStream.h"
+#include "NetObject.h"
 
 namespace NETTIK
 {
@@ -24,8 +25,24 @@ private:
 	std::vector<mgrvec_it> m_PendingDeletes;
 public:
 
-	// Gets instance's name.
-	inline std::string GetName() const
+	NetObject* FindObject(uint32_t netid)
+	{
+
+		for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
+		{
+			NetObject* entry;
+			entry = it->second->GetByNetID(netid);
+
+			if (entry != nullptr)
+				return entry;
+
+		}
+
+		return nullptr;
+	}
+
+	//! Gets instance's name.
+	inline std::string& GetName()
 	{
 		return m_sName;
 	}
@@ -39,23 +56,31 @@ public:
 	VirtualInstance(std::string name, NETTIK::IController* controller);
 	virtual ~VirtualInstance();
 
-	template <class EntityType>
+	template <class T>
 	IEntityManager* CreateEntityManager(std::string name)
 	{
-		IEntityManager* mgr = new CEntities<EntityType>(this);
+		IEntityManager* mgr = new CEntities<T>(this);
 		mgr->SetName(name);
 
 		m_EntManagers.insert(make_pair(name, mgr));
 		return mgr;
 	}
 
-
-	template <class EntityType>
-	CEntities<EntityType>* GetEntityManager(std::string name)
+	template <class T>
+	CEntities<T>* GetEntityManager(std::string name)
 	{
 		auto it = m_EntManagers.find(name);
 		if (it != m_EntManagers.end())
-			return dynamic_cast<CEntities<EntityType>*>((*it).second);
+			return dynamic_cast<CEntities<T>*>((*it).second);
+		else
+			return nullptr;
+	}
+
+	IEntityManager* GetEntitiyManagerInterface(std::string name)
+	{
+		auto it = m_EntManagers.find(name);
+		if (it != m_EntManagers.end())
+			return dynamic_cast<IEntityManager*>((*it).second);
 		else
 			return nullptr;
 	}

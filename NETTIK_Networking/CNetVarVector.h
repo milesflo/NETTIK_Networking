@@ -22,7 +22,7 @@ public:
 		if (!SetGuard(compose))
 			return;
 
-		*m_Data = compose;
+		m_Data = compose;
 	}
 	virtual ~CNetVarVector() { }
 };

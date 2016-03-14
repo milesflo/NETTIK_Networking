@@ -2,6 +2,7 @@
 #include "SnapshotStream.h"
 #include "INetworkCodes.hpp"
 #include "IDebug.hpp"
+#include "NETIDReserved.h"
 #include <enet\types.h>
 #include <cstddef>
 
@@ -21,6 +22,24 @@ private:
 	SnapshotHeaderData m_data;
 
 public:
+
+	static void Generate(SnapshotStream& stream, uint32_t sequence, uint16_t updates, size_t max)
+	{
+
+		static NETTIK::INetworkCodes::msg_t code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
+
+		SnapshotStream::Stream& header = stream.header();
+
+		SnapshotHeader generator(header);
+		generator.set_code(code);
+		generator.set_sequence(sequence);
+		generator.set_count(updates);
+		generator.set_max(max);
+		generator.write();
+
+		generator.copy_from(stream, max);
+	}
+
 	SnapshotHeader(SnapshotStream::Stream& header) : header(header)
 	{
 

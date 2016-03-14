@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "SnapshotStream.h"
+#include "NetObject.h"
 
 class IEntityManager
 {
@@ -8,11 +9,17 @@ public:
 	virtual void SetName(std::string name) = 0;
 	virtual std::string GetName() const = 0;
 
+	virtual NetObject* GetByNetID(uint32_t id) = 0;
+
 	virtual void PostUpdate() = 0;
 	virtual void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& buffers, bool bReliableFlag, bool bForced) = 0;
 
+	//! Adds a self-maintaining object. Invokes the type specifier's constructor but
+	//  operates in this scope.
+	virtual NetObject* Add(uint32_t netid) = 0;
+
 	//! Adds a reference to the network queue. Must be of base class "NetObject".
-	virtual uint32_t Add(void* object) = 0;
+	virtual uint32_t Add(NetObject* object) = 0;
 
 	//! Removes a reference from the network queue. Doesn't destroy the pointer.
 	virtual bool Remove(uint32_t entityCode) = 0;

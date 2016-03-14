@@ -1,6 +1,7 @@
 #pragma once
 #include "NetVar.h"
 #include "Constraints.h"
+#include "SnapshotEntList.h"
 #define DEFINE_NetVar(type, name, reliable) \
 	CNetVarBase<type> name = CNetVarBase<type>(this, #name, reliable)
 
@@ -15,18 +16,16 @@ private:
 	bool        m_bChanged = true;
 
 protected:
-	VarType*     m_Data = nullptr;
+	VarType     m_Data;
 
 	bool SetGuard(VarType& data)
 	{
 		if (!m_pParent->m_Active)
 			return false;
 
-		if (m_Data == nullptr)
+		if (m_Data == data)
 			return false;
 
-		if (*m_Data == data)
-			return false;
 		m_bChanged = true;
 
 		return true;
@@ -46,29 +45,20 @@ public:
 		if (!bForced && !m_bChanged)
 			return 0;
 
-		if (!m_Data)
-			return 0;
-
 		// This is slow AF.
 		// TODO: Pass character buffer and fill and update
 		// an index of the current stream length.
 		uint32_t code;
-		code = NETID_Reserved::RTTI_Object::OBJECT_DAT;
+		code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
 
 		SnapshotStream::Stream& buffer = buffers.create();
 
-		// | network id |
-		for (size_t i = 0; i < sizeof(uint32_t); i++)
-			buffer.push_back(((unsigned char*)(&m_pParent->m_NetCode))[i]);
-
-		// | varname |
-		for (size_t i = 0; i < strlen(m_Name); i++)
-			buffer.push_back((((m_Name)[i])));
-		buffer.push_back(0); // NULL terminate
-
-		// | data buffer ....
-		for (size_t i = 0; i < sizeof(VarType); i++)
-			buffer.push_back(((unsigned char*)(m_Data))[i]);
+		SnapshotEntList generator;
+		generator.set_frametype(FrameType::kFRAME_Data);
+		generator.set_name(m_Name);
+		generator.set_netid(m_pParent->m_NetCode);
+		generator.set_data(reinterpret_cast<unsigned char*>(&m_Data), sizeof(VarType));
+		generator.write(buffer);
 
 		m_bChanged = false;
 		return buffer.size();
@@ -76,21 +66,30 @@ public:
 
 	CNetVarBase(NetObject* parent, const char* name, bool reliable) : NetVar(parent, name, reliable)
 	{
-		m_Data = new VarType();
-		*m_Data = VarType();
 	}
 
 	virtual ~CNetVarBase()
 	{
-		delete(m_Data);
-		m_Data = nullptr;
+
 	}
 
-	virtual void Set(VarType data)
+	void Set(unsigned char* ptr, size_t size)
+	{
+		if (size == 0)
+			size = sizeof(VarType);
+
+		VarType* stream;
+		stream = reinterpret_cast<VarType*>(ptr);
+
+		for (size_t i = 0; i < size; i++)
+			(&m_Data)[i] = stream[i];
+	}
+
+	void Set(VarType data)
 	{
 		if (!SetGuard(data))
 			return;
 
-		*m_Data = data;
+		m_Data = data;
 	}
 };

@@ -48,11 +48,66 @@ void IControllerClient::ControllerUpdate()
 	PostUpdate();
 }
 
+void IControllerClient::EntAllocate(SnapshotEntList& frame)
+{
+	const char* manager_name = frame.name();
+	const uint32_t netID = frame.netid();
+	const char* instance_name = reinterpret_cast<const char*>(frame.data());
+
+	VirtualInstance* instance;
+	instance = GetInstance(instance_name);
+
+	if (instance == nullptr)
+		NETTIK_EXCEPTION("Invalid instance field passed from server.");
+
+	IEntityManager* manager;
+	manager = instance->GetEntitiyManagerInterface(manager_name);
+
+	if (manager == nullptr)
+		NETTIK_EXCEPTION("Invalid manager field passed from server.");
+
+	manager->Add(netID);
+}
+
+void IControllerClient::EntDeallocate(SnapshotEntList& frame)
+{
+
+}
+
+void IControllerClient::EntUpdate(SnapshotEntList& frame)
+{
+	NetObject*  target = nullptr;
+	uint32_t    queryID = frame.netid();
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+	{
+		target = it->second->FindObject(queryID);
+		if (target != nullptr)
+		{
+			break;
+		}
+	}
+
+	if (target == nullptr)
+	{
+		printf("warning: tried to update null entity with ID: %d\n", queryID);
+		return;
+	}
+
+	auto var_it = target->m_Vars.find(frame.name());
+	if (var_it == target->m_Vars.end())
+	{
+		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.name(), queryID);
+		return;
+	}
+
+	var_it->second->Set(const_cast<unsigned char*>(frame.data()), 0);
+}
+
 void IControllerClient::HandleEntSnapshot(const enet_uint8* data, size_t data_len, ENetPeer* peer)
 {
 	SnapshotHeader header;
 	header.read(data, data_len);
-	header.display();
 
 	size_t expected_size = header.count() * header.max_size();
 	size_t header_size = data_len - header.size();
@@ -72,20 +127,25 @@ void IControllerClient::HandleEntSnapshot(const enet_uint8* data, size_t data_le
 	for (size_t i = 0; i < header.count(); i++)
 	{
 		SnapshotEntList frame;
-		frame.read(partition, header.max_size());
+		frame.read_data(partition, header.max_size());
+
+		switch (frame.frametype())
+		{
+		case kFRAME_Data:
+			EntUpdate(frame);
+			break;
+		case kFRAME_Alloc:
+			EntAllocate(frame);
+			break;
+		case kFRAME_Dealloc:
+			EntDeallocate(frame);
+			break;
+		default:
+			NETTIK_EXCEPTION("Unknown frame type sent, possible stack corruption.");
+		}
 
 		partition += header.max_size();
 	}
-}
-
-void IControllerClient::HandleEntNew(const enet_uint8* data, size_t data_len, ENetPeer* peer)
-{
-
-}
-
-void IControllerClient::HandleEntDel(const enet_uint8* data, size_t data_len, ENetPeer* peer)
-{
-
 }
 
 bool IControllerClient::Connect(const char* hostname, uint16_t port)
@@ -102,9 +162,9 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 		this->Stop();
 	});
 
-	on(NETID_Reserved::RTTI_Object::SNAPSHOT,   std::bind(&IControllerClient::HandleEntSnapshot, this, _1, _2, _3));
-	on(NETID_Reserved::RTTI_Object::OBJECT_NEW, std::bind(&IControllerClient::HandleEntNew, this, _1, _2, _3));
-	on(NETID_Reserved::RTTI_Object::OBJECT_DEL, std::bind(&IControllerClient::HandleEntDel, this, _1, _2, _3));
+	on(NETID_Reserved::RTTI_Object::OBJECT_FRAME,   std::bind(&IControllerClient::HandleEntSnapshot, this, _1, _2, _3));
+//	on(NETID_Reserved::RTTI_Object::OBJECT_NEW, std::bind(&IControllerClient::HandleEntNew, this, _1, _2, _3));
+//	on(NETID_Reserved::RTTI_Object::OBJECT_DEL, std::bind(&IControllerClient::HandleEntDel, this, _1, _2, _3));
 
 	if (enet_host_service(m_pHost, &m_CurrentEvent, 5000) > 0 &&
 		m_CurrentEvent.type == ENET_EVENT_TYPE_CONNECT)

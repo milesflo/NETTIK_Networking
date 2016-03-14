@@ -31,7 +31,7 @@ void SnapshotHeader::read(SnapshotStream::Stream& data)
 		NETTIK_EXCEPTION("Header read doesn't meet header size.");
 
 	enet_uint8* stream;
-	stream = &data[0];
+	stream = reinterpret_cast<enet_uint8*>(&data[0]);
 
 	read(stream, data.size());
 }

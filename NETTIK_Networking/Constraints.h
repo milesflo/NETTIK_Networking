@@ -7,3 +7,5 @@ const size_t max_entvar_name = 64;
 // Maxiumum data for variables. Increasing this will affect memory
 // and performance on packet serailisation.
 const size_t max_entvar_data = 128;
+
+const size_t max_entmgr_name = 16;

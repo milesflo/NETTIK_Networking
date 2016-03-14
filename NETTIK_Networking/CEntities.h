@@ -19,20 +19,9 @@
 #include "CNetVarBase.h"
 #include "SnapshotStream.h"
 
+#include "Constraints.h"
+#include "NETIDReserved.h"
 extern uint32_t m_TotalEntities;
-
-// Reserved network IDs for entity manipulation.
-namespace NETID_Reserved
-{
-	enum RTTI_Object
-	{
-		OBJECT_NEW = 0xFFE0,
-		OBJECT_DEL = 0xFFE1,
-		OBJECT_DAT = 0xFFE2,
-
-		SNAPSHOT   = 0xFFE3,
-	};
-};
 
 // Forward delcare some stuff.
 namespace NETTIK
@@ -41,59 +30,102 @@ namespace NETTIK
 	class IControllerServer;
 }
 
-
-template <typename EntityType>
+template <class TypeObject>
 class CEntities : public IEntityManager
 {
 private:
-	LockableVector<EntityType*> m_Objects;
+	std::vector<TypeObject*> m_MaintainedObjects;
+
+	LockableVector<NetObject*> m_Objects;
+	std::unordered_map<uint32_t, NetObject*> m_ObjectRefs;
+
 	std::string      m_name;
 	VirtualInstance* m_pBaseInstance;
 
 	NETTIK::IController*   m_pGlobalController;
 public:
 
-	void PostUpdate()
-	{
-		m_Objects.safe_lock();
-		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
-			(*it)->Update();
-		m_Objects.safe_unlock();
-	}
-
-	void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& stream, bool bReliableFlag, bool bForced = false)
-	{
-//		printf("snapshot.\n");
-		m_Objects.safe_lock();
-		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
-		{
-			(*it)->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
-		}
-		m_Objects.safe_unlock();
-	}
-
-	inline void SetName(std::string name)
-	{
-		m_name = name;
-	}
-	
 	inline std::string GetName() const
 	{
 		return m_name;
 	}
 
-	uint32_t Add(void* _ObjectPtr)
+	NetObject* Add(uint32_t netid)
 	{
-		EntityType* object;
-		object = static_cast<EntityType*>(_ObjectPtr);
+		TypeObject* instance;
+		instance = new TypeObject();
 
-		object->m_NetCode = (m_TotalEntities++);
-		object->m_pInstance = m_pBaseInstance;
+		NetObject* object;
+		object = dynamic_cast<NetObject*>(instance);
 		
+		if (!object)
+			NETTIK_EXCEPTION("Cast of object to NetObject failed.");
+
+		object->m_NetCode = netid;
+		object->m_pInstance = m_pBaseInstance;
+		object->m_pManager = this;
+		
+		// For fast lookup.
+		m_ObjectRefs[object->m_NetCode] = object;
+
+		m_Objects.safe_lock();
+		m_Objects.get()->push_back(object);
+		m_Objects.safe_unlock();
+
+		m_MaintainedObjects.push_back(instance);
+
+		return instance;
+	}
+
+
+	NetObject* GetByNetID(uint32_t id)
+	{
+		auto it = m_ObjectRefs.find(id);
+		if (it == m_ObjectRefs.end())
+			return nullptr;
+
+		return dynamic_cast<NetObject*>(it->second);
+	}
+
+	void PostUpdate()
+	{
 		m_Objects.safe_lock();
 
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
+			(*it)->Update();
+
+		m_Objects.safe_unlock();
+	}
+
+	void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& stream, bool bReliableFlag, bool bForced = false)
+	{
+		m_Objects.safe_lock();
+
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
+			(*it)->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
+
+		m_Objects.safe_unlock();
+	}
+
+	void SetName(std::string name)
+	{
+		if (name.size() > max_entmgr_name)
+			NETTIK_EXCEPTION("Entity manager name length exceeds MAX_ENTMGR_NAME.");
+
+		m_name = name;
+	}
+
+	uint32_t Add(NetObject* object)
+	{
+		object->m_NetCode = (m_TotalEntities++);
+		object->m_pInstance = m_pBaseInstance;
+		object->m_pManager = this;
+
+		// For fast lookup.
+		m_ObjectRefs[object->m_NetCode] = object;
+
 		NETTIK::IControllerServer* server;
-		server = dynamic_cast<IControllerServer*>(m_pGlobalController);
+		server = dynamic_cast<NETTIK::IControllerServer*>(m_pGlobalController);
 
 		if (!server)
 			NETTIK_EXCEPTION("Cannot stream objects if controller isn't a server service.");
@@ -101,16 +133,50 @@ public:
 		SnapshotStream reliableStream;
 		SnapshotStream unreliableStream;
 
+		m_Objects.safe_lock();
+		m_Objects.get()->push_back(object);
+
+		SnapshotEntList creationUpdate;
+		creationUpdate.set_frametype(FrameType::kFRAME_Alloc);
+		creationUpdate.set_name(m_name);
+		creationUpdate.set_netid(object->m_NetCode);
+
+		char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
+		creationUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
+
+		SnapshotStream::Stream creationStream;
+		creationUpdate.write(creationStream);
+
+		reliableStream.get()->push_back(creationStream);
+
 		m_pBaseInstance->DoSnapshot(reliableStream, true, true);
 		m_pBaseInstance->DoSnapshot(unreliableStream, false, true);
-	
-		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); it++)
-		{
 
-			// Tell this object of this new object.
-			if ((*it)->m_pPeer)
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
+		{
+			// Update the creation update list to the current object
+			creationUpdate.set_netid((*it)->m_NetCode);
+
+			// Create a new stream to synch the current instance state to the new
+			// peer object.
+			SnapshotStream::Stream creationStream;
+			creationUpdate.write(creationStream);
+
+			// Set up a reliable stream for allocating new net IDs.
+			SnapshotStream creationStreamReliable;
+			creationStreamReliable.get()->push_back(creationStream);
+
+			// Generate this packet's header.
+			SnapshotHeader::Generate(creationStreamReliable, 0, 1, creationStream.size());
+
+			// Send it to the new peer.
+			server->SendStream(creationStreamReliable, true, object->m_pPeer);
+
+			// Inform all the objects of the snapshot changes (new objects)
+			if ((*it)->m_pPeer && (*it)->m_pPeer->state == ENET_PEER_STATE_CONNECTED)
 			{
 				//object->Serialize((*it)->m_pPeer);
+				//server->SendStream(creationStreamReliable, true, (*it)->m_pPeer);
 
 				if (reliableStream.modified())
 					server->SendStream(reliableStream, true, (*it)->m_pPeer);
@@ -132,8 +198,6 @@ public:
 				server->SendStream(unreliableStream, false, object->m_pPeer);
 		}
 
-		m_Objects.get()->push_back(object);
-
 		m_Objects.safe_unlock();
 		return object->m_NetCode;
 	}
@@ -151,13 +215,17 @@ public:
 					// Delete all entities on peer.
 				}
 
+				auto map_it = m_ObjectRefs.find((*it)->m_NetCode);
+				if (map_it != m_ObjectRefs.end())
+					m_ObjectRefs.erase(map_it);
+
 				m_Objects.get()->erase(it);
 				m_Objects.safe_unlock();
 
 				return true;
 			}
 			else
-				it++;
+				++it;
 		}
 
 		m_Objects.safe_unlock();
@@ -179,8 +247,15 @@ public:
 
 	virtual ~CEntities()
 	{
+		m_Objects.safe_lock();
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
+			it = m_Objects.get()->erase(it);
+
+		for (auto it = m_MaintainedObjects.begin(); it != m_MaintainedObjects.end();)
+		{
+			delete(*it);
+			it = m_MaintainedObjects.erase(it);
+		}
+		m_Objects.safe_unlock();
 	}
 };
-
-template <class EntityType>
-using CEntities_ptr = std::unique_ptr<CEntities<EntityType>>;
