@@ -45,6 +45,9 @@ bool IControllerClient::InitializeAddress(const char* hostname, uint16_t port)
 
 void IControllerClient::ControllerUpdate()
 {
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
+
 	PostUpdate();
 }
 

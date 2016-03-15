@@ -197,7 +197,6 @@ void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t fl
 	if (!m_bRunning)
 		return;
 
-	if (m_pHost->)
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
 

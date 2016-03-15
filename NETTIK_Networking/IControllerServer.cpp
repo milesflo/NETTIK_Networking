@@ -63,10 +63,10 @@ void IControllerServer::ControllerUpdate()
 
 	}
 
-	PostUpdate();
-
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
 		it->second->DoPostUpdate();
+
+	PostUpdate();
 
 }
 IControllerServer::~IControllerServer()

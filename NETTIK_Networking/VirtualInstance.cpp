@@ -33,7 +33,7 @@ void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, boo
 		}
 	}
 
-	uint16_t num_updates = stream.get()->size() - 1;
+	uint16_t num_updates = static_cast<uint16_t>(stream.get()->size()) - 1;
 
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 		it->second->GetSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);

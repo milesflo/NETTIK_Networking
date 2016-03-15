@@ -29,20 +29,24 @@ public:
 	DEFINE_NetVar(char, m_Char, true);
 	DEFINE_NetVar(uint32_t, m_Int, false);
 
-
-	char _debug_memory[1024 * 56];
-
 	void Update()
 	{
 		// Debugging 
-		if (m_NetCode == 0)
+		if (m_NetCode == 0 && IsServer())
 			m_Int.Set(rand() % UINT32_MAX);
+
+		if (!IsServer())
+			printf("client value: %d\n", m_Int);
+
 	}
 
 	CPlayer() : NetObject()
 	{
-		m_Char.Set(0xff);
-		m_Int.Set(123);
+		if (IsServer())
+		{
+			m_Char.Set(0xff);
+			m_Int.Set(123);
+		}
 	}
 
 	virtual ~CPlayer()
@@ -135,8 +139,10 @@ bool StartClient()
 	client->Start();
 
 	cout << "Running process..." << endl;
+
 	while (client->IsRunning())
 	{
+		IController::Timer timer(60);
 		client->Update();
 	}
 
@@ -160,6 +166,7 @@ bool StartServer()
 	cout << "Running process..." << endl;
 	while (server->IsRunning())
 	{
+		IController::Timer timer(60);
 		server->Update();
 	}
 

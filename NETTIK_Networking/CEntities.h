@@ -64,7 +64,8 @@ public:
 		object->m_NetCode = netid;
 		object->m_pInstance = m_pBaseInstance;
 		object->m_pManager = this;
-		
+		object->SetIsServer(false);
+
 		// For fast lookup.
 		m_ObjectRefs[object->m_NetCode] = object;
 
