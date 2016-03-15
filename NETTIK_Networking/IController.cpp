@@ -134,16 +134,18 @@ void IController::Stop()
 	if (!m_bRunning)
 		return;
 
-	m_bRunning = false;
-	m_bConnected = false;
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	m_bShuttingDown = true;
 
 	if (m_pThread != nullptr)
 	{
 		delete(m_pThread);
 		m_pThread = nullptr;
 	}
+
+	m_bRunning = false;
+	m_bConnected = false;
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
 //	if (!m_bReplicating)
 //	{
@@ -161,6 +163,7 @@ void IController::Stop()
 		m_pHost = nullptr;
 	}
 
+	m_bShuttingDown = false;
 }
 
 void IController::Run(bool& bThreadStatus)
@@ -181,13 +184,13 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
-/*
+
 	for (size_t i = 0; i < data_len; ++i)
 	{
 		printf("%1x ", (unsigned char)data[i]);
 	};  printf("\n");
 
-	printf("Sending %d\n", *(INetworkCodes::msg_t*)(data));*/
+//	printf("Sending %d\n", *(INetworkCodes::msg_t*)(data));
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 	enet_peer_send(peer, channel, packet);
 }
@@ -199,6 +202,11 @@ void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t fl
 
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
+
+	for (size_t i = 0; i < data_len; ++i)
+	{
+		printf("%1x ", (unsigned char)data[i]);
+	};  printf("\n");
 
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 	enet_host_broadcast(m_pHost, channel, packet);
@@ -222,10 +230,10 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 
 	INetworkCodes::msg_t code;
 	code = *(INetworkCodes::msg_t*)(data);
-	/*for (unsigned long i = 0; i < data_length; i++)
+	for (unsigned long i = 0; i < data_length; i++)
 	{
 		printf("%1x ", (unsigned char)data[i]);
-	};  printf("\n");*/
+	};  printf("\n");
 
 	auto callbacks = m_Callbacks.find(code);
 	if (callbacks != m_Callbacks.end())

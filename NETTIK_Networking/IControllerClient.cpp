@@ -69,7 +69,8 @@ void IControllerClient::EntAllocate(SnapshotEntList& frame)
 	if (manager == nullptr)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
 
-	manager->Add(netID);
+	if (manager->GetByNetID(netID) == nullptr)
+		manager->Add(netID);
 }
 
 void IControllerClient::EntDeallocate(SnapshotEntList& frame)
@@ -103,6 +104,8 @@ void IControllerClient::EntUpdate(SnapshotEntList& frame)
 		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.name(), queryID);
 		return;
 	}
+
+	printf("updated variable %s on %d\n", frame.name(), queryID);
 
 	var_it->second->Set(const_cast<unsigned char*>(frame.data()), 0);
 }

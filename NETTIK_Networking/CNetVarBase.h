@@ -33,6 +33,11 @@ protected:
 
 public:
 
+	inline VarType& get()
+	{
+		return m_Data;
+	}
+
 	CNetVarBase(const CNetVarBase& from)
 	{
 		m_Name = from.m_Name;

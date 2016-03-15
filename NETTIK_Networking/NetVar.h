@@ -12,6 +12,7 @@ protected:
 	bool        m_Reliable;
 
 public:
+
 	virtual size_t TakeVariableSnapshot(SnapshotStream& buffers, bool bForced) = 0;
 
 	//! Internal setting of anonymous data.

@@ -7,6 +7,8 @@ using namespace std;
 
 IController* service;
 
+const uint32_t serviceRate = 3;
+
 BOOL WINAPI CtrlHandler(DWORD type)
 {
 	switch (type)
@@ -29,14 +31,17 @@ public:
 	DEFINE_NetVar(char, m_Char, true);
 	DEFINE_NetVar(uint32_t, m_Int, false);
 
+	DEFINE_NetVector(m_Pos, false);
+
 	void Update()
 	{
+		m_Pos.Set(1, 2, 3);
 		// Debugging 
 		if (m_NetCode == 0 && IsServer())
-			m_Int.Set(rand() % UINT32_MAX);
+			m_Int.Set(static_cast<uint32_t>(rand() % UINT32_MAX));
 
 		if (!IsServer())
-			printf("client value: %d\n", m_Int);
+			printf("client value %s %d (%d)\n", m_Int.GetName(), m_Int.get(), m_NetCode);
 
 	}
 
@@ -142,11 +147,11 @@ bool StartClient()
 
 	while (client->IsRunning())
 	{
-		IController::Timer timer(60);
+		IController::Timer timer(serviceRate);
 		client->Update();
 	}
 
-	delete(client);
+	client->Destroy();
 	return true;
 }
 
@@ -166,11 +171,10 @@ bool StartServer()
 	cout << "Running process..." << endl;
 	while (server->IsRunning())
 	{
-		IController::Timer timer(60);
+		IController::Timer timer(serviceRate);
 		server->Update();
 	}
-
-	delete(server);
+	server->Destroy();
 	return true;
 }
 
@@ -182,7 +186,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	char mode = 's';
+	char mode = 'c';
 	if (argc > 1)
 		mode = argv[1][0];
 

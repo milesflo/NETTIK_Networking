@@ -71,6 +71,7 @@ namespace NETTIK
 		ENetAddress m_Address;
 		ENetHost*   m_pHost;
 
+		bool        m_bShuttingDown = false;
 		bool        m_bRunning = false;
 		bool        m_bConnected = false;
 		bool        m_bReplicating;
@@ -96,9 +97,6 @@ namespace NETTIK
 
 			printf("~IController()\n");
 
-			// Flag the controller as stopped.
-			Stop();
-
 			// We don't need ENET anymore.
 			printf("~ENET()\n");
 			enet_deinitialize();
@@ -109,6 +107,15 @@ namespace NETTIK
 			printf("~PeerSingleton()\n");
 			DeletePeerSingleton();
 			printf("~done\n");
+		}
+
+		void Destroy()
+		{
+			while (m_bShuttingDown)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			}
+			delete(this);
 		}
 
 		//! Performs a post update, handled by server/client.

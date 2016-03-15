@@ -34,7 +34,7 @@ template <class TypeObject>
 class CEntities : public IEntityManager
 {
 private:
-	std::vector<TypeObject*> m_MaintainedObjects;
+	LockableVector<TypeObject*> m_MaintainedObjects;
 
 	LockableVector<NetObject*> m_Objects;
 	std::unordered_map<uint32_t, NetObject*> m_ObjectRefs;
@@ -52,6 +52,10 @@ public:
 
 	NetObject* Add(uint32_t netid)
 	{
+
+		m_Objects.safe_lock();
+		m_MaintainedObjects.safe_lock();
+
 		TypeObject* instance;
 		instance = new TypeObject();
 
@@ -69,11 +73,11 @@ public:
 		// For fast lookup.
 		m_ObjectRefs[object->m_NetCode] = object;
 
-		m_Objects.safe_lock();
 		m_Objects.get()->push_back(object);
-		m_Objects.safe_unlock();
+		m_MaintainedObjects.get()->push_back(instance);
 
-		m_MaintainedObjects.push_back(instance);
+		m_Objects.safe_unlock();
+		m_MaintainedObjects.safe_unlock();
 
 		return instance;
 	}
@@ -90,6 +94,9 @@ public:
 
 	void PostUpdate()
 	{
+		if (!m_pGlobalController->IsRunning())
+			return;
+
 		m_Objects.safe_lock();
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
@@ -100,6 +107,9 @@ public:
 
 	void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& stream, bool bReliableFlag, bool bForced = false)
 	{
+		if (!m_pGlobalController->IsRunning())
+			return;
+
 		m_Objects.safe_lock();
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
@@ -205,6 +215,31 @@ public:
 
 	bool Remove(uint32_t code)
 	{
+
+		NETTIK::IControllerServer* server;
+		server = dynamic_cast<NETTIK::IControllerServer*>(m_pGlobalController);
+
+		if (!server)
+			NETTIK_EXCEPTION("Cannot stream objects if controller isn't a server service.");
+
+		SnapshotStream reliableStream;
+
+		SnapshotEntList deletionUpdate;
+		deletionUpdate.set_frametype(FrameType::kFRAME_Dealloc);
+		deletionUpdate.set_name(m_name);
+		deletionUpdate.set_netid(code);
+
+		char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
+		deletionUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
+
+		SnapshotStream::Stream deletionStream;
+		deletionUpdate.write(deletionStream);
+
+		reliableStream.get()->push_back(deletionStream);
+
+		// Generate this packet's header.
+		SnapshotHeader::Generate(reliableStream, 0, 1, deletionStream.size());
+
 		m_Objects.safe_lock();
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
@@ -214,6 +249,7 @@ public:
 				if ((*it)->m_pPeer != nullptr)
 				{
 					// Delete all entities on peer.
+					server->SendStream(reliableStream, true, (*it)->m_pPeer);
 				}
 
 				auto map_it = m_ObjectRefs.find((*it)->m_NetCode);
@@ -249,14 +285,15 @@ public:
 	virtual ~CEntities()
 	{
 		m_Objects.safe_lock();
+		m_MaintainedObjects.safe_lock();
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 			it = m_Objects.get()->erase(it);
 
-		for (auto it = m_MaintainedObjects.begin(); it != m_MaintainedObjects.end();)
-		{
-			delete(*it);
-			it = m_MaintainedObjects.erase(it);
-		}
+		// memory leak but needs investigating because of heap corruption.
+		for (auto it = m_MaintainedObjects.get()->begin(); it != m_MaintainedObjects.get()->end();)
+			it = m_MaintainedObjects.get()->erase(it);
+
+		m_MaintainedObjects.safe_unlock();
 		m_Objects.safe_unlock();
 	}
 };
