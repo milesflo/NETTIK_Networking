@@ -245,4 +245,4 @@ protobuf/*
 !protobuf/protoc.exe
 
 # NETTIK Bullsh*t
-NETTIK_Networking.lib
+# NETTIK_Networking.lib
