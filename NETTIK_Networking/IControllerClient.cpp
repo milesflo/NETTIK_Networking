@@ -70,12 +70,30 @@ void IControllerClient::EntAllocate(SnapshotEntList& frame)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
 
 	if (manager->GetByNetID(netID) == nullptr)
-		manager->Add(netID);
+		manager->AddLocal(netID);
 }
 
 void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 {
+	const char* manager_name = frame.name();
+	const uint32_t netID = frame.netid();
+	const char* instance_name = reinterpret_cast<const char*>(frame.data());
 
+	VirtualInstance* instance;
+	instance = GetInstance(instance_name);
+
+	if (instance == nullptr)
+		NETTIK_EXCEPTION("Invalid instance field passed from server.");
+
+	IEntityManager* manager;
+	manager = instance->GetEntitiyManagerInterface(manager_name);
+
+	if (manager == nullptr)
+		NETTIK_EXCEPTION("Invalid manager field passed from server.");
+
+	printf("removing entity %d\n", netID);
+	if (manager->GetByNetID(netID) != nullptr)
+		manager->RemoveLocal(netID);
 }
 
 void IControllerClient::EntUpdate(SnapshotEntList& frame)
@@ -104,8 +122,6 @@ void IControllerClient::EntUpdate(SnapshotEntList& frame)
 		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.name(), queryID);
 		return;
 	}
-
-	printf("updated variable %s on %d\n", frame.name(), queryID);
 
 	var_it->second->Set(const_cast<unsigned char*>(frame.data()), 0);
 }

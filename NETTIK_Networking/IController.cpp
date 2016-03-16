@@ -13,14 +13,6 @@ IController* IController::GetPeerSingleton()
 	return s_PeerSingleton;
 }
 
-std::string IController::GetIPAddress(ENetAddress& addr)
-{
-	char buffer[32];
-	enet_address_get_host_ip(&addr, buffer, 32);
-
-	return std::string(buffer);
-}
-
 void IController::DeletePeerSingleton()
 {
 
@@ -42,6 +34,25 @@ void IController::SetPeerSingleton(IController* peer)
 //
 // IController member functions:
 //
+IController::~IController()
+{
+	// We don't need ENET anymore.
+	enet_deinitialize();
+
+	// Delete the global singleton (this!)
+	// (doesn't actually delete the singleton,
+	// just dereferences it)
+	DeletePeerSingleton();
+}
+
+std::string IController::GetIPAddress(ENetAddress& addr)
+{
+	char buffer[32];
+	enet_address_get_host_ip(&addr, buffer, 32);
+
+	return std::string(buffer);
+}
+
 IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 {
 	SetPeerSingleton(this);
@@ -145,8 +156,6 @@ void IController::Stop()
 	m_bRunning = false;
 	m_bConnected = false;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-
 //	if (!m_bReplicating)
 //	{
 		// Close all connections.
@@ -184,12 +193,12 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
-
+/*
 	for (size_t i = 0; i < data_len; ++i)
 	{
 		printf("%1x ", (unsigned char)data[i]);
 	};  printf("\n");
-
+	*/
 //	printf("Sending %d\n", *(INetworkCodes::msg_t*)(data));
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 	enet_peer_send(peer, channel, packet);
@@ -202,12 +211,12 @@ void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t fl
 
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
-
+/*
 	for (size_t i = 0; i < data_len; ++i)
 	{
 		printf("%1x ", (unsigned char)data[i]);
 	};  printf("\n");
-
+*/
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 	enet_host_broadcast(m_pHost, channel, packet);
 }
@@ -230,10 +239,10 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 
 	INetworkCodes::msg_t code;
 	code = *(INetworkCodes::msg_t*)(data);
-	for (unsigned long i = 0; i < data_length; i++)
-	{
-		printf("%1x ", (unsigned char)data[i]);
-	};  printf("\n");
+	//for (unsigned long i = 0; i < data_length; i++)
+	//{
+	//	printf("%1x ", (unsigned char)data[i]);
+	//};  printf("\n");
 
 	auto callbacks = m_Callbacks.find(code);
 	if (callbacks != m_Callbacks.end())

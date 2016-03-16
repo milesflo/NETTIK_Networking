@@ -83,11 +83,14 @@ public:
 		if (size == 0)
 			size = sizeof(VarType);
 
-		VarType* stream;
-		stream = reinterpret_cast<VarType*>(ptr);
+		unsigned char* data;
+		data = reinterpret_cast<unsigned char*>(&m_Data);
 
+		printf("size = %d | my size = %d\n", size, sizeof(VarType));
+		//for (size_t i = 0; i < size; i++)
+		//	(&m_Data)[i] = stream[i];
 		for (size_t i = 0; i < size; i++)
-			(&m_Data)[i] = stream[i];
+			data[i] = ptr[i];
 	}
 
 	void Set(VarType data)

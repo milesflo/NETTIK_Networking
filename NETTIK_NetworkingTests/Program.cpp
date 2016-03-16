@@ -7,7 +7,7 @@ using namespace std;
 
 IController* service;
 
-const uint32_t serviceRate = 3;
+const uint32_t serviceRate = 60;
 
 BOOL WINAPI CtrlHandler(DWORD type)
 {
@@ -40,8 +40,8 @@ public:
 		if (m_NetCode == 0 && IsServer())
 			m_Int.Set(static_cast<uint32_t>(rand() % UINT32_MAX));
 
-		if (!IsServer())
-			printf("client value %s %d (%d)\n", m_Int.GetName(), m_Int.get(), m_NetCode);
+//		if (!IsServer())
+//			printf("client value %s %d (%d)\n", m_Int.GetName(), m_Int.get(), m_NetCode);
 
 	}
 

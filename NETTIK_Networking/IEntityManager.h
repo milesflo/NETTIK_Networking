@@ -16,7 +16,10 @@ public:
 
 	//! Adds a self-maintaining object. Invokes the type specifier's constructor but
 	//  operates in this scope.
-	virtual NetObject* Add(uint32_t netid) = 0;
+	virtual NetObject* AddLocal(uint32_t netid) = 0;
+
+	//! Removes a self-maintaing object.
+	virtual bool RemoveLocal(uint32_t entityCode) = 0;
 
 	//! Adds a reference to the network queue. Must be of base class "NetObject".
 	virtual uint32_t Add(NetObject* object) = 0;

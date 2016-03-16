@@ -92,22 +92,7 @@ namespace NETTIK
 	public:
 
 		IController(uint32_t tickRate);
-		virtual ~IController()
-		{
-
-			printf("~IController()\n");
-
-			// We don't need ENET anymore.
-			printf("~ENET()\n");
-			enet_deinitialize();
-
-			// Delete the global singleton (this!)
-			// (doesn't actually delete the singleton,
-			// just dereferences it)
-			printf("~PeerSingleton()\n");
-			DeletePeerSingleton();
-			printf("~done\n");
-		}
+		virtual ~IController();
 
 		void Destroy()
 		{

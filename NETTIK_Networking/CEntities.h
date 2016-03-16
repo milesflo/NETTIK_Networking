@@ -50,7 +50,7 @@ public:
 		return m_name;
 	}
 
-	NetObject* Add(uint32_t netid)
+	NetObject* AddLocal(uint32_t netid)
 	{
 
 		m_Objects.safe_lock();
@@ -82,6 +82,43 @@ public:
 		return instance;
 	}
 
+	bool RemoveLocal(uint32_t code)
+	{
+		// Erase from object pointer list.
+		m_Objects.safe_lock();
+		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
+		{
+			if ((*it)->m_NetCode == code)
+			{
+				auto map_it = m_ObjectRefs.find((*it)->m_NetCode);
+				if (map_it != m_ObjectRefs.end())
+					m_ObjectRefs.erase(map_it);
+
+				m_Objects.get()->erase(it);
+				break;
+			}
+			else
+				++it;
+		}
+		m_Objects.safe_unlock();
+
+		// Delete from maintained objects.
+		m_MaintainedObjects.safe_lock();
+		for (auto it = m_MaintainedObjects.get()->begin(); it != m_MaintainedObjects.get()->end();)
+		{
+			if ((*it)->m_NetCode == code)
+			{
+				delete(*it);
+				m_MaintainedObjects.get()->erase(it);
+				break;
+			}
+			else
+				++it;
+		}
+		m_MaintainedObjects.safe_unlock();
+
+		return false;
+	}
 
 	NetObject* GetByNetID(uint32_t id)
 	{
@@ -184,18 +221,20 @@ public:
 			server->SendStream(creationStreamReliable, true, object->m_pPeer);
 
 			// Inform all the objects of the snapshot changes (new objects)
-			if ((*it)->m_pPeer && (*it)->m_pPeer->state == ENET_PEER_STATE_CONNECTED)
+			if ((*it)->m_pPeer)
 			{
 				//object->Serialize((*it)->m_pPeer);
-				//server->SendStream(creationStreamReliable, true, (*it)->m_pPeer);
+				server->SendStream(creationStreamReliable, true, (*it)->m_pPeer);
 
-				if (reliableStream.modified())
-					server->SendStream(reliableStream, true, (*it)->m_pPeer);
-
-				if (unreliableStream.modified())
-					server->SendStream(unreliableStream, false, (*it)->m_pPeer);
 			}
 		}
+
+		if (reliableStream.modified())
+			server->BroadcastStream(reliableStream, true);
+
+		if (unreliableStream.modified())
+			server->BroadcastStream(unreliableStream, false);
+
 
 		// Inform this object to player.
 		if (object->m_pPeer)
@@ -222,8 +261,6 @@ public:
 		if (!server)
 			NETTIK_EXCEPTION("Cannot stream objects if controller isn't a server service.");
 
-		SnapshotStream reliableStream;
-
 		SnapshotEntList deletionUpdate;
 		deletionUpdate.set_frametype(FrameType::kFRAME_Dealloc);
 		deletionUpdate.set_name(m_name);
@@ -235,6 +272,7 @@ public:
 		SnapshotStream::Stream deletionStream;
 		deletionUpdate.write(deletionStream);
 
+		SnapshotStream reliableStream;
 		reliableStream.get()->push_back(deletionStream);
 
 		// Generate this packet's header.
@@ -244,26 +282,22 @@ public:
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 		{
+
 			if ((*it)->m_NetCode == code)
 			{
-				if ((*it)->m_pPeer != nullptr)
-				{
-					// Delete all entities on peer.
-					server->SendStream(reliableStream, true, (*it)->m_pPeer);
-				}
 
 				auto map_it = m_ObjectRefs.find((*it)->m_NetCode);
 				if (map_it != m_ObjectRefs.end())
 					m_ObjectRefs.erase(map_it);
 
 				m_Objects.get()->erase(it);
-				m_Objects.safe_unlock();
-
-				return true;
+				break;
 			}
 			else
 				++it;
 		}
+
+		server->BroadcastStream(reliableStream, true);
 
 		m_Objects.safe_unlock();
 		return false;
