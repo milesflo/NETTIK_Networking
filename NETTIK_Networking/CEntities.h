@@ -42,8 +42,21 @@ private:
 	std::string      m_name;
 	VirtualInstance* m_pBaseInstance;
 
+	std::function<void(TypeObject*)> m_fCallbackCreate;
+	std::function<void(TypeObject*)> m_fCallbackDelete;
+
 	NETTIK::IController*   m_pGlobalController;
 public:
+
+	void SetCallbackCreate(std::function<void(TypeObject*)> func)
+	{
+		m_fCallbackCreate = func;
+	}
+
+	void SetCallbackDelete(std::function<void(TypeObject*)> func)
+	{
+		m_fCallbackDelete = func;
+	}
 
 	inline std::string GetName() const
 	{
@@ -79,6 +92,7 @@ public:
 		m_Objects.safe_unlock();
 		m_MaintainedObjects.safe_unlock();
 
+		m_fCallbackCreate(instance);
 		return instance;
 	}
 
@@ -108,6 +122,7 @@ public:
 		{
 			if ((*it)->m_NetCode == code)
 			{
+				m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
 				delete(*it);
 				m_MaintainedObjects.get()->erase(it);
 				break;
@@ -249,6 +264,8 @@ public:
 		}
 
 		m_Objects.safe_unlock();
+		m_fCallbackCreate(dynamic_cast<TypeObject*>(object));
+
 		return object->m_NetCode;
 	}
 
@@ -290,6 +307,7 @@ public:
 				if (map_it != m_ObjectRefs.end())
 					m_ObjectRefs.erase(map_it);
 
+				m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
 				m_Objects.get()->erase(it);
 				break;
 			}

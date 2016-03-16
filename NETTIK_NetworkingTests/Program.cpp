@@ -124,10 +124,20 @@ public:
 	}
 };
 
+void OnNewPlayer(CPlayer* player)
+{
+	printf("create.\n");
+}
+
+void OnDeletePlayer(CPlayer* player)
+{
+	printf("delete.\n");
+}
+
 void SetupSharedResources(IController* controller)
 {
 	VirtualInstance* instance = controller->CreateInstance("world");
-	instance->CreateEntityManager<CPlayer>("players");
+	instance->CreateEntityManager<CPlayer>("players", OnNewPlayer, OnDeletePlayer);
 }
 
 bool StartClient()

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include <functional>
 #include "CEntities.h"
 #include "SnapshotStream.h"
 #include "NetObject.h"
@@ -57,10 +58,12 @@ public:
 	virtual ~VirtualInstance();
 
 	template <class T>
-	IEntityManager* CreateEntityManager(std::string name)
+	IEntityManager* CreateEntityManager(std::string name, std::function<void(T*)> callbackCreate, std::function<void(T*)> callbackDelete)
 	{
-		IEntityManager* mgr = new CEntities<T>(this);
+		CEntities<T>* mgr = new CEntities<T>(this);
 		mgr->SetName(name);
+		mgr->SetCallbackCreate(callbackCreate);
+		mgr->SetCallbackDelete(callbackDelete);
 
 		m_EntManagers.insert(make_pair(name, mgr));
 		return mgr;
