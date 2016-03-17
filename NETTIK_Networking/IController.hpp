@@ -13,9 +13,6 @@
 #include "IThread.hpp"
 #include "INetworkPacketFactory.hpp"
 #include "VirtualInstance.h"
-#define DEFINE_SERVER(bServer) \
-	bool IsServer() { return bServer; }
-
 
 namespace NETTIK
 {
@@ -89,6 +86,7 @@ namespace NETTIK
 
 		IThread*    m_pThread = nullptr;
 
+		bool        m_bServer;
 	public:
 
 		IController(uint32_t tickRate);
@@ -107,7 +105,7 @@ namespace NETTIK
 		virtual void PostUpdate() = 0;
 
 		//! Returns if the controller is a server or not.
-		virtual bool IsServer() = 0;
+		bool IsServer();
 
 		//! Performs a controller type update.
 		virtual void ControllerUpdate() = 0;

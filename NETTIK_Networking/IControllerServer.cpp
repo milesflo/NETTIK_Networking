@@ -21,12 +21,13 @@ bool IControllerServer::InitializeAddress(const char* hostname, uint16_t port)
 IControllerServer::IControllerServer(uint32_t rate) : IController(rate)
 {
 	m_bReplicating = false;
-
+	m_bServer = true;
 }
 
 IControllerServer::IControllerServer() : IController(0)
 {
 	m_bReplicating = false;
+	m_bServer = true;
 }
 
 bool IControllerServer::Listen(uint16_t port, size_t peerLimit)

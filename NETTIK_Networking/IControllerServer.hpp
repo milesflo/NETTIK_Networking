@@ -7,8 +7,6 @@ namespace NETTIK
 	class IControllerServer : public IController
 	{
 	public:
-		DEFINE_SERVER(true);
-
 		size_t m_iPeerLimit;
 
 	public:

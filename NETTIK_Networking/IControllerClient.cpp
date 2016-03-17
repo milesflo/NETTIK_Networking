@@ -15,6 +15,7 @@ IControllerClient::IControllerClient(uint32_t rate) : IController(rate)
 		NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
 
 	m_bReplicating = true;
+	m_bServer = false;
 }
 
 IControllerClient::IControllerClient() : IController(0)
@@ -23,6 +24,7 @@ IControllerClient::IControllerClient() : IController(0)
 		NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
 
 	m_bReplicating = true;
+	m_bServer = false;
 }
 
 

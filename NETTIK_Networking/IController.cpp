@@ -8,6 +8,11 @@ static IController* s_PeerSingleton = nullptr;
 //! Issue message for when an unhandled packet is processed.
 const char* s_issueUnhandledPacket = "Unhandled packet, code: %u, packet length: %d\n";
 
+bool IController::IsServer()
+{
+	return m_bServer;
+}
+
 IController* IController::GetPeerSingleton()
 {
 	return s_PeerSingleton;
