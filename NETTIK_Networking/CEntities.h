@@ -28,6 +28,7 @@ namespace NETTIK
 {
 	class IController;
 	class IControllerServer;
+	class IControllerClient;
 }
 
 template <class TypeObject>
