@@ -135,14 +135,26 @@ public:
 
 		return false;
 	}
+	NetObject* GetByPeerID(ENetPeer* id)
+	{
+		for (auto it = m_ObjectRefs.begin(); it != m_ObjectRefs.end(); ++it)
+		{
+			NetObject* object;
+			object = (*it).second;
 
+			if (object->m_pPeer == id)
+				return object;
+		}
+
+		return nullptr;
+	}
 	NetObject* GetByNetID(uint32_t id)
 	{
 		auto it = m_ObjectRefs.find(id);
 		if (it == m_ObjectRefs.end())
 			return nullptr;
 
-		return dynamic_cast<NetObject*>(it->second);
+		return (it->second);
 	}
 
 	void PostUpdate()

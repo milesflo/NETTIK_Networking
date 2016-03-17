@@ -86,9 +86,6 @@ public:
 		unsigned char* data;
 		data = reinterpret_cast<unsigned char*>(&m_Data);
 
-		printf("size = %d | my size = %d\n", size, sizeof(VarType));
-		//for (size_t i = 0; i < size; i++)
-		//	(&m_Data)[i] = stream[i];
 		for (size_t i = 0; i < size; i++)
 			data[i] = ptr[i];
 	}

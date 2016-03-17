@@ -93,7 +93,6 @@ void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 	if (manager == nullptr)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
 
-	printf("removing entity %d\n", netID);
 	if (manager->GetByNetID(netID) != nullptr)
 		manager->RemoveLocal(netID);
 }

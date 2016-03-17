@@ -114,9 +114,6 @@ public:
 		size_t data_len;
 		for (data_len = 0; data_len < max_entvar_data; data_len++)
 		{
-			if (*current_ptr == 0)
-				break;
-
 			m_data.data[data_len] = (char)*current_ptr++;
 		}
 		m_data.data[data_len + 1] = 0; // null terminate
