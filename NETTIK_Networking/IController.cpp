@@ -188,6 +188,19 @@ void IController::Run(bool& bThreadStatus)
 	}
 }
 
+void IController::SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer)
+{
+	uint32_t flags;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
+
+	if (peer == nullptr)
+		peer = GetFirstPeer();
+
+	// This is a specific snapshot to resync a plsyer, don't do any tick logic.
+	// Controller -> Send ( peer, header, buffer )
+	Send(&stream.result()[0], stream.result().size(), peer, flags, 0);
+}
+
 void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel)
 {
 	if (peer == nullptr)

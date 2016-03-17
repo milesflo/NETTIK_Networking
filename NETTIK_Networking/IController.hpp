@@ -161,6 +161,9 @@ namespace NETTIK
 		//! Sends data to the ENET peer.
 		void Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);
 
+		//! Sends SnapshotStream
+		void SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer = nullptr);
+
 		//! Sends data to the first ENET peer.
 		// Remember to set flag as reliable for important information.
 		void Send(const enet_uint8* data, size_t data_len, uint32_t flags = ENET_PACKET_FLAG_UNSEQUENCED, uint8_t channel = 0);

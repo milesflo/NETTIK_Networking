@@ -9,11 +9,15 @@
 struct SnapshotHeaderData
 {
 	NETTIK::INetworkCodes::msg_t    message_code = 0; // 0
-	uint16_t count = 0;                               // 2
-	uint32_t sequence = 0;                            // 4
+
+	uint16_t count = 0;									// 2
+	uint32_t sequence = 0;								// 4
+
+	// 4
 	size_t   max_message_length = 0;                  // 8 (x86)
 };
 static_assert(sizeof(SnapshotHeaderData) == 12U, "Snapshot header size not correct.");
+
 
 class SnapshotHeader
 {

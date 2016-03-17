@@ -11,6 +11,15 @@ bool IControllerServer::InitializeHost()
 	return true;
 }
 
+//! Broadcast SnapshotStream
+void IControllerServer::BroadcastStream(SnapshotStream& stream, bool reliable)
+{
+	uint32_t flags;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
+
+	Broadcast(&stream.result()[0], stream.result().size(), flags, 0);
+}
+
 bool IControllerServer::InitializeAddress(const char* hostname, uint16_t port)
 {
 	m_Address.host = ENET_HOST_ANY;
