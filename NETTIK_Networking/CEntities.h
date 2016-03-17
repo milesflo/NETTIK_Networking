@@ -153,7 +153,7 @@ public:
 		m_Objects.safe_lock();
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
-			(*it)->Update();
+			(*it)->Update(m_pGlobalController->IsServer());
 
 		m_Objects.safe_unlock();
 	}

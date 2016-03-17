@@ -38,7 +38,7 @@ public:
 	VirtualInstance* m_pInstance = nullptr;
 	IEntityManager*  m_pManager = nullptr;
 
-	virtual void Update() = 0;
+	virtual void Update(bool server) = 0;
 
 public:
 	std::recursive_mutex m_Mutex;
