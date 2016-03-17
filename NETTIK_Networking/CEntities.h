@@ -234,12 +234,14 @@ public:
 			SnapshotHeader::Generate(creationStreamReliable, 0, 1, creationStream.size());
 
 			// Send it to the new peer.
-			server->SendStream(creationStreamReliable, true, object->m_pPeer);
+			if (object->m_pPeer)
+			{
+				server->SendStream(creationStreamReliable, true, object->m_pPeer);
+			}
 
 			// Inform all the objects of the snapshot changes (new objects)
 			if ((*it)->m_pPeer)
 			{
-				//object->Serialize((*it)->m_pPeer);
 				server->SendStream(creationStreamReliable, true, (*it)->m_pPeer);
 
 			}
@@ -255,8 +257,6 @@ public:
 		// Inform this object to player.
 		if (object->m_pPeer)
 		{
-			//(*it)->Serialize(object->m_pPeer);
-
 			if (reliableStream.modified())
 				server->SendStream(reliableStream, true, object->m_pPeer);
 
