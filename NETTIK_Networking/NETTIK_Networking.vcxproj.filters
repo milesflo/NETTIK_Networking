@@ -96,6 +96,15 @@
     <ClInclude Include="NETIDReserved.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SnapshotOwnership.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReplicationInfo.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerFlags.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="INetworkPacketFactory.cpp">

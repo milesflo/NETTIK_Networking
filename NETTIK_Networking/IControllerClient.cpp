@@ -55,9 +55,10 @@ void IControllerClient::ControllerUpdate()
 
 void IControllerClient::EntAllocate(SnapshotEntList& frame)
 {
-	const char* manager_name = frame.name();
-	const uint32_t netID = frame.netid();
-	const char* instance_name = reinterpret_cast<const char*>(frame.data());
+	const char* manager_name = frame.get_name();
+	const uint32_t netID = frame.get_netid();
+	const uint32_t controller = frame.get_controller();
+	const char* instance_name = reinterpret_cast<const char*>(frame.get_data());
 
 	VirtualInstance* instance;
 	instance = GetInstance(instance_name);
@@ -72,14 +73,24 @@ void IControllerClient::EntAllocate(SnapshotEntList& frame)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
 
 	if (manager->GetByNetID(netID) == nullptr)
-		manager->AddLocal(netID);
+	{
+		NetObject* instance = manager->AddLocal(netID);
+		//instance->m_Controller = controller;
+
+		if (controller == NET_CONTROLLER_LOCAL)
+		{
+			m_ControlledObjects[netID] = instance;
+		}
+
+	}
 }
 
 void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 {
-	const char* manager_name = frame.name();
-	const uint32_t netID = frame.netid();
-	const char* instance_name = reinterpret_cast<const char*>(frame.data());
+	const char* manager_name = frame.get_name();
+	const uint32_t netID = frame.get_netid();
+	const uint32_t controller = frame.get_controller();
+	const char* instance_name = reinterpret_cast<const char*>(frame.get_data());
 
 	VirtualInstance* instance;
 	instance = GetInstance(instance_name);
@@ -93,38 +104,48 @@ void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 	if (manager == nullptr)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
 
-	if (manager->GetByNetID(netID) != nullptr)
-		manager->RemoveLocal(netID);
+	NetObject* object;
+	object = manager->GetByNetID(netID);
+	if (object == nullptr)
+		return;
+
+	manager->RemoveLocal(netID);
+
+	if (object->m_Controller == NET_CONTROLLER_LOCAL)
+	{
+		auto object = m_ControlledObjects.find(netID);
+
+		if (object != m_ControlledObjects.end())
+			m_ControlledObjects.erase(object);
+	}
+
 }
 
-void IControllerClient::EntUpdate(SnapshotEntList& frame)
+void IControllerClient::HandleEntOwnership(const enet_uint8* data, size_t data_len, ENetPeer* peer)
 {
-	NetObject*  target = nullptr;
-	uint32_t    queryID = frame.netid();
+	SnapshotHeader header;
+	header.read(data, data_len);
 
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-	{
-		target = it->second->FindObject(queryID);
-		if (target != nullptr)
-		{
-			break;
-		}
-	}
+	enet_uint8* partition;
+	partition = (enet_uint8*)(data);
+	partition += header.size();
 
-	if (target == nullptr)
+	size_t expected_size = (sizeof(uint32_t) * header.count());
+	size_t header_size = data_len - header.size();
+
+	if (expected_size != header_size)
 	{
-		printf("warning: tried to update null entity with ID: %d\n", queryID);
+		printf("warning: dropped ownership list, provided size '%d' when expected '%d'\n", header_size, expected_size);
 		return;
 	}
 
-	auto var_it = target->m_Vars.find(frame.name());
-	if (var_it == target->m_Vars.end())
+	for (size_t i = 0; i < header.count(); i++)
 	{
-		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.name(), queryID);
-		return;
-	}
+		uint32_t netid = static_cast<uint32_t>(*partition);
 
-	var_it->second->Set(const_cast<unsigned char*>(frame.data()), 0);
+		printf("I now own %d\n", netid);
+		partition += sizeof(uint32_t);
+	}
 }
 
 void IControllerClient::HandleEntSnapshot(const enet_uint8* data, size_t data_len, ENetPeer* peer)
@@ -152,10 +173,10 @@ void IControllerClient::HandleEntSnapshot(const enet_uint8* data, size_t data_le
 		SnapshotEntList frame;
 		frame.read_data(partition, header.max_size());
 
-		switch (frame.frametype())
+		switch (frame.get_frametype())
 		{
 		case kFRAME_Data:
-			EntUpdate(frame);
+			ReadEntityUpdate(frame);
 			break;
 		case kFRAME_Alloc:
 			EntAllocate(frame);
@@ -186,6 +207,7 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 	});
 
 	on(NETID_Reserved::RTTI_Object::OBJECT_FRAME,   std::bind(&IControllerClient::HandleEntSnapshot, this, _1, _2, _3));
+	on(NETID_Reserved::RTTI_Object::CLIENT_OWNERSHIP, std::bind(&IControllerClient::HandleEntOwnership, this, _1, _2, _3));
 //	on(NETID_Reserved::RTTI_Object::OBJECT_NEW, std::bind(&IControllerClient::HandleEntNew, this, _1, _2, _3));
 //	on(NETID_Reserved::RTTI_Object::OBJECT_DEL, std::bind(&IControllerClient::HandleEntDel, this, _1, _2, _3));
 

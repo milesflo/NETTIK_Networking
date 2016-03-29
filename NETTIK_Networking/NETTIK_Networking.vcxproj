@@ -184,6 +184,7 @@
     <ClInclude Include="CNetVarBase.h" />
     <ClInclude Include="CNetVarVector.h" />
     <ClInclude Include="Constraints.h" />
+    <ClInclude Include="ControllerFlags.h" />
     <ClInclude Include="CPlayerRealm.h" />
     <ClInclude Include="CVector3.h" />
     <ClInclude Include="EntityMessages.pb.h" />
@@ -200,8 +201,10 @@
     <ClInclude Include="NetObject.h" />
     <ClInclude Include="NETTIK_Networking.hpp" />
     <ClInclude Include="NetVar.h" />
+    <ClInclude Include="ReplicationInfo.h" />
     <ClInclude Include="SnapshotEntList.h" />
     <ClInclude Include="SnapshotHeader.h" />
+    <ClInclude Include="SnapshotOwnership.h" />
     <ClInclude Include="SnapshotStream.h" />
     <ClInclude Include="VirtualInstance.h" />
   </ItemGroup>

@@ -21,6 +21,8 @@ struct SnapshotEntListDataEntry
 
 	// NetID
 	uint32_t netID = 0;
+
+	uint32_t controller = NET_CONTROLLER_NONE;
 	
 	// Entity name / varname
 	char name[max_entvar_name] = { 0 };
@@ -28,7 +30,7 @@ struct SnapshotEntListDataEntry
 	// Data buffer.
 	unsigned char data[max_entvar_data] = { 0 };
 };
-static_assert(sizeof(SnapshotEntListDataEntry) == 68U + 128U + 4U, "SnapshotEntListDataEntry size not correct.");
+static_assert(sizeof(SnapshotEntListDataEntry) == 68U + 128U + 4U + 4U, "SnapshotEntListDataEntry size not correct.");
 
 inline void* add_ptr(void* in, size_t offset)
 {
@@ -58,6 +60,10 @@ public:
 		for (size_t i = 0; i < sizeof(FrameType); i++)
 			data.push_back(stream[i]);
 		stream += sizeof(FrameType);
+
+		for (size_t i = 0; i < sizeof(uint32_t); i++)
+			data.push_back(stream[i]);
+		stream += sizeof(uint32_t);
 
 		for (size_t i = 0; i < sizeof(uint32_t); i++)
 			data.push_back(stream[i]);
@@ -101,6 +107,12 @@ public:
 
 		m_data.netID = *netID_ptr;
 
+		uint32_t* controller_ptr;
+		controller_ptr = reinterpret_cast<uint32_t*>(current_ptr);
+		current_ptr += sizeof(uint32_t);
+
+		m_data.controller = *controller_ptr;
+
 		for (int i = 0; i < max_entvar_name; i++)
 		{
 			if (*current_ptr == 0)
@@ -121,27 +133,32 @@ public:
 		m_dataPointer = reinterpret_cast<void*>(++current_ptr);
 	}
 
-	inline const void* ptr() const
+	inline const void* get_ptr() const
 	{
 		return m_dataPointer;
 	}
 
-	inline uint32_t netid() const
+	inline uint32_t get_netid() const
 	{
 		return m_data.netID;
 	}
 
-	inline const char* name() const
+	inline const char* get_name() const
 	{
 		return m_data.name;
 	}
 
-	inline const unsigned char* data() const
+	inline const unsigned char* get_data() const
 	{
 		return m_data.data;
 	}
 	
-	inline FrameType frametype() const
+	inline uint32_t get_controller() const
+	{
+		return m_data.controller;
+	}
+
+	inline FrameType get_frametype() const
 	{
 		return m_data.frameType;
 	}
@@ -164,9 +181,9 @@ public:
 		m_data.frameType = type;
 	}
 
-	inline size_t typesize()
+	inline void set_controller(uint32_t cid)
 	{
-		return m_typesize;
+		m_data.controller = cid;
 	}
 
 	inline void set_data(unsigned char* stream, size_t size)
@@ -193,6 +210,12 @@ public:
 		stream = &data[0];
 
 		read_data(stream, data.size());
+	}
+
+	// Static data.
+	inline size_t typesize()
+	{
+		return m_typesize;
 	}
 
 };

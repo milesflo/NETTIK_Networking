@@ -11,14 +11,12 @@ namespace NETTIK
 
 	public:
 
-		//! Broadcast SnapshotStream
-		void BroadcastStream(SnapshotStream& stream, bool reliable);
-
 		//! Update routines.
 		void ControllerUpdate();
+		
+		void HandleClientEntSnapshot(const enet_uint8* data, size_t data_len, ENetPeer* peer);
 
-		IControllerServer();
-		IControllerServer(uint32_t rate);
+		explicit IControllerServer(uint32_t rate = 0);
 		virtual ~IControllerServer();
 
 		bool InitializeHost();

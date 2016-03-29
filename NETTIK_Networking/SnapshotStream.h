@@ -39,6 +39,13 @@ public:
 		return m_data.at(0);
 	}
 
+	inline void clear()
+	{
+		m_Finished = false;
+		m_data.clear();
+		m_data.emplace_back();
+	}
+
 	inline bool modified()
 	{
 		return m_data.size() > 1;

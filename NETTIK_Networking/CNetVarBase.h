@@ -20,7 +20,7 @@ protected:
 
 	bool SetGuard(VarType& data)
 	{
-		if (!m_pParent->m_Active)
+		if (!m_pParent->IsActive())
 			return false;
 
 		if (m_Data == data)

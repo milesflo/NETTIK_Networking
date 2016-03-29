@@ -5,6 +5,7 @@ namespace NETID_Reserved
 {
 	enum RTTI_Object
 	{
-		OBJECT_FRAME = 0xFFFA
+		OBJECT_FRAME     = 0xFFFA,
+		CLIENT_OWNERSHIP = 0xFFFB
 	};
 };

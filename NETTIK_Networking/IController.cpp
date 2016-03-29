@@ -8,6 +8,62 @@ static IController* s_PeerSingleton = nullptr;
 //! Issue message for when an unhandled packet is processed.
 const char* s_issueUnhandledPacket = "Unhandled packet, code: %u, packet length: %d\n";
 
+IController::Timer::Timer(uint32_t rate) : m_rate(rate)
+{
+	m_begin = std::chrono::steady_clock::now();
+}
+
+IController::Timer::~Timer()
+{
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+	auto loop_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - m_begin);
+	auto desired_time = std::chrono::milliseconds(1000 / m_rate);
+
+	std::this_thread::sleep_for(desired_time - loop_time);
+}
+
+void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
+{
+
+	NetObject*  target = nullptr;
+	uint32_t    queryID = frame.get_netid();
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+	{
+		target = it->second->FindObject(queryID);
+		if (target != nullptr)
+		{
+			break;
+		}
+	}
+
+	if (target == nullptr)
+	{
+		printf("warning: tried to update null entity with ID: %d\n", queryID);
+		return;
+	}
+
+	// If owner is set, check the permissions for updating this entity.
+	if (owner != nullptr)
+	{
+		if (target->m_pPeer != owner)
+		{
+			printf("warning: tried updating entity (ID = %d) with invalid permissions.\n", queryID);
+			return;
+		}
+	}
+
+	auto var_it = target->m_Vars.find(frame.get_name());
+	if (var_it == target->m_Vars.end())
+	{
+		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.get_name(), queryID);
+		return;
+	}
+
+	var_it->second->Set(const_cast<unsigned char*>(frame.get_data()), 0);
+}
+
 bool IController::IsServer()
 {
 	return m_bServer;
@@ -16,6 +72,15 @@ bool IController::IsServer()
 IController* IController::GetPeerSingleton()
 {
 	return s_PeerSingleton;
+}
+
+void IController::Destroy()
+{
+	while (m_bShuttingDown)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
+	delete(this);
 }
 
 void IController::DeletePeerSingleton()
@@ -137,11 +202,49 @@ void IController::Start()
 		m_pThread->Start();
 }
 
+void IController::SnapshotUpdate()
+{
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+	{
+		VirtualInstance* instance;
+		instance = it->second.get();
+
+
+		instance->DoSnapshot(m_reliableStream, true, false);
+		instance->DoSnapshot(m_unreliableStream, false, false);
+
+		if (m_reliableStream.modified())
+		{
+			if (IsServer())
+				BroadcastStream(m_reliableStream, true);
+			else
+				SendStream(m_reliableStream, true);
+		}
+
+		if (m_unreliableStream.modified())
+		{
+			if (IsServer())
+				BroadcastStream(m_unreliableStream, true);
+			else
+				SendStream(m_unreliableStream, true);
+		}
+	}
+
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
+
+	PostUpdate();
+
+	m_reliableStream.clear();
+	m_unreliableStream.clear();
+}
+
 void IController::Update()
 {
 	if (!m_bRunning)
 		return;
 
+	SnapshotUpdate();
 	ControllerUpdate();
 }
 
@@ -186,6 +289,14 @@ void IController::Run(bool& bThreadStatus)
 	{
 		ProcessNetStack();
 	}
+}
+
+void IController::BroadcastStream(SnapshotStream& stream, bool reliable)
+{
+	uint32_t flags;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
+
+	Broadcast(&stream.result()[0], stream.result().size(), flags, 0);
 }
 
 void IController::SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer)
@@ -295,6 +406,7 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 
 void IController::ProcessNetStack()
 {
+	Timer timer(m_iNetworkRate);
 
 	if (!m_bRunning)
 		return;
@@ -342,5 +454,4 @@ void IController::ProcessNetStack()
 		}
 	}
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(m_iNetworkRate));
 }

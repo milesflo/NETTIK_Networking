@@ -25,22 +25,14 @@ namespace NETTIK
 		class Timer
 		{
 		private:
+			bool m_bDelegated = false;
+
 			uint32_t m_rate;
 			std::chrono::steady_clock::time_point m_begin;
+
 		public:
-			Timer(uint32_t rate) : m_rate(rate)
-			{
-				m_begin = std::chrono::steady_clock::now();
-			}
-			~Timer()
-			{
-				std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-				auto loop_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - m_begin);
-				auto desired_time = std::chrono::milliseconds(1000 / m_rate);
-
-				std::this_thread::sleep_for(desired_time - loop_time);
-			}
+			Timer(uint32_t rate);
+			~Timer();
 		};
 
 		enum DISCONNECT_REASONS : NETTIK::INetworkCodes::msg_t
@@ -82,24 +74,29 @@ namespace NETTIK
 		virtual bool InitializeHost() = 0;
 
 		ENetEvent   m_CurrentEvent;
+
 		uint32_t    m_iNetworkRate;
+		uint32_t    m_iFPS;
 
 		IThread*    m_pThread = nullptr;
 
 		bool        m_bServer;
+
+		SnapshotStream m_reliableStream;
+		SnapshotStream m_unreliableStream;
+
+
 	public:
+
+		void ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner = nullptr);
+
+		//! Returns the single host used by this controller.
+		ENetHost* GetHost() const;
 
 		IController(uint32_t tickRate);
 		virtual ~IController();
 
-		void Destroy()
-		{
-			while (m_bShuttingDown)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			}
-			delete(this);
-		}
+		void Destroy();
 
 		//! Performs a post update, handled by server/client.
 		virtual void PostUpdate() = 0;
@@ -113,33 +110,20 @@ namespace NETTIK
 		//! Performs a tick, calls PostUpdate.
 		void Update();
 
+		void SnapshotUpdate();
+
 		//! Returns rate that messages get processed.
-		inline uint32_t GetNetworkRate(void) const
-		{
-			return m_iNetworkRate;
-		}
+		uint32_t GetNetworkRate(void) const;
 
 		//! Sets the rate that messages get processed.
-		inline void SetNetworkRate(uint32_t netRate)
-		{
-			m_iNetworkRate = netRate;
-		}
+		void SetNetworkRate(uint32_t netRate);
 
 		//! Returns if the controller is running or not.
-		inline bool IsRunning(void) const
-		{
-			return m_bRunning;
-		}
+		bool IsRunning(void) const;
 
 		//! Useful for clients as the first peer will be
 		// the server.
-		inline ENetPeer* GetFirstPeer()
-		{
-			if (m_PeerList.size() == 0)
-				return nullptr;
-
-			return m_PeerList.front(); /* todo: implement*/
-		}
+		ENetPeer* GetFirstPeer();
 
 		static std::string GetIPAddress(ENetAddress& addr);
 
@@ -160,6 +144,9 @@ namespace NETTIK
 
 		//! Sends data to the ENET peer.
 		void Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel);
+
+		//! Broadcast SnapshotStream
+		void BroadcastStream(SnapshotStream& stream, bool reliable);
 
 		//! Sends SnapshotStream
 		void SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer = nullptr);
@@ -196,20 +183,49 @@ namespace NETTIK
 
 	public:
 
-		inline void on(INetworkCodes::msg_t code, CallbackFunction_f callback)
-		{
-			m_Callbacks[code].push_back(callback);
-		}
+		void on(INetworkCodes::msg_t code, CallbackFunction_f callback);
 
-		inline void on_enet(ENetEventType evt, EventFunction_f callback)
-		{
-			m_EventCallbacks[evt].push_back(callback);
-		}
+		void on_enet(ENetEventType evt, EventFunction_f callback);
 
 		void FireEvent(ENetEventType evt, ENetEvent& evtFrame);
 
-		// TODO: add "once", "off"
-		// SEE: EventEmitters in JS
 	};
 
+	inline ENetHost* IController::GetHost() const
+	{
+		return m_pHost;
+	}
+
+	inline void IController::on(INetworkCodes::msg_t code, CallbackFunction_f callback)
+	{
+		m_Callbacks[code].push_back(callback);
+	}
+
+	inline void IController::on_enet(ENetEventType evt, EventFunction_f callback)
+	{
+		m_EventCallbacks[evt].push_back(callback);
+	}
+
+	inline ENetPeer* IController::GetFirstPeer()
+	{
+		if (m_PeerList.size() == 0)
+			return nullptr;
+
+		return m_PeerList.front(); /* todo: implement*/
+	}
+
+	inline uint32_t IController::GetNetworkRate(void) const
+	{
+		return m_iNetworkRate;
+	}
+
+	inline void IController::SetNetworkRate(uint32_t netRate)
+	{
+		m_iNetworkRate = netRate;
+	}
+
+	inline bool IController::IsRunning(void) const
+	{
+		return m_bRunning;
+	}
 }

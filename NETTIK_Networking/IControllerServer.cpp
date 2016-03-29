@@ -1,4 +1,5 @@
 #include "IControllerServer.hpp"
+using namespace std::placeholders;
 using namespace NETTIK;
 
 bool IControllerServer::InitializeHost()
@@ -11,14 +12,6 @@ bool IControllerServer::InitializeHost()
 	return true;
 }
 
-//! Broadcast SnapshotStream
-void IControllerServer::BroadcastStream(SnapshotStream& stream, bool reliable)
-{
-	uint32_t flags;
-	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
-
-	Broadcast(&stream.result()[0], stream.result().size(), flags, 0);
-}
 
 bool IControllerServer::InitializeAddress(const char* hostname, uint16_t port)
 {
@@ -31,12 +24,10 @@ IControllerServer::IControllerServer(uint32_t rate) : IController(rate)
 {
 	m_bReplicating = false;
 	m_bServer = true;
-}
 
-IControllerServer::IControllerServer() : IController(0)
-{
-	m_bReplicating = false;
-	m_bServer = true;
+
+	on(NETID_Reserved::RTTI_Object::OBJECT_FRAME, std::bind(&IControllerServer::HandleClientEntSnapshot, this, _1, _2, _3));
+
 }
 
 bool IControllerServer::Listen(uint16_t port, size_t peerLimit)
@@ -50,33 +41,44 @@ bool IControllerServer::Listen(uint16_t port, size_t peerLimit)
 	return true;
 }
 
-void IControllerServer::ControllerUpdate()
+
+void IControllerServer::HandleClientEntSnapshot(const enet_uint8* data, size_t data_len, ENetPeer* peer)
 {
+	SnapshotHeader header;
+	header.read(data, data_len);
 
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+	size_t expected_size = header.count() * header.max_size();
+	size_t header_size = data_len - header.size();
+
+	if (header_size != expected_size)
 	{
-		VirtualInstance* instance;
-		instance = it->second.get();
-
-		SnapshotStream reliableStream;
-		SnapshotStream unreliableStream;
-
-		instance->DoSnapshot(reliableStream, true, false);
-		instance->DoSnapshot(unreliableStream, false, false);
-
-		if (reliableStream.modified())
-			BroadcastStream(reliableStream, true);
-
-		if (unreliableStream.modified())
-			BroadcastStream(unreliableStream, false);
-
-
+		printf("warning: dropped snapshot, provided size '%d' when expected '%d'\n", header_size, expected_size);
+		return;
 	}
 
-	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
 
-	PostUpdate();
+	enet_uint8* partition;
+	partition = (enet_uint8*)(data);
+	partition += header.size();
+
+	// partition now at the first frame.
+	for (size_t i = 0; i < header.count(); i++)
+	{
+		SnapshotEntList frame;
+		frame.read_data(partition, header.max_size());
+
+		// Permissions are handled by the second parameter
+		if (frame.get_frametype() == kFRAME_Data)
+		{
+			ReadEntityUpdate(frame, peer);
+		}
+		partition += header.max_size();
+	}
+}
+
+
+void IControllerServer::ControllerUpdate()
+{
 
 }
 IControllerServer::~IControllerServer()

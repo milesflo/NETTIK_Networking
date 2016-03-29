@@ -21,6 +21,8 @@
 
 #include "Constraints.h"
 #include "NETIDReserved.h"
+#include "ReplicationInfo.h"
+#include "ControllerFlags.h"
 extern uint32_t m_TotalEntities;
 
 // Forward delcare some stuff.
@@ -47,6 +49,7 @@ private:
 	std::function<void(TypeObject*)> m_fCallbackDelete;
 
 	NETTIK::IController*   m_pGlobalController;
+
 public:
 
 	void SetCallbackCreate(std::function<void(TypeObject*)> func)
@@ -164,8 +167,13 @@ public:
 
 		m_Objects.safe_lock();
 
+
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
-			(*it)->Update(m_pGlobalController->IsServer());
+		{
+			ReplicationInfo replicationInfo(m_pGlobalController->IsServer(), (*it)->m_pPeer, (*it)->m_Controller);
+
+			(*it)->NetworkUpdate(replicationInfo);
+		}
 
 		m_Objects.safe_unlock();
 	}
@@ -216,6 +224,7 @@ public:
 		creationUpdate.set_frametype(FrameType::kFRAME_Alloc);
 		creationUpdate.set_name(m_name);
 		creationUpdate.set_netid(object->m_NetCode);
+		creationUpdate.set_controller(NET_CONTROLLER_LOCAL);
 
 		char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
 		creationUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
@@ -232,6 +241,7 @@ public:
 		{
 			// Update the creation update list to the current object
 			creationUpdate.set_netid((*it)->m_NetCode);
+			creationUpdate.set_controller((*it)->m_pPeer == object->m_pPeer ? NET_CONTROLLER_LOCAL : NET_CONTROLLER_NONE);
 
 			// Create a new stream to synch the current instance state to the new
 			// peer object.
@@ -299,15 +309,6 @@ public:
 		char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
 		deletionUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
 
-		SnapshotStream::Stream deletionStream;
-		deletionUpdate.write(deletionStream);
-
-		SnapshotStream reliableStream;
-		reliableStream.get()->push_back(deletionStream);
-
-		// Generate this packet's header.
-		SnapshotHeader::Generate(reliableStream, 0, 1, deletionStream.size());
-
 		m_Objects.safe_lock();
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
@@ -327,6 +328,15 @@ public:
 			else
 				++it;
 		}
+
+		SnapshotStream::Stream deletionStream;
+		deletionUpdate.write(deletionStream);
+
+		SnapshotStream reliableStream;
+		reliableStream.get()->push_back(deletionStream);
+
+		// Generate this packet's header.
+		SnapshotHeader::Generate(reliableStream, 0, 1, deletionStream.size());
 
 		server->BroadcastStream(reliableStream, true);
 

@@ -1,11 +1,14 @@
 #pragma once
 #include "IController.hpp"
+#include <unordered_map>
 
 namespace NETTIK
 {
 
 	class IControllerClient : public IController
 	{
+	private:
+		std::unordered_map<uint32_t, NetObject*> m_ControlledObjects;
 	public:
 		IControllerClient();
 		IControllerClient(uint32_t rate);
@@ -18,8 +21,8 @@ namespace NETTIK
 
 		void EntAllocate(SnapshotEntList& frame);
 		void EntDeallocate(SnapshotEntList& frame);
-		void EntUpdate(SnapshotEntList& frame);
 
+		void HandleEntOwnership(const enet_uint8* data, size_t data_len, ENetPeer* peer);
 		void HandleEntSnapshot(const enet_uint8* data, size_t data_len, ENetPeer* peer);
 
 		//! Creatse the client connection framework.
