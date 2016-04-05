@@ -6,7 +6,7 @@
 #include <google/protobuf/stubs/common.h>
 
 /* Important includes for constructing full interfaces */
-#include "IDebug.hpp"
+#include "IDebug.h"
 #include "INetworkCodes.hpp"
 #include "INetworkPacketFactory.hpp"
 

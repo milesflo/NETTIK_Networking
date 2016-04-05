@@ -1,5 +1,6 @@
 #include "IController.hpp"
-#include "IDebug.hpp"
+#include "IDebug.h"
+#include <enet\enet.h>
 using namespace NETTIK;
 
 //! Global singleton for the ENET peer.
@@ -131,14 +132,32 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 		NETTIK_EXCEPTION("ENET initialisation failed.");
 
 
+	// Processes the network stack.
 	m_pThread = new IThread([](void* pData, bool& bThreadStatus) {
 
 		IController* self;
 		self = static_cast<IController*>(pData);
 
 		self->Run(bThreadStatus);
+	}, this);
+
+	// Process entity synch.
+	m_pSyncThread = new IThread([](void* pData, bool& bThreadStatus) {
+
+		IController* self;
+		self = static_cast<IController*>(pData);
+
+		while (self->IsRunning() && bThreadStatus)
+		{
+			IController::Timer timer(self->GetNetworkRate());
+			self->Update();
+		}
+
+		self->Destroy();
 
 	}, this);
+
+
 }
 
 //
@@ -200,33 +219,44 @@ void IController::Start()
 
 	if (m_pThread)
 		m_pThread->Start();
+
+	if (m_pSyncThread)
+		m_pSyncThread->Start();
+
+
 }
 
 void IController::SnapshotUpdate()
 {
+	if (m_pHost->connectedPeers == 0)
+		return;
+
+	SnapshotStream reliableStream;
+	SnapshotStream unreliableStream;
+
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
 	{
 		VirtualInstance* instance;
 		instance = it->second.get();
 
 
-		instance->DoSnapshot(m_reliableStream, true, false);
-		instance->DoSnapshot(m_unreliableStream, false, false);
+		instance->DoSnapshot(reliableStream, true, false);
+		instance->DoSnapshot(unreliableStream, false, false);
 
-		if (m_reliableStream.modified())
+		if (reliableStream.modified())
 		{
 			if (IsServer())
-				BroadcastStream(m_reliableStream, true);
+				BroadcastStream(reliableStream, true);
 			else
-				SendStream(m_reliableStream, true);
+				SendStream(reliableStream, true);
 		}
 
-		if (m_unreliableStream.modified())
+		if (unreliableStream.modified())
 		{
 			if (IsServer())
-				BroadcastStream(m_unreliableStream, true);
+				BroadcastStream(unreliableStream, true);
 			else
-				SendStream(m_unreliableStream, true);
+				SendStream(unreliableStream, true);
 		}
 	}
 
@@ -235,8 +265,8 @@ void IController::SnapshotUpdate()
 
 	PostUpdate();
 
-	m_reliableStream.clear();
-	m_unreliableStream.clear();
+	reliableStream.clear();
+	unreliableStream.clear();
 }
 
 void IController::Update()
@@ -259,6 +289,12 @@ void IController::Stop()
 	{
 		delete(m_pThread);
 		m_pThread = nullptr;
+	}
+
+	if (m_pSyncThread != nullptr)
+	{
+		delete(m_pSyncThread);
+		m_pSyncThread = nullptr;
 	}
 
 	m_bRunning = false;
@@ -285,6 +321,7 @@ void IController::Stop()
 
 void IController::Run(bool& bThreadStatus)
 {
+
 	while (bThreadStatus && m_bRunning)
 	{
 		ProcessNetStack();

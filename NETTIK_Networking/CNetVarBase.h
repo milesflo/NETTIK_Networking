@@ -14,7 +14,7 @@ class CNetVarBase : public NetVar
 
 private:
 	bool        m_bChanged = true;
-
+	size_t      m_iChanges = 0;
 protected:
 	VarType     m_Data;
 
@@ -78,6 +78,13 @@ public:
 
 	}
 
+	inline size_t GetChanges()
+	{
+		size_t tmp = m_iChanges;
+		m_iChanges = 0;
+		return tmp;
+	}
+
 	void Set(unsigned char* ptr, size_t size)
 	{
 		if (size == 0)
@@ -87,7 +94,10 @@ public:
 		data = reinterpret_cast<unsigned char*>(&m_Data);
 
 		for (size_t i = 0; i < size; i++)
+		{
 			data[i] = ptr[i];
+		}
+		m_iChanges++;
 	}
 
 	void Set(VarType data)
@@ -96,5 +106,6 @@ public:
 			return;
 
 		m_Data = data;
+		m_iChanges++;
 	}
 };

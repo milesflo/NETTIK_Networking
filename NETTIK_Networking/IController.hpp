@@ -9,8 +9,8 @@
 #include <mutex>
 
 #include "INetworkCodes.hpp"
-#include "IDebug.hpp"
-#include "IThread.hpp"
+#include "IDebug.h"
+#include "IThread.h"
 #include "INetworkPacketFactory.hpp"
 #include "VirtualInstance.h"
 
@@ -79,11 +79,9 @@ namespace NETTIK
 		uint32_t    m_iFPS;
 
 		IThread*    m_pThread = nullptr;
+		IThread*    m_pSyncThread = nullptr;
 
 		bool        m_bServer;
-
-		SnapshotStream m_reliableStream;
-		SnapshotStream m_unreliableStream;
 
 
 	public:

@@ -1,4 +1,4 @@
-#include "IThread.hpp"
+#include "IThread.h"
 #include <cstdio>
 using namespace NETTIK;
 

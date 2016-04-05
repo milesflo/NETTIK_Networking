@@ -18,7 +18,7 @@ IControllerClient::IControllerClient(uint32_t rate) : IController(rate)
 	m_bServer = false;
 }
 
-IControllerClient::IControllerClient() : IController(0)
+IControllerClient::IControllerClient() : IController(60)
 {
 	if (!InitializeHost())
 		NETTIK_EXCEPTION("Failed establishing host, network protcol error.");
@@ -74,15 +74,13 @@ void IControllerClient::EntAllocate(SnapshotEntList& frame)
 
 	if (manager->GetByNetID(netID) == nullptr)
 	{
-		NetObject* instance = manager->AddLocal(netID);
-		//instance->m_Controller = controller;
+		NetObject* instance = manager->AddLocal(netID, controller);
 
 		if (controller == NET_CONTROLLER_LOCAL)
-		{
 			m_ControlledObjects[netID] = instance;
-		}
 
 	}
+
 }
 
 void IControllerClient::EntDeallocate(SnapshotEntList& frame)

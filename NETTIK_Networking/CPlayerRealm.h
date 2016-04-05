@@ -5,12 +5,11 @@
 #include <map>
 #include "NETTIK_Networking.hpp"
 
-template <class TypeName>
 class CPlayerRealm
 {
 private:
 	std::map<uint32_t,
-		std::unique_ptr<TypeName>
+		std::unique_ptr<NetObject>
 	> m_PlayerList;
 
 	std::list<uint32_t> m_FreeList;
@@ -32,6 +31,7 @@ public:
 		return i;
 	}
 
+	template <class TypeName>
 	TypeName* Add(ENetPeer* peer)
 	{
 		std::unique_ptr<TypeName> player(new TypeName());
@@ -44,6 +44,17 @@ public:
 		m_PlayerList[new_ID] = std::move(player);
 
 		return m_PlayerList[new_ID].get();
+	}
+
+	void Add(NetObject* object, ENetPeer* peer)
+	{
+		object->m_RealmID = GetFreeID();
+		object->m_pPeer = peer;
+
+		uint32_t new_ID;
+		new_ID = object->m_RealmID;
+
+		m_PlayerList[new_ID] = std::move(std::unique_ptr<NetObject>(object));
 	}
 
 	void ProcessRealmDeletes()
@@ -70,7 +81,23 @@ public:
 		return true;
 	}
 
-	TypeName* GetPlayer(uint32_t id)
+	bool RemoveByNetID(uint32_t netid)
+	{
+		for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
+		{
+			if (it->second->m_NetCode == netid)
+			{
+				m_FreeList.push_back(it->second->m_RealmID);
+				it->second.release();
+				m_PlayerList.erase(it);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	NetObject* GetPlayer(uint32_t id)
 	{
 		auto it = m_PlayerList.find(id);
 		if (it == m_PlayerList.end())
@@ -79,12 +106,25 @@ public:
 		return (*it).second.get();
 	}
 
-	TypeName* GetPlayer(ENetPeer* peer)
+	NetObject* GetPlayerByNetID(uint32_t netid)
 	{
 		for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 		{
-			if ((*it).second->m_pPeer == peer)
-				return (*it).second.get();
+			if (it->second->m_NetCode == netid)
+			{
+				return it->second.get();
+			}
+		}
+
+		return nullptr;
+	}
+
+	NetObject* GetPlayer(ENetPeer* peer)
+	{
+		for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
+		{
+			if (it->second->m_pPeer == peer)
+				return it->second.get();
 		}
 
 		return nullptr;

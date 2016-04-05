@@ -13,44 +13,66 @@ private:
 	std::recursive_mutex m_mutex;
 
 	typedef typename std::vector<T>::size_type size_type;
+
 public:
 
-	inline void safe_lock()
-	{
-		m_mutex.lock();
-	}
+	void safe_lock();
 
-	inline void safe_unlock()
-	{
-		m_mutex.unlock();
-	}
+	void safe_unlock();
 
-	inline my_vec* get()
-	{
-		return &m_contents;
-	}
+	my_vec* get();
 
-	inline void push_back(T v)
-	{
-		lock(m_mutex);
-		m_contents.push_back(v);
-	}
+	void push_back(T v);
 
-	inline T back()
-	{
-		lock(m_mutex);
-		return m_contents.back();
-	}
+	T back();
 
-	inline void pop_back(T v)
-	{
-		lock(m_mutex);
-		m_contents.pop_back();
-	}
+	void pop_back(T v);
 
-	inline T at(size_type index)
-	{
-		lock(m_mutex);
-		return m_contents.at(index);
-	}
+	T at(size_type index);
 };
+
+template <typename T>
+inline void LockableVector<T>::safe_lock()
+{
+	m_mutex.lock();
+}
+
+template <typename T>
+inline void LockableVector<T>::safe_unlock()
+{
+	m_mutex.unlock();
+}
+
+template <typename T>
+inline typename LockableVector<T>::my_vec* LockableVector<T>::get()
+{
+	return &m_contents;
+}
+
+template <typename T>
+inline void LockableVector<T>::push_back(T v)
+{
+	lock(m_mutex);
+	m_contents.push_back(v);
+}
+
+template <typename T>
+inline T LockableVector<T>::back()
+{
+	lock(m_mutex);
+	return m_contents.back();
+}
+
+template <typename T>
+inline void LockableVector<T>::pop_back(T v)
+{
+	lock(m_mutex);
+	m_contents.pop_back();
+}
+
+template <typename T>
+inline T LockableVector<T>::at(size_type index)
+{
+	lock(m_mutex);
+	return m_contents.at(index);
+}

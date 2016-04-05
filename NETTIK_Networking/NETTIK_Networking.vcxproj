@@ -194,8 +194,8 @@
     <ClInclude Include="IEntityManager.h" />
     <ClInclude Include="INetworkCodes.hpp" />
     <ClInclude Include="INetworkPacketFactory.hpp" />
-    <ClInclude Include="IDebug.hpp" />
-    <ClInclude Include="IThread.hpp" />
+    <ClInclude Include="IDebug.h" />
+    <ClInclude Include="IThread.h" />
     <ClInclude Include="LockableVector.h" />
     <ClInclude Include="NETIDReserved.h" />
     <ClInclude Include="NetObject.h" />

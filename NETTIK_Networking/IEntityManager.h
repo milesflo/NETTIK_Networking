@@ -16,7 +16,7 @@ public:
 
 	//! Adds a self-maintaining object. Invokes the type specifier's constructor but
 	//  operates in this scope.
-	virtual NetObject* AddLocal(uint32_t netid) = 0;
+	virtual NetObject* AddLocal(uint32_t netid, uint32_t controller = NET_CONTROLLER_NONE) = 0;
 
 	//! Removes a self-maintaing object.
 	virtual bool RemoveLocal(uint32_t entityCode) = 0;

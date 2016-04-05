@@ -1,7 +1,7 @@
 #pragma once
 #include "SnapshotStream.h"
 #include "INetworkCodes.hpp"
-#include "IDebug.hpp"
+#include "IDebug.h"
 #include "NETIDReserved.h"
 #include <enet\types.h>
 #include <cstddef>

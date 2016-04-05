@@ -67,7 +67,7 @@ public:
 		return m_name;
 	}
 
-	NetObject* AddLocal(uint32_t netid)
+	NetObject* AddLocal(uint32_t netid, uint32_t controller = NET_CONTROLLER_NONE)
 	{
 
 		m_Objects.safe_lock();
@@ -85,6 +85,7 @@ public:
 		object->m_NetCode = netid;
 		object->m_pInstance = m_pBaseInstance;
 		object->m_pManager = this;
+		object->m_Controller = controller;
 		object->SetIsServer(false);
 
 		// For fast lookup.
@@ -102,6 +103,8 @@ public:
 
 	bool RemoveLocal(uint32_t code)
 	{
+		bool result = false;
+
 		// Erase from object pointer list.
 		m_Objects.safe_lock();
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
@@ -126,9 +129,13 @@ public:
 		{
 			if ((*it)->m_NetCode == code)
 			{
+				// test___
 				m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
+				(*it)->m_pManager = nullptr;
 				delete(*it);
 				m_MaintainedObjects.get()->erase(it);
+
+				result = true;
 				break;
 			}
 			else
@@ -136,8 +143,9 @@ public:
 		}
 		m_MaintainedObjects.safe_unlock();
 
-		return false;
+		return result;
 	}
+
 	NetObject* GetByPeerID(ENetPeer* id)
 	{
 		for (auto it = m_ObjectRefs.begin(); it != m_ObjectRefs.end(); ++it)
@@ -224,7 +232,7 @@ public:
 		creationUpdate.set_frametype(FrameType::kFRAME_Alloc);
 		creationUpdate.set_name(m_name);
 		creationUpdate.set_netid(object->m_NetCode);
-		creationUpdate.set_controller(NET_CONTROLLER_LOCAL);
+		creationUpdate.set_controller(NET_CONTROLLER_NONE);
 
 		char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
 		creationUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
@@ -240,8 +248,12 @@ public:
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
 		{
 			// Update the creation update list to the current object
+			uint32_t controllerStatus;
+			controllerStatus = (*it)->m_pPeer == object->m_pPeer ? NET_CONTROLLER_LOCAL : NET_CONTROLLER_NONE;
 			creationUpdate.set_netid((*it)->m_NetCode);
-			creationUpdate.set_controller((*it)->m_pPeer == object->m_pPeer ? NET_CONTROLLER_LOCAL : NET_CONTROLLER_NONE);
+			creationUpdate.set_controller(controllerStatus);
+
+			printf("controller = %s\n", controllerStatus == NET_CONTROLLER_LOCAL ? "local" : "none");
 
 			// Create a new stream to synch the current instance state to the new
 			// peer object.
@@ -294,6 +306,7 @@ public:
 
 	bool Remove(uint32_t code)
 	{
+		bool result = false;
 
 		NETTIK::IControllerServer* server;
 		server = dynamic_cast<NETTIK::IControllerServer*>(m_pGlobalController);
@@ -323,6 +336,7 @@ public:
 
 				m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
 				m_Objects.get()->erase(it);
+				result = true;
 				break;
 			}
 			else
@@ -341,7 +355,7 @@ public:
 		server->BroadcastStream(reliableStream, true);
 
 		m_Objects.safe_unlock();
-		return false;
+		return result;
 	}
 
 	CEntities(VirtualInstance* baseInstance)

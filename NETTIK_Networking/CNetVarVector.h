@@ -1,7 +1,7 @@
 #pragma once
 #include "CNetVarBase.h"
 #include "CVector3.h"
-#include "IDebug.hpp"
+#include "IDebug.h"
 #define DEFINE_NetVector(name, reliable) \
 	CNetVarVector   name = CNetVarVector(this, #name, reliable)
 

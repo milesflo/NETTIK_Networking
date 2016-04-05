@@ -1,158 +1,209 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Core">
+      <UniqueIdentifier>{db196690-de82-4173-985a-2e09c03f3920}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Header Files\Utilities">
-      <UniqueIdentifier>{ef10652e-56b6-451e-a4cc-356afff5c913}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Packet Factory">
-      <UniqueIdentifier>{8849daa4-7235-442c-a056-fded2f9f2cc5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Controllers">
+    <Filter Include="Core\Controllers">
       <UniqueIdentifier>{31a6c664-8f67-4408-89dd-3a678f11920a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Controllers\headers">
+      <UniqueIdentifier>{6f5f4275-7e76-4f95-a3f8-8b2127b55fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Controllers\source">
+      <UniqueIdentifier>{cccaa7e2-1bd8-452c-86e9-8c57046c7989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Serialization">
+      <UniqueIdentifier>{91d2d1de-b3dd-4830-a3e3-cc17af3778ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Serialization\headers">
+      <UniqueIdentifier>{61c472be-64fa-413f-ad3e-b2eda74c3df4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Serialization\source">
+      <UniqueIdentifier>{5c7e9ef1-9182-458b-b097-fa2290e06394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocol Buffers">
+      <UniqueIdentifier>{53f1c7b1-19e1-4308-88eb-e9db3860c77a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocol Buffers\headers">
+      <UniqueIdentifier>{f305b874-0464-479d-98a4-ee4261da9a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocol Buffers\source">
+      <UniqueIdentifier>{bd5353c5-59b5-49bc-b00c-cd3c3ff4987b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocol Buffers\protos">
+      <UniqueIdentifier>{ff21811c-2ac5-4120-8b2e-ef6c5d28980d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{2e839791-af0f-4e04-b475-2e47766b2c40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Libraries">
+      <UniqueIdentifier>{a5032dd6-7285-4cfc-840d-bce17c964b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Libraries\headers">
+      <UniqueIdentifier>{dfdf6a4d-9e9d-497d-872f-0aa3af628c7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Libraries\source">
+      <UniqueIdentifier>{79bc4057-bfa3-49c5-b6a8-50b03db60f22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Object">
+      <UniqueIdentifier>{738b1a2f-d030-4722-bf4b-6f4a90225edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Object\headers">
+      <UniqueIdentifier>{6a29c5dd-647a-4f34-b4c3-99343a62496d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Object\source">
+      <UniqueIdentifier>{a6e49a43-35a5-4e39-aad1-80fc5b067bf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Virtual Instance">
+      <UniqueIdentifier>{0c29459d-b1a5-4948-8dee-eed8b8df3903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Virtual Instance\headers">
+      <UniqueIdentifier>{413aaf4b-1bfa-4c60-8691-ab8407a1f11d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Virtual Instance\source">
+      <UniqueIdentifier>{fe30637f-32ce-4957-abd0-002a8fa81e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Entity Manager">
+      <UniqueIdentifier>{1df8fc90-07fd-4521-bf8c-ffc67c8a374c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Entity Manager\headers">
+      <UniqueIdentifier>{22e138ea-7899-4aa0-bd3d-52c546476388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Entity Manager\source">
+      <UniqueIdentifier>{3019b1b7-d57e-4d7e-80c6-893393f65dc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NETTIK_Networking.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IThread.hpp">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="IDebug.hpp">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="INetworkPacketFactory.hpp">
-      <Filter>Header Files\Packet Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="INetworkCodes.hpp">
-      <Filter>Header Files\Packet Factory</Filter>
-    </ClInclude>
     <ClInclude Include="IController.hpp">
-      <Filter>Header Files\Controllers</Filter>
+      <Filter>Core\Controllers\headers</Filter>
     </ClInclude>
     <ClInclude Include="IControllerClient.hpp">
-      <Filter>Header Files\Controllers</Filter>
+      <Filter>Core\Controllers\headers</Filter>
     </ClInclude>
     <ClInclude Include="IControllerServer.hpp">
-      <Filter>Header Files\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="CEntities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityMessages.pb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VirtualInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CVector3.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="NetObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NetVar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayerRealm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LockableVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SnapshotStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SnapshotHeader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CNetVarBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CNetVarVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IEntityManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Controllers\headers</Filter>
     </ClInclude>
     <ClInclude Include="SnapshotEntList.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Serialization\headers</Filter>
     </ClInclude>
-    <ClInclude Include="Constraints.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NETIDReserved.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SnapshotHeader.h">
+      <Filter>Core\Serialization\headers</Filter>
     </ClInclude>
     <ClInclude Include="SnapshotOwnership.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Serialization\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SnapshotStream.h">
+      <Filter>Core\Serialization\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="INetworkCodes.hpp">
+      <Filter>Core\Serialization\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="INetworkPacketFactory.hpp">
+      <Filter>Core\Serialization\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityMessages.pb.h">
+      <Filter>Protocol Buffers\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NETTIK_Networking.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector3.h">
+      <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
     <ClInclude Include="ReplicationInfo.h">
-      <Filter>Header Files\Utilities</Filter>
+      <Filter>Core\Serialization\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NETIDReserved.h">
+      <Filter>Core\Serialization\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayerRealm.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="LockableVector.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetVar.h">
+      <Filter>Core\Network Object\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarBase.h">
+      <Filter>Core\Network Object\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarVector.h">
+      <Filter>Core\Network Object\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetObject.h">
+      <Filter>Core\Network Object\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualInstance.h">
+      <Filter>Entities\Virtual Instance\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IEntityManager.h">
+      <Filter>Entities\Entity Manager\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CEntities.h">
+      <Filter>Entities\Entity Manager\headers</Filter>
     </ClInclude>
     <ClInclude Include="ControllerFlags.h">
-      <Filter>Header Files\Utilities</Filter>
+      <Filter>Core\Controllers\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IThread.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IDebug.h">
+      <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="INetworkPacketFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NETTIK_Networking.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IThread.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Controllers\source</Filter>
     </ClCompile>
     <ClCompile Include="IControllerClient.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Controllers\source</Filter>
     </ClCompile>
     <ClCompile Include="IControllerServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CEntities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityMessages.pb.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VirtualInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CVector3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NetObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NetVar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CPlayerRealm.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Controllers\source</Filter>
     </ClCompile>
     <ClCompile Include="SnapshotHeader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Serialization\source</Filter>
+    </ClCompile>
+    <ClCompile Include="INetworkPacketFactory.cpp">
+      <Filter>Core\Serialization\source</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityMessages.pb.cc">
+      <Filter>Protocol Buffers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayerRealm.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector3.cpp">
+      <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="IThread.cpp">
+      <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NetVar.cpp">
+      <Filter>Core\Network Object\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NetObject.cpp">
+      <Filter>Core\Network Object\source</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualInstance.cpp">
+      <Filter>Entities\Virtual Instance\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CEntities.cpp">
+      <Filter>Entities\Entity Manager\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NETTIK_Networking.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EntityMessages.proto">
-      <Filter>Resource Files</Filter>
+      <Filter>Protocol Buffers\protos</Filter>
     </None>
   </ItemGroup>
 </Project>

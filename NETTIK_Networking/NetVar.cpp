@@ -1,6 +1,6 @@
 #include "NetVar.h"
 #include "NetObject.h"
-#include "IDebug.hpp"
+#include "IDebug.h"
 using namespace NETTIK;
 
 NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name), m_pParent(parent), m_Reliable(reliable)

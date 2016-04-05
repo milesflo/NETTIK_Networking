@@ -1,7 +1,7 @@
 #pragma once
 #include "SnapshotStream.h"
 #include "INetworkCodes.hpp"
-#include "IDebug.hpp"
+#include "IDebug.h"
 #include "SnapshotHeader.h"
 #include "Constraints.h"
 #include <enet\types.h>
@@ -79,6 +79,9 @@ public:
 
 		for (size_t i = 0; i < m_typesize; i++)
 			data.push_back(*stream++);
+
+		for (size_t i = m_typesize; i < max_entvar_data; i++)
+			data.push_back(0);
 	}
 
 	void read_data(const enet_uint8* stream, size_t stream_len)
@@ -113,12 +116,12 @@ public:
 
 		m_data.controller = *controller_ptr;
 
-		for (int i = 0; i < max_entvar_name; i++)
+		for (size_t i = 0; i < max_entvar_name; i++)
 		{
 			if (*current_ptr == 0)
 				break;
 
-			m_data.name[i] = (char)*current_ptr++;
+			m_data.name[i] = (unsigned char)*current_ptr++;
 		}
 
 		current_ptr++;
@@ -189,7 +192,9 @@ public:
 	inline void set_data(unsigned char* stream, size_t size)
 	{
 		for (size_t i = 0; i < size; i++)
+		{
 			m_data.data[i] = stream[i];
+		}
 
 		m_typesize = size;
 	}
