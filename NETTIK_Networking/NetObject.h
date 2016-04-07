@@ -47,6 +47,7 @@ public:
 
 	virtual ~NetObject()
 	{
+		printf("DESTROY.\n");
 		if (m_pManager != nullptr)
 			DestroyNetworkedEntity();
 		else

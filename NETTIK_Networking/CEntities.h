@@ -299,13 +299,14 @@ public:
 		}
 
 		m_Objects.safe_unlock();
-		m_fCallbackCreate(dynamic_cast<TypeObject*>(object));
+		m_fCallbackCreate(static_cast<TypeObject*>(object));
 
 		return object->m_NetCode;
 	}
 
 	bool Remove(uint32_t code)
 	{
+		printf("[remove]\n");
 		bool result = false;
 
 		NETTIK::IControllerServer* server;
@@ -324,9 +325,10 @@ public:
 
 		m_Objects.safe_lock();
 
+		
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 		{
-
+			printf("[remove \\ loop]\n");
 			if ((*it)->m_NetCode == code)
 			{
 
@@ -334,7 +336,10 @@ public:
 				if (map_it != m_ObjectRefs.end())
 					m_ObjectRefs.erase(map_it);
 
-				m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
+				(*it)->m_pInstance = nullptr;
+				(*it)->m_pManager = nullptr;
+
+				m_fCallbackDelete(static_cast<TypeObject*>(*it));
 				m_Objects.get()->erase(it);
 				result = true;
 				break;
