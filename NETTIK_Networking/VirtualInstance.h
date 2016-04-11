@@ -26,27 +26,10 @@ private:
 	std::vector<mgrvec_it> m_PendingDeletes;
 public:
 
-	NetObject* FindObject(uint32_t netid)
-	{
-
-		for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
-		{
-			NetObject* entry;
-			entry = it->second->GetByNetID(netid);
-
-			if (entry != nullptr)
-				return entry;
-
-		}
-
-		return nullptr;
-	}
+	NetObject* FindObject(uint32_t netid);
 
 	//! Gets instance's name.
-	inline std::string& GetName()
-	{
-		return m_sName;
-	}
+	std::string& GetName();
 
 	void DoPostUpdate();
 	void DoSnapshot(SnapshotStream& collection, bool bReliableFlag, bool bForced = false);
@@ -58,7 +41,7 @@ public:
 	virtual ~VirtualInstance();
 
 	template <class T>
-	IEntityManager* CreateEntityManager(std::string name, std::function<void(T*)> callbackCreate, std::function<void(T*)> callbackDelete)
+	IEntityManager* CreateManager(std::string name, std::function<void(T*)> callbackCreate, std::function<void(T*)> callbackDelete)
 	{
 		CEntities<T>* mgr = new CEntities<T>(this);
 		mgr->SetName(name);
@@ -70,7 +53,7 @@ public:
 	}
 
 	template <class T>
-	CEntities<T>* GetEntityManager(std::string name)
+	CEntities<T>* GetManager(std::string name)
 	{
 		auto it = m_EntManagers.find(name);
 		if (it != m_EntManagers.end())
@@ -79,7 +62,7 @@ public:
 			return nullptr;
 	}
 
-	IEntityManager* GetEntitiyManagerInterface(std::string name)
+	IEntityManager* GetManager(std::string name)
 	{
 		auto it = m_EntManagers.find(name);
 		if (it != m_EntManagers.end())
@@ -89,4 +72,12 @@ public:
 	}
 
 };
+
 using VirtualInstance_ptr = std::unique_ptr<VirtualInstance>;
+
+
+//! Gets instance's name.
+inline std::string& VirtualInstance::GetName()
+{
+	return m_sName;
+}

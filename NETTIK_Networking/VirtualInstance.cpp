@@ -4,6 +4,22 @@
 #include <vector>
 using namespace NETTIK;
 
+NetObject* VirtualInstance::FindObject(uint32_t netid)
+{
+
+	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
+	{
+		NetObject* entry;
+		entry = it->second->GetByNetID(netid);
+
+		if (entry != nullptr)
+			return entry;
+
+	}
+
+	return nullptr;
+}
+
 void VirtualInstance::DoPostUpdate()
 {
 	// Process pending ent manager deletions.

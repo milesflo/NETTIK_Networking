@@ -67,7 +67,7 @@ void IControllerClient::EntAllocate(SnapshotEntList& frame)
 		NETTIK_EXCEPTION("Invalid instance field passed from server.");
 
 	IEntityManager* manager;
-	manager = instance->GetEntitiyManagerInterface(manager_name);
+	manager = instance->GetManager(manager_name);
 
 	if (manager == nullptr)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
@@ -97,7 +97,7 @@ void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 		NETTIK_EXCEPTION("Invalid instance field passed from server.");
 
 	IEntityManager* manager;
-	manager = instance->GetEntitiyManagerInterface(manager_name);
+	manager = instance->GetManager(manager_name);
 
 	if (manager == nullptr)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");

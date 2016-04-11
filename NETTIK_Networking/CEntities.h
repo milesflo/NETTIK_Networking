@@ -159,6 +159,7 @@ public:
 
 		return nullptr;
 	}
+
 	NetObject* GetByNetID(uint32_t id)
 	{
 		auto it = m_ObjectRefs.find(id);
@@ -253,8 +254,6 @@ public:
 			creationUpdate.set_netid((*it)->m_NetCode);
 			creationUpdate.set_controller(controllerStatus);
 
-			printf("controller = %s\n", controllerStatus == NET_CONTROLLER_LOCAL ? "local" : "none");
-
 			// Create a new stream to synch the current instance state to the new
 			// peer object.
 			SnapshotStream::Stream creationStream;
@@ -306,7 +305,6 @@ public:
 
 	bool Remove(uint32_t code)
 	{
-		printf("[remove]\n");
 		bool result = false;
 
 		NETTIK::IControllerServer* server;
@@ -328,7 +326,6 @@ public:
 		
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 		{
-			printf("[remove \\ loop]\n");
 			if ((*it)->m_NetCode == code)
 			{
 
