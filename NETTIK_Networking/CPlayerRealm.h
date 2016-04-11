@@ -31,7 +31,7 @@ public:
 		uint32_t new_ID;
 		new_ID = player->m_RealmID;
 
-		NetObject* result;
+		TypeName* result;
 		result = player.get();
 
 		m_PlayerList[new_ID] = std::move(player);
