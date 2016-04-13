@@ -1,13 +1,13 @@
 #pragma once
 #include "CNetVarBase.h"
-#include "CVector3.h"
+#include "CNetworkVector3.h"
 #include "IDebug.h"
 #define DEFINE_NetVector(name, reliable) \
 	CNetVarVector   name = CNetVarVector(this, #name, reliable)
 
 //! A three dimension network variable for representing
 //  X,Y,Z.
-class CNetVarVector : public CNetVarBase<NETTIK::CVector3>
+class CNetVarVector : public CNetVarBase<NETTIK::CNetworkVector3>
 {
 public:
 	
@@ -18,7 +18,7 @@ public:
 
 	void Set(float x, float y, float z)
 	{
-		NETTIK::CVector3 compose(x, y, z);
+		NETTIK::CNetworkVector3 compose(x, y, z);
 		if (!SetGuard(compose))
 			return;
 

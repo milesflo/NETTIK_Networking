@@ -9,7 +9,6 @@
 
 // TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
 #include "IEntityManager.h"
-#include "CVector3.h"
 #include "INetworkPacketFactory.hpp"
 #include "EntityMessages.pb.h"
 

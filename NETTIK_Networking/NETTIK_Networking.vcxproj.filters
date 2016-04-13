@@ -111,9 +111,6 @@
     <ClInclude Include="NETTIK_Networking.hpp">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="CVector3.h">
-      <Filter>Standard Libraries\headers</Filter>
-    </ClInclude>
     <ClInclude Include="ReplicationInfo.h">
       <Filter>Core\Serialization\headers</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
     <ClInclude Include="IDebug.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
+    <ClInclude Include="CNetworkVector3.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IController.cpp">
@@ -179,9 +179,6 @@
     <ClCompile Include="CPlayerRealm.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="CVector3.cpp">
-      <Filter>Standard Libraries\source</Filter>
-    </ClCompile>
     <ClCompile Include="IThread.cpp">
       <Filter>Standard Libraries\source</Filter>
     </ClCompile>
@@ -199,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="NETTIK_Networking.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetworkVector3.cpp">
+      <Filter>Standard Libraries\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
