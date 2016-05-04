@@ -156,6 +156,12 @@
     <ClInclude Include="CNetworkVector3.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
+    <ClInclude Include="CNetVarString.h">
+      <Filter>Core\Network Object\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBit.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IController.cpp">

@@ -82,9 +82,11 @@ namespace NETTIK
 		IThread*    m_pSyncThread = nullptr;
 
 		bool        m_bServer;
-
+		bool        m_bDumpMode = false;
 
 	public:
+
+		void Dump();
 
 		void ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner = nullptr);
 

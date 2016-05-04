@@ -81,7 +81,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DynamicRelease|Win32'">
     <IncludePath>..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Release;..\lib\x86-release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\DynamicRelease;..\lib\x86-release-dynamic;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -176,12 +176,13 @@
       <AdditionalDependencies>libprotobuf.lib;enet.lib;ws2_32.lib;winmm.lib</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>copy /Y "..\Release\NETTIK_Networking.lib" "..\lib\x86-release-dynamic\"</Command>
+      <Command>copy /Y "..\DynamicRelease\NETTIK_Networking.lib" "..\lib\x86-release-dynamic\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CEntities.h" />
     <ClInclude Include="CNetVarBase.h" />
+    <ClInclude Include="CNetVarString.h" />
     <ClInclude Include="CNetVarVector.h" />
     <ClInclude Include="Constraints.h" />
     <ClInclude Include="ControllerFlags.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="IDebug.h" />
     <ClInclude Include="IThread.h" />
     <ClInclude Include="LockableVector.h" />
+    <ClInclude Include="NetBit.h" />
     <ClInclude Include="NETIDReserved.h" />
     <ClInclude Include="NetObject.h" />
     <ClInclude Include="NETTIK_Networking.hpp" />

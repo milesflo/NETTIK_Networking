@@ -62,7 +62,14 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 		return;
 	}
 
-	var_it->second->Set(const_cast<unsigned char*>(frame.get_data()), 0);
+	if (target->m_Controller == NET_CONTROLLER_LOCAL && frame.get_forced() == false)
+	{
+		printf("dropping synch as hasnt been flagged as forced.\n");
+	}
+	else
+	{
+		var_it->second->Set(const_cast<unsigned char*>(frame.get_data()), 0, owner);
+	}
 }
 
 bool IController::IsServer()
@@ -228,8 +235,8 @@ void IController::Start()
 
 void IController::SnapshotUpdate()
 {
-	if (m_pHost->connectedPeers == 0)
-		return;
+//	if (m_pHost->connectedPeers == 0)
+//		return;
 
 	SnapshotStream reliableStream;
 	SnapshotStream unreliableStream;
@@ -441,6 +448,12 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 	}
 }
 
+void IController::Dump()
+{
+	printf("IController DUMP mode enabled.\n");
+	m_bDumpMode = true;
+}
+
 void IController::ProcessNetStack()
 {
 	Timer timer(m_iNetworkRate);
@@ -480,6 +493,26 @@ void IController::ProcessNetStack()
 
 		case ENET_EVENT_TYPE_RECEIVE:
 		{
+			if (m_bDumpMode)
+			{
+				printf("#raw: ");
+				for (size_t i = 0; i < m_CurrentEvent.packet->dataLength; i++)
+				{
+					printf("%1x ", m_CurrentEvent.packet->data[i]);
+				} printf("\n");
+
+				printf("#str: ");
+				for (size_t i = 0; i < m_CurrentEvent.packet->dataLength; i++)
+				{
+					const char ch = static_cast<const char>(m_CurrentEvent.packet->data[i]);
+
+					if (ch >= 65 && ch <= 172)
+						printf("%c ", ch);
+					else
+						printf("%1x ", ch);
+				} printf("\n");
+
+			}
 			// Send for processing.
 			ProcessRecv(m_CurrentEvent.packet->data, m_CurrentEvent.packet->dataLength, m_CurrentEvent.peer);
 

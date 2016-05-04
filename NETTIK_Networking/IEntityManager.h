@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <enet/enet.h>
 #include "SnapshotStream.h"
 #include "NetObject.h"
 

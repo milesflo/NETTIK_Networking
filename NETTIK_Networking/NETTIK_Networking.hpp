@@ -18,3 +18,4 @@
 /* Some macros in here */
 #include "CNetVarBase.h"
 #include "CNetVarVector.h"
+#include "CNetVarString.h"

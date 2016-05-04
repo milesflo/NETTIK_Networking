@@ -12,20 +12,13 @@
 */
 syntax = "proto3";
 
-message INetVector2
+message ProtoMessageVector
 {
 	float x = 1;
 	float y = 2;
 }
 
-message IMessageNewObject_New
+message ProtoMessageRPC
 {
-	uint32 id = 1;
-	uint32 type = 2;
-	string name = 3;
-}
-
-message IMessageNewObject_Del
-{
-	uint32 id = 1;
+	bool val = 1;
 }

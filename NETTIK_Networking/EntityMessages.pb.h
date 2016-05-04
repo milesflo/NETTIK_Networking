@@ -34,38 +34,37 @@ void protobuf_AddDesc_EntityMessages_2eproto();
 void protobuf_AssignDesc_EntityMessages_2eproto();
 void protobuf_ShutdownFile_EntityMessages_2eproto();
 
-class INetVector2;
-class IMessageNewObject_New;
-class IMessageNewObject_Del;
+class ProtoMessageVector;
+class ProtoMessageRPC;
 
 // ===================================================================
 
-class INetVector2 : public ::google::protobuf::Message {
+class ProtoMessageVector : public ::google::protobuf::Message {
  public:
-  INetVector2();
-  virtual ~INetVector2();
+  ProtoMessageVector();
+  virtual ~ProtoMessageVector();
 
-  INetVector2(const INetVector2& from);
+  ProtoMessageVector(const ProtoMessageVector& from);
 
-  inline INetVector2& operator=(const INetVector2& from) {
+  inline ProtoMessageVector& operator=(const ProtoMessageVector& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const INetVector2& default_instance();
+  static const ProtoMessageVector& default_instance();
 
-  void Swap(INetVector2* other);
+  void Swap(ProtoMessageVector* other);
 
   // implements Message ----------------------------------------------
 
-  inline INetVector2* New() const { return New(NULL); }
+  inline ProtoMessageVector* New() const { return New(NULL); }
 
-  INetVector2* New(::google::protobuf::Arena* arena) const;
+  ProtoMessageVector* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const INetVector2& from);
-  void MergeFrom(const INetVector2& from);
+  void CopyFrom(const ProtoMessageVector& from);
+  void MergeFrom(const ProtoMessageVector& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -80,7 +79,7 @@ class INetVector2 : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(INetVector2* other);
+  void InternalSwap(ProtoMessageVector* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -108,7 +107,7 @@ class INetVector2 : public ::google::protobuf::Message {
   float y() const;
   void set_y(float value);
 
-  // @@protoc_insertion_point(class_scope:INetVector2)
+  // @@protoc_insertion_point(class_scope:ProtoMessageVector)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -121,36 +120,36 @@ class INetVector2 : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_EntityMessages_2eproto();
 
   void InitAsDefaultInstance();
-  static INetVector2* default_instance_;
+  static ProtoMessageVector* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class IMessageNewObject_New : public ::google::protobuf::Message {
+class ProtoMessageRPC : public ::google::protobuf::Message {
  public:
-  IMessageNewObject_New();
-  virtual ~IMessageNewObject_New();
+  ProtoMessageRPC();
+  virtual ~ProtoMessageRPC();
 
-  IMessageNewObject_New(const IMessageNewObject_New& from);
+  ProtoMessageRPC(const ProtoMessageRPC& from);
 
-  inline IMessageNewObject_New& operator=(const IMessageNewObject_New& from) {
+  inline ProtoMessageRPC& operator=(const ProtoMessageRPC& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const IMessageNewObject_New& default_instance();
+  static const ProtoMessageRPC& default_instance();
 
-  void Swap(IMessageNewObject_New* other);
+  void Swap(ProtoMessageRPC* other);
 
   // implements Message ----------------------------------------------
 
-  inline IMessageNewObject_New* New() const { return New(NULL); }
+  inline ProtoMessageRPC* New() const { return New(NULL); }
 
-  IMessageNewObject_New* New(::google::protobuf::Arena* arena) const;
+  ProtoMessageRPC* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const IMessageNewObject_New& from);
-  void MergeFrom(const IMessageNewObject_New& from);
+  void CopyFrom(const ProtoMessageRPC& from);
+  void MergeFrom(const ProtoMessageRPC& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -165,7 +164,7 @@ class IMessageNewObject_New : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(IMessageNewObject_New* other);
+  void InternalSwap(ProtoMessageRPC* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -181,122 +180,25 @@ class IMessageNewObject_New : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional uint32 id = 1;
-  void clear_id();
-  static const int kIdFieldNumber = 1;
-  ::google::protobuf::uint32 id() const;
-  void set_id(::google::protobuf::uint32 value);
+  // optional bool val = 1;
+  void clear_val();
+  static const int kValFieldNumber = 1;
+  bool val() const;
+  void set_val(bool value);
 
-  // optional uint32 type = 2;
-  void clear_type();
-  static const int kTypeFieldNumber = 2;
-  ::google::protobuf::uint32 type() const;
-  void set_type(::google::protobuf::uint32 value);
-
-  // optional string name = 3;
-  void clear_name();
-  static const int kNameFieldNumber = 3;
-  const ::std::string& name() const;
-  void set_name(const ::std::string& value);
-  void set_name(const char* value);
-  void set_name(const char* value, size_t size);
-  ::std::string* mutable_name();
-  ::std::string* release_name();
-  void set_allocated_name(::std::string* name);
-
-  // @@protoc_insertion_point(class_scope:IMessageNewObject_New)
+  // @@protoc_insertion_point(class_scope:ProtoMessageRPC)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::uint32 id_;
-  ::google::protobuf::uint32 type_;
-  ::google::protobuf::internal::ArenaStringPtr name_;
+  bool val_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
   friend void protobuf_AssignDesc_EntityMessages_2eproto();
   friend void protobuf_ShutdownFile_EntityMessages_2eproto();
 
   void InitAsDefaultInstance();
-  static IMessageNewObject_New* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class IMessageNewObject_Del : public ::google::protobuf::Message {
- public:
-  IMessageNewObject_Del();
-  virtual ~IMessageNewObject_Del();
-
-  IMessageNewObject_Del(const IMessageNewObject_Del& from);
-
-  inline IMessageNewObject_Del& operator=(const IMessageNewObject_Del& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const IMessageNewObject_Del& default_instance();
-
-  void Swap(IMessageNewObject_Del* other);
-
-  // implements Message ----------------------------------------------
-
-  inline IMessageNewObject_Del* New() const { return New(NULL); }
-
-  IMessageNewObject_Del* New(::google::protobuf::Arena* arena) const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const IMessageNewObject_Del& from);
-  void MergeFrom(const IMessageNewObject_Del& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  void InternalSwap(IMessageNewObject_Del* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return _internal_metadata_.arena();
-  }
-  inline void* MaybeArenaPtr() const {
-    return _internal_metadata_.raw_arena_ptr();
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional uint32 id = 1;
-  void clear_id();
-  static const int kIdFieldNumber = 1;
-  ::google::protobuf::uint32 id() const;
-  void set_id(::google::protobuf::uint32 value);
-
-  // @@protoc_insertion_point(class_scope:IMessageNewObject_Del)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  bool _is_default_instance_;
-  ::google::protobuf::uint32 id_;
-  mutable int _cached_size_;
-  friend void  protobuf_AddDesc_EntityMessages_2eproto();
-  friend void protobuf_AssignDesc_EntityMessages_2eproto();
-  friend void protobuf_ShutdownFile_EntityMessages_2eproto();
-
-  void InitAsDefaultInstance();
-  static IMessageNewObject_Del* default_instance_;
+  static ProtoMessageRPC* default_instance_;
 };
 // ===================================================================
 
@@ -304,132 +206,55 @@ class IMessageNewObject_Del : public ::google::protobuf::Message {
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// INetVector2
+// ProtoMessageVector
 
 // optional float x = 1;
-inline void INetVector2::clear_x() {
+inline void ProtoMessageVector::clear_x() {
   x_ = 0;
 }
-inline float INetVector2::x() const {
-  // @@protoc_insertion_point(field_get:INetVector2.x)
+inline float ProtoMessageVector::x() const {
+  // @@protoc_insertion_point(field_get:ProtoMessageVector.x)
   return x_;
 }
-inline void INetVector2::set_x(float value) {
+inline void ProtoMessageVector::set_x(float value) {
   
   x_ = value;
-  // @@protoc_insertion_point(field_set:INetVector2.x)
+  // @@protoc_insertion_point(field_set:ProtoMessageVector.x)
 }
 
 // optional float y = 2;
-inline void INetVector2::clear_y() {
+inline void ProtoMessageVector::clear_y() {
   y_ = 0;
 }
-inline float INetVector2::y() const {
-  // @@protoc_insertion_point(field_get:INetVector2.y)
+inline float ProtoMessageVector::y() const {
+  // @@protoc_insertion_point(field_get:ProtoMessageVector.y)
   return y_;
 }
-inline void INetVector2::set_y(float value) {
+inline void ProtoMessageVector::set_y(float value) {
   
   y_ = value;
-  // @@protoc_insertion_point(field_set:INetVector2.y)
+  // @@protoc_insertion_point(field_set:ProtoMessageVector.y)
 }
 
 // -------------------------------------------------------------------
 
-// IMessageNewObject_New
+// ProtoMessageRPC
 
-// optional uint32 id = 1;
-inline void IMessageNewObject_New::clear_id() {
-  id_ = 0u;
+// optional bool val = 1;
+inline void ProtoMessageRPC::clear_val() {
+  val_ = false;
 }
-inline ::google::protobuf::uint32 IMessageNewObject_New::id() const {
-  // @@protoc_insertion_point(field_get:IMessageNewObject_New.id)
-  return id_;
+inline bool ProtoMessageRPC::val() const {
+  // @@protoc_insertion_point(field_get:ProtoMessageRPC.val)
+  return val_;
 }
-inline void IMessageNewObject_New::set_id(::google::protobuf::uint32 value) {
+inline void ProtoMessageRPC::set_val(bool value) {
   
-  id_ = value;
-  // @@protoc_insertion_point(field_set:IMessageNewObject_New.id)
-}
-
-// optional uint32 type = 2;
-inline void IMessageNewObject_New::clear_type() {
-  type_ = 0u;
-}
-inline ::google::protobuf::uint32 IMessageNewObject_New::type() const {
-  // @@protoc_insertion_point(field_get:IMessageNewObject_New.type)
-  return type_;
-}
-inline void IMessageNewObject_New::set_type(::google::protobuf::uint32 value) {
-  
-  type_ = value;
-  // @@protoc_insertion_point(field_set:IMessageNewObject_New.type)
-}
-
-// optional string name = 3;
-inline void IMessageNewObject_New::clear_name() {
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& IMessageNewObject_New::name() const {
-  // @@protoc_insertion_point(field_get:IMessageNewObject_New.name)
-  return name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void IMessageNewObject_New::set_name(const ::std::string& value) {
-  
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:IMessageNewObject_New.name)
-}
-inline void IMessageNewObject_New::set_name(const char* value) {
-  
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:IMessageNewObject_New.name)
-}
-inline void IMessageNewObject_New::set_name(const char* value, size_t size) {
-  
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:IMessageNewObject_New.name)
-}
-inline ::std::string* IMessageNewObject_New::mutable_name() {
-  
-  // @@protoc_insertion_point(field_mutable:IMessageNewObject_New.name)
-  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* IMessageNewObject_New::release_name() {
-  
-  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void IMessageNewObject_New::set_allocated_name(::std::string* name) {
-  if (name != NULL) {
-    
-  } else {
-    
-  }
-  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
-  // @@protoc_insertion_point(field_set_allocated:IMessageNewObject_New.name)
-}
-
-// -------------------------------------------------------------------
-
-// IMessageNewObject_Del
-
-// optional uint32 id = 1;
-inline void IMessageNewObject_Del::clear_id() {
-  id_ = 0u;
-}
-inline ::google::protobuf::uint32 IMessageNewObject_Del::id() const {
-  // @@protoc_insertion_point(field_get:IMessageNewObject_Del.id)
-  return id_;
-}
-inline void IMessageNewObject_Del::set_id(::google::protobuf::uint32 value) {
-  
-  id_ = value;
-  // @@protoc_insertion_point(field_set:IMessageNewObject_Del.id)
+  val_ = value;
+  // @@protoc_insertion_point(field_set:ProtoMessageRPC.val)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 

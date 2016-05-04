@@ -3,11 +3,14 @@
 #include <unordered_map>
 #include <inttypes.h>
 #include <mutex>
+#include <string>
 
 #include "SnapshotStream.h"
 #include "ReplicationInfo.h"
-#define DEFINE_NETOBJECT(typeName) \
-	std::string GetNetObject_Name() const { return typeName; }
+
+// Static debug return information.
+#define DEFINE_NetObject(typeName) \
+	const std::string GetNetObject_Name() const { return typeName; }
 
 class NetVar;
 class VirtualInstance;
@@ -22,12 +25,19 @@ public:
 
 	std::unordered_map<std::string, NetVar*> m_Vars;
 	// These are set by DEFINE_NETOBJECT.
-	virtual std::string   GetNetObject_Name() const = 0;
+	virtual const std::string GetNetObject_Name() const = 0;
 
 	// Snapshotting
 	// - size_t result is the LARGEST update element (for padding)
 	// TODO: Pass reliable flag for generating reliable/unsequenced snapshots.
-	void TakeObjectSnapshot(size_t& max_value, uint16_t& num_update, SnapshotStream& buffers, bool bReliableFlag, bool bForced = false);
+	void TakeObjectSnapshot(
+		size_t&				max_value,
+		uint16_t&			num_update,
+		SnapshotStream&		buffers,
+		bool				bReliableFlag,
+
+		bool		bForced			= false
+	);
 
 	inline bool IsActive() const { return m_bActive; }
 	inline bool IsServer() const { return m_bIsServer; }
@@ -41,20 +51,46 @@ public:
 	virtual void NetworkUpdate(ReplicationInfo& repinfo) = 0;
 
 public:
+
+	std::string NetObject::GetPeerHost()
+	{
+		if (m_pPeer == nullptr)
+			return "nullptr:0";
+
+		char buffer[32] = { 0 };
+		enet_address_get_host_ip(&m_pPeer->address, buffer, 32);
+
+		return std::string(buffer) + std::to_string(m_pPeer->address.port);
+	}
+
 	std::recursive_mutex m_Mutex;
+
+	//! Is the object controlled by this.
+	bool IsNetworkLocal();
+
+	//! Is the object remotely synched.
+	bool IsNetworkRemote();
 
 	void DestroyNetworkedEntity();
 
 	virtual ~NetObject()
 	{
-		printf("DESTROY.\n");
 		if (m_pManager != nullptr)
 			DestroyNetworkedEntity();
-		else
-			printf("warning: deleting network object without referenced ent manager.");
-	};
+	}
 
 private:
 	bool m_bIsServer = true;
 	bool m_bActive = true;
 };
+
+
+inline bool NetObject::IsNetworkLocal()
+{
+	return m_Controller == NET_CONTROLLER_LOCAL;
+}
+
+inline bool NetObject::IsNetworkRemote()
+{
+	return m_Controller != NET_CONTROLLER_LOCAL;
+}

@@ -68,6 +68,7 @@ public:
 
 	NetObject* AddLocal(uint32_t netid, uint32_t controller = NET_CONTROLLER_NONE)
 	{
+		printf("%s: created object of type '%s'\n", __FUNCTION__, controller == NET_CONTROLLER_LOCAL ? "local" : "remote");
 
 		m_Objects.safe_lock();
 		m_MaintainedObjects.safe_lock();
@@ -209,6 +210,7 @@ public:
 
 	uint32_t Add(NetObject* object)
 	{
+		// Sets object attributes.
 		object->m_NetCode = (m_TotalEntities++);
 		object->m_pInstance = m_pBaseInstance;
 		object->m_pManager = this;
@@ -216,6 +218,7 @@ public:
 		// For fast lookup.
 		m_ObjectRefs[object->m_NetCode] = object;
 
+		// Get the server controller.
 		NETTIK::IControllerServer* server;
 		server = dynamic_cast<NETTIK::IControllerServer*>(m_pGlobalController);
 
@@ -225,9 +228,7 @@ public:
 		SnapshotStream reliableStream;
 		SnapshotStream unreliableStream;
 
-		m_Objects.safe_lock();
-		m_Objects.get()->push_back(object);
-
+		// Creation object for new entity. 
 		SnapshotEntList creationUpdate;
 		creationUpdate.set_frametype(FrameType::kFRAME_Alloc);
 		creationUpdate.set_name(m_name);
@@ -237,33 +238,36 @@ public:
 		char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
 		creationUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
 
-		SnapshotStream::Stream creationStream;
-		creationUpdate.write(creationStream);
+		SnapshotStream::Stream creationStreamNewObject;
+		creationUpdate.write(creationStreamNewObject);
 
-		reliableStream.get()->push_back(creationStream);
+		reliableStream.get()->push_back(creationStreamNewObject);
 
-		m_pBaseInstance->DoSnapshot(reliableStream, true, true);
-		m_pBaseInstance->DoSnapshot(unreliableStream, false, true);
+		m_Objects.safe_lock();
+		m_Objects.get()->push_back(object);
 
-		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
+		m_pBaseInstance->DoSnapshot(reliableStream, true, false);
+		m_pBaseInstance->DoSnapshot(unreliableStream, false, false);
+
+		for (auto object_it = m_Objects.get()->begin(); object_it != m_Objects.get()->end(); ++object_it)
 		{
 			// Update the creation update list to the current object
 			uint32_t controllerStatus;
-			controllerStatus = (*it)->m_pPeer == object->m_pPeer ? NET_CONTROLLER_LOCAL : NET_CONTROLLER_NONE;
-			creationUpdate.set_netid((*it)->m_NetCode);
+			controllerStatus = (*object_it)->m_pPeer == object->m_pPeer ? NET_CONTROLLER_LOCAL : NET_CONTROLLER_NONE;
+			creationUpdate.set_netid((*object_it)->m_NetCode);
 			creationUpdate.set_controller(controllerStatus);
 
 			// Create a new stream to synch the current instance state to the new
 			// peer object.
-			SnapshotStream::Stream creationStream;
-			creationUpdate.write(creationStream);
+			SnapshotStream::Stream creationStreamExistingObject;
+			creationUpdate.write(creationStreamExistingObject);
 
 			// Set up a reliable stream for allocating new net IDs.
 			SnapshotStream creationStreamReliable;
-			creationStreamReliable.get()->push_back(creationStream);
+			creationStreamReliable.get()->push_back(creationStreamExistingObject);
 
 			// Generate this packet's header.
-			SnapshotHeader::Generate(creationStreamReliable, 0, 1, creationStream.size());
+			SnapshotHeader::Generate(creationStreamReliable, 0, 1, creationStreamExistingObject.size());
 
 			// Send it to the new peer.
 			if (object->m_pPeer)
@@ -272,18 +276,27 @@ public:
 			}
 
 			// Inform all the objects of the snapshot changes (new objects)
-			if ((*it)->m_pPeer)
+			if ((*object_it)->m_pPeer)
 			{
-				server->SendStream(creationStreamReliable, true, (*it)->m_pPeer);
-
+			//	server->SendStream(reliableStream, true, (*object_it)->m_pPeer);
+			//	server->SendStream(unreliableStream, false, (*object_it)->m_pPeer);
 			}
 		}
 
+		// Broadcast the creation update.
 		if (reliableStream.modified())
 			server->BroadcastStream(reliableStream, true);
 
 		if (unreliableStream.modified())
 			server->BroadcastStream(unreliableStream, false);
+
+		// Clear streams to make way for full snapshot stream.
+		reliableStream.clear();
+		unreliableStream.clear();
+
+		// Get a full snapshot of the current object list to send to the new player.
+		m_pBaseInstance->DoSnapshot(reliableStream, true, true);
+		m_pBaseInstance->DoSnapshot(unreliableStream, false, true);
 
 
 		// Inform this object to player.

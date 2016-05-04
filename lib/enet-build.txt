@@ -1,0 +1,12 @@
+Fresh build was done on 19/04/16. This built Release and Debug targetting x86 and compiled in both STATIC and DYNAMIC.
+
+To build: Download ENET source, extract and place premake5.exe inside directory. Add IDE platform to command line then open
+solution file. Add both libraries:
+	
+#pragma comment(lib, "Ws2_32.lib")
+
+	#pragma comment(lib, "WINMM.LIB")
+
+... into enet.h.
+
+Change project "code generation" to the appropriate versions without the "DLL" attached (for static .lib linking)

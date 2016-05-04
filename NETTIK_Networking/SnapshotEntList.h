@@ -5,6 +5,7 @@
 #include "SnapshotHeader.h"
 #include "Constraints.h"
 #include <enet\types.h>
+#include <cstddef>
 
 // Todo: Reorder because this being 4 bytes is bad.
 //       but.... it ensures that data is aligned ok...
@@ -17,20 +18,28 @@ enum FrameType : uint32_t
 
 struct SnapshotEntListDataEntry
 {
-	FrameType frameType;
+	FrameType frameType;							// 0x00
 
 	// NetID
-	uint32_t netID = 0;
+	uint32_t netID = 0;								// 0x04
 
-	uint32_t controller = NET_CONTROLLER_NONE;
+	uint32_t controller = NET_CONTROLLER_NONE;		// 0x08
 	
+	// Forced flag.
+	bool forced = false;
+
 	// Entity name / varname
 	char name[max_entvar_name] = { 0 };
 	
 	// Data buffer.
 	unsigned char data[max_entvar_data] = { 0 };
+
+	// Unused.
+	bool padding_01 = false;
+	bool padding_02 = false;
+	bool padding_03 = false;
 };
-static_assert(sizeof(SnapshotEntListDataEntry) == 68U + 128U + 4U + 4U, "SnapshotEntListDataEntry size not correct.");
+static_assert(sizeof(SnapshotEntListDataEntry) == 68U + 128U + 4U + 4U + 4U, "SnapshotEntListDataEntry size not correct.");
 
 inline void* add_ptr(void* in, size_t offset)
 {
@@ -54,8 +63,11 @@ public:
 
 	void write(SnapshotStream::Stream& data)
 	{
+		unsigned char* base_ptr;
+		base_ptr = reinterpret_cast<unsigned char*>(&m_data);
+
 		unsigned char* stream;
-		stream = reinterpret_cast<unsigned char*>(&m_data);
+		stream = base_ptr;
 
 		for (size_t i = 0; i < sizeof(FrameType); i++)
 			data.push_back(stream[i]);
@@ -68,6 +80,10 @@ public:
 		for (size_t i = 0; i < sizeof(uint32_t); i++)
 			data.push_back(stream[i]);
 		stream += sizeof(uint32_t);
+
+		//printf("writing forced = %d for %s\n", *stream, m_data.name);
+		data.push_back(*stream);
+		stream += sizeof(bool);
 
 		size_t name_length = strlen(m_data.name);
 
@@ -82,6 +98,7 @@ public:
 
 		for (size_t i = m_typesize; i < max_entvar_data; i++)
 			data.push_back(0);
+
 	}
 
 	void read_data(const enet_uint8* stream, size_t stream_len)
@@ -95,8 +112,11 @@ public:
 		// header | [data entry]
 		// | network id |
 
+		unsigned char* base_ptr;
+		base_ptr = reinterpret_cast<unsigned char*>(const_cast<enet_uint8*>(stream));
+
 		unsigned char* current_ptr;
-		current_ptr = reinterpret_cast<unsigned char*>(const_cast<enet_uint8*>(stream));
+		current_ptr = base_ptr;
 
 		FrameType* frameType_ptr;
 		frameType_ptr = reinterpret_cast<FrameType*>(current_ptr);
@@ -116,6 +136,12 @@ public:
 
 		m_data.controller = *controller_ptr;
 
+		bool* forced_ptr;
+		forced_ptr = reinterpret_cast<bool*>(current_ptr);
+		current_ptr += sizeof(bool);
+
+		m_data.forced = *forced_ptr;
+
 		for (size_t i = 0; i < max_entvar_name; i++)
 		{
 			if (*current_ptr == 0)
@@ -123,6 +149,8 @@ public:
 
 			m_data.name[i] = (unsigned char)*current_ptr++;
 		}
+
+		//printf("received forced = %d for %s\n", m_data.forced, m_data.name);
 
 		current_ptr++;
 
@@ -134,6 +162,17 @@ public:
 		m_data.data[data_len + 1] = 0; // null terminate
 
 		m_dataPointer = reinterpret_cast<void*>(++current_ptr);
+
+	}
+
+	inline bool get_forced() const
+	{
+		return m_data.forced;
+	}
+
+	inline void set_forced(bool val)
+	{
+		m_data.forced = val;
 	}
 
 	inline const void* get_ptr() const

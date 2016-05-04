@@ -79,8 +79,12 @@ void IControllerServer::HandleClientEntSnapshot(const enet_uint8* data, size_t d
 
 void IControllerServer::ControllerUpdate()
 {
+	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
+		it->second->DoPostUpdate();
 
+	PostUpdate();
 }
+
 IControllerServer::~IControllerServer()
 {
 
