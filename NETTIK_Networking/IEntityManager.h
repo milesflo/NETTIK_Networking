@@ -12,7 +12,7 @@ public:
 
 	virtual NetObject* GetByNetID(uint32_t id) = 0;
 	virtual NetObject* GetByPeerID(ENetPeer* id) = 0;
-	virtual void PostUpdate() = 0;
+	virtual void PostUpdate(float elapsedTime) = 0;
 	virtual void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& buffers, bool bReliableFlag, bool bForced) = 0;
 
 	//! Adds a self-maintaining object. Invokes the type specifier's constructor but

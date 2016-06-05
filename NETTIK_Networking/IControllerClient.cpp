@@ -45,12 +45,12 @@ bool IControllerClient::InitializeAddress(const char* hostname, uint16_t port)
 	return true;
 }
 
-void IControllerClient::ControllerUpdate()
+void IControllerClient::ControllerUpdate(float elapsedTime)
 {
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
+		it->second->DoPostUpdate(elapsedTime);
 
-	PostUpdate();
+	PostUpdate(elapsedTime);
 }
 
 void IControllerClient::EntAllocate(SnapshotEntList& frame)

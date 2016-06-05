@@ -40,17 +40,15 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 	}
 
 	if (target == nullptr)
-	{
-		printf("warning: tried to update null entity with ID: %d\n", queryID);
 		return;
-	}
 
 	// If owner is set, check the permissions for updating this entity.
+	// This will happen when clients resync entities that aren't theirs, but
+	// this could also be called by a malicious peer.
 	if (owner != nullptr)
 	{
 		if (target->m_pPeer != owner)
 		{
-			printf("warning: tried updating entity (ID = %d) with invalid permissions.\n", queryID);
 			return;
 		}
 	}
@@ -64,7 +62,6 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 
 	if (target->m_Controller == NET_CONTROLLER_LOCAL && frame.get_forced() == false)
 	{
-		printf("dropping synch as hasnt been flagged as forced.\n");
 	}
 	else
 	{
@@ -157,7 +154,7 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 		while (self->IsRunning() && bThreadStatus)
 		{
 			IController::Timer timer(self->GetNetworkRate());
-			self->Update();
+			self->Update(1000.0f / static_cast<float>(self->GetNetworkRate()));
 		}
 
 		self->Destroy();
@@ -166,22 +163,6 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 
 }
-
-//
-//IController::~IController()
-//{
-//	printf("yo.\n");
-//	// Flag the controller as stopped.
-//	Stop();
-//
-//	// We don't need ENET anymore.
-//	enet_deinitialize();
-//
-//	// Delete the global singleton (this!)
-//	// (doesn't actually delete the singleton,
-//	// just dereferences it)
-//	DeletePeerSingleton();
-//}
 
 VirtualInstance* IController::CreateInstance(std::string name)
 {
@@ -233,7 +214,7 @@ void IController::Start()
 
 }
 
-void IController::SnapshotUpdate()
+void IController::SnapshotUpdate(float elapsedTime)
 {
 //	if (m_pHost->connectedPeers == 0)
 //		return;
@@ -268,21 +249,21 @@ void IController::SnapshotUpdate()
 	}
 
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
+		it->second->DoPostUpdate(elapsedTime);
 
-	PostUpdate();
+	PostUpdate(elapsedTime);
 
 	reliableStream.clear();
 	unreliableStream.clear();
 }
 
-void IController::Update()
+void IController::Update(float elapsedTime)
 {
 	if (!m_bRunning)
 		return;
 
-	SnapshotUpdate();
-	ControllerUpdate();
+	SnapshotUpdate(elapsedTime);
+	ControllerUpdate(elapsedTime);
 }
 
 void IController::Stop()

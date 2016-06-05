@@ -12,7 +12,7 @@ namespace NETTIK
 	public:
 
 		//! Update routines.
-		void ControllerUpdate();
+		void ControllerUpdate(float elapsedTime);
 		
 		void HandleClientEntSnapshot(const enet_uint8* data, size_t data_len, ENetPeer* peer);
 

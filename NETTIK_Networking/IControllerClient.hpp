@@ -15,7 +15,7 @@ namespace NETTIK
 		virtual ~IControllerClient();
 
 		//! Update routines.
-		void ControllerUpdate();
+		void ControllerUpdate(float elapsedTime);
 
 		//! Entity replication
 

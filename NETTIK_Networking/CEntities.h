@@ -51,6 +51,11 @@ private:
 
 public:
 
+	LockableVector<NetObject*>& GetObjects()
+	{
+		return m_Objects;
+	}
+
 	void SetCallbackCreate(std::function<void(TypeObject*)> func)
 	{
 		m_fCallbackCreate = func;
@@ -169,7 +174,7 @@ public:
 		return (it->second);
 	}
 
-	void PostUpdate()
+	void PostUpdate(float elapsedTime)
 	{
 		if (!m_pGlobalController->IsRunning())
 			return;
@@ -179,7 +184,7 @@ public:
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
 		{
-			ReplicationInfo replicationInfo(m_pGlobalController->IsServer(), (*it)->m_pPeer, (*it)->m_Controller);
+			ReplicationInfo replicationInfo(m_pGlobalController->IsServer(), (*it)->m_pPeer, (*it)->m_Controller, elapsedTime);
 
 			(*it)->NetworkUpdate(replicationInfo);
 		}

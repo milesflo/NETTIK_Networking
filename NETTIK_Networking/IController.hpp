@@ -99,18 +99,18 @@ namespace NETTIK
 		void Destroy();
 
 		//! Performs a post update, handled by server/client.
-		virtual void PostUpdate() = 0;
+		virtual void PostUpdate(float elapsedTime) = 0;
+
+		//! Performs a controller type update.
+		virtual void ControllerUpdate(float elapsedTime) = 0;
 
 		//! Returns if the controller is a server or not.
 		bool IsServer();
 
-		//! Performs a controller type update.
-		virtual void ControllerUpdate() = 0;
-
 		//! Performs a tick, calls PostUpdate.
-		void Update();
+		void Update(float elapsedTime);
 
-		void SnapshotUpdate();
+		void SnapshotUpdate(float elapsedTime);
 
 		//! Returns rate that messages get processed.
 		uint32_t GetNetworkRate(void) const;

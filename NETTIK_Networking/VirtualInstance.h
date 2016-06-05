@@ -31,7 +31,7 @@ public:
 	//! Gets instance's name.
 	std::string& GetName();
 
-	void DoPostUpdate();
+	void DoPostUpdate(float elapsedTime);
 	void DoSnapshot(SnapshotStream& collection, bool bReliableFlag, bool bForced = false);
 
 	void DestroyEntityManager(std::string name);

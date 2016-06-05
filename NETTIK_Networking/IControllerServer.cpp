@@ -77,12 +77,12 @@ void IControllerServer::HandleClientEntSnapshot(const enet_uint8* data, size_t d
 }
 
 
-void IControllerServer::ControllerUpdate()
+void IControllerServer::ControllerUpdate(float elapsedTime)
 {
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
-		it->second->DoPostUpdate();
+		it->second->DoPostUpdate(elapsedTime);
 
-	PostUpdate();
+	PostUpdate(elapsedTime);
 }
 
 IControllerServer::~IControllerServer()

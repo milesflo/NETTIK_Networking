@@ -30,7 +30,8 @@ public:
 	// Snapshotting
 	// - size_t result is the LARGEST update element (for padding)
 	// TODO: Pass reliable flag for generating reliable/unsequenced snapshots.
-	void TakeObjectSnapshot(
+	void TakeObjectSnapshot
+	(
 		size_t&				max_value,
 		uint16_t&			num_update,
 		SnapshotStream&		buffers,
@@ -80,8 +81,8 @@ public:
 	}
 
 private:
-	bool m_bIsServer = true;
-	bool m_bActive = true;
+	bool m_bIsServer  = true;
+	bool m_bActive    = true;
 };
 
 

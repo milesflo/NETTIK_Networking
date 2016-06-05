@@ -20,7 +20,7 @@ NetObject* VirtualInstance::FindObject(uint32_t netid)
 	return nullptr;
 }
 
-void VirtualInstance::DoPostUpdate()
+void VirtualInstance::DoPostUpdate(float elapsedTime)
 {
 	// Process pending ent manager deletions.
 	for (auto it = m_PendingDeletes.begin(); it != m_PendingDeletes.end(); )
@@ -32,7 +32,7 @@ void VirtualInstance::DoPostUpdate()
 	// Process ent managers still in list.
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{
-		it->second->PostUpdate();
+		it->second->PostUpdate(elapsedTime);
 	}
 
 }
