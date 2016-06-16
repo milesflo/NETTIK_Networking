@@ -181,6 +181,7 @@ namespace NETTIK
 
 		> m_EventCallbacks;
 
+		std::mutex m_ENET_RW;
 	public:
 
 		void on(INetworkCodes::msg_t code, CallbackFunction_f callback);
@@ -189,6 +190,7 @@ namespace NETTIK
 
 		void FireEvent(ENetEventType evt, ENetEvent& evtFrame);
 
+		int ServiceHostSafe(ENetHost *, ENetEvent *, enet_uint32);
 	};
 
 	inline ENetHost* IController::GetHost() const

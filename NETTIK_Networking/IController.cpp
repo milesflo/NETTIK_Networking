@@ -355,6 +355,9 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 	*/
 //	printf("Sending %d\n", *(INetworkCodes::msg_t*)(data));
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
+
+	std::unique_lock<std::mutex> _(m_ENET_RW);
+
 	enet_peer_send(peer, channel, packet);
 }
 
@@ -362,7 +365,7 @@ void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t fl
 {
 	if (!m_bRunning)
 		return;
-
+	
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
 /*
@@ -372,6 +375,8 @@ void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t fl
 	};  printf("\n");
 */
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
+	std::unique_lock<std::mutex> _(m_ENET_RW);
+
 	enet_host_broadcast(m_pHost, channel, packet);
 }
 
@@ -435,14 +440,22 @@ void IController::Dump()
 	m_bDumpMode = true;
 }
 
+int IController::ServiceHostSafe(ENetHost* pHost, ENetEvent* pEvent, enet_uint32 flag)
+{
+	std::unique_lock<std::mutex> _(m_ENET_RW);
+	return enet_host_service(pHost, pEvent, 0);
+}
+
 void IController::ProcessNetStack()
 {
 	Timer timer(m_iNetworkRate);
 
 	if (!m_bRunning)
 		return;
+
 	// Check m_bRunning again on each loop.
-	while (m_pHost != nullptr && m_bRunning && enet_host_service(m_pHost, &m_CurrentEvent, 0) > 0)
+
+	while (m_pHost != nullptr && m_bRunning && ServiceHostSafe(m_pHost, &m_CurrentEvent, 0) > 0)
 	{
 		ENetEventType type = m_CurrentEvent.type;
 
