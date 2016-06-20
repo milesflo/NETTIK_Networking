@@ -431,9 +431,9 @@ inline size_t CEntities<TypeObject>::Count()
 {
 	size_t result;
 
-	m_Objects.safe_lock();
+//	m_Objects.safe_lock();
 	result = m_Objects.get()->size();
-	m_Objects.safe_unlock();
+//	m_Objects.safe_unlock();
 	return result;
 
 }
