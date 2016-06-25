@@ -54,6 +54,9 @@ public:
 	size_t Count();
 	size_t CountMaintained();
 
+	// Returns a controlled object specified in the index.
+	TypeObject* GetControlled(uint32_t index = 0);
+
 	LockableVector<NetObject*>& GetObjects()
 	{
 		return m_Objects;
@@ -218,6 +221,19 @@ public:
 
 	virtual ~CEntities();
 };
+
+template <class TypeObject>
+TypeObject* CEntities<TypeObject>::GetControlled(uint32_t index)
+{
+	uint32_t current_index = 0;
+	for (auto it = m_ObjectRefs.begin(); it != m_ObjectRefs.end(); ++it)
+	{
+		if ((*it).second->m_Controller == NET_CONTROLLER_LOCAL && current_index == index)
+			return dynamic_cast<TypeObject*>((*it).second);
+	}
+
+	return nullptr;
+}
 
 template <class TypeObject>
 void CEntities<TypeObject>::SetName(std::string name)

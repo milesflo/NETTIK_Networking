@@ -47,6 +47,9 @@ public:
 
 	void ClearChanges();
 
+	//! Increments the changes value to provoke a scripted update.
+	void InvalidateChanges();
+
 	//! Sets raw data and invalidates packet. Natural process is the function is called remotely.
 	void Set(unsigned char* ptr, size_t size, ENetPeer* pWho);
 
@@ -88,7 +91,14 @@ void CNetVarBase<VarType>::Invalidate()
 template< class VarType >
 CNetVarBase<VarType>::CNetVarBase(NetObject* parent, const char* name, bool reliable) : NetVar(parent, name, reliable)
 {
+	unsigned char* pVarData;
+	pVarData = reinterpret_cast<unsigned char*>(&m_Data);
 
+	// For data safety, fill the variable with 00 bytes.
+	for (size_t i = 0; i < sizeof(VarType); i++)
+	{
+		pVarData[ i ] = 0;
+	}
 }
 
 template< class VarType >
@@ -152,6 +162,13 @@ inline void CNetVarBase<VarType>::ClearChanges()
 {
 	m_iChanges = 0;
 }
+
+template< class VarType >
+inline void CNetVarBase<VarType>::InvalidateChanges()
+{
+	++ m_iChanges;
+}
+
 
 template< class VarType >
 void CNetVarBase<VarType>::Set(unsigned char* ptr, size_t size, ENetPeer* pWho)
