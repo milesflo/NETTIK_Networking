@@ -120,14 +120,6 @@ IController::~IController()
 	DeletePeerSingleton();
 }
 
-std::string IController::GetIPAddress(ENetAddress& addr)
-{
-	char buffer[32];
-	enet_address_get_host_ip(&addr, buffer, 32);
-
-	return std::string(buffer);
-}
-
 IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 {
 	SetPeerSingleton(this);

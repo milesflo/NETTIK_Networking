@@ -193,6 +193,19 @@ namespace NETTIK
 		int ServiceHostSafe(ENetHost *, ENetEvent *, enet_uint32);
 	};
 
+
+	inline std::string IController::GetIPAddress(ENetAddress& addr)
+	{
+		char buffer[20];
+		
+		if (enet_address_get_host_ip(&addr, buffer, 20) < 0)
+		{
+			return "?.?.?.?";
+		}
+
+		return std::string(buffer);
+	}
+
 	inline ENetHost* IController::GetHost() const
 	{
 		return m_pHost;
