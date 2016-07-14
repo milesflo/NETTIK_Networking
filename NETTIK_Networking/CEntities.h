@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #pragma once
 #include <vector>
 #include <string>
@@ -416,8 +422,7 @@ CEntities<TypeObject>::CEntities(VirtualInstance* baseInstance)
 {
 	m_pBaseInstance = baseInstance;
 
-	NETTIK::IController* controller;
-	controller = NETTIK::IController::GetPeerSingleton();
+	NETTIK::IController* controller = NETTIK::IController::GetSingleton( );
 
 	if (!controller)
 		throw std::runtime_error("IController not found.");

@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #include "NetVar.h"
 #include "NetObject.h"
 #include "IDebug.h"
@@ -7,7 +13,9 @@ NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name
 {
 	if (m_pParent->m_Mutex.try_lock())
 	{
-		m_pParent->m_Vars[m_Name] = this;
+		NetObject::VariableList_t& vars = m_pParent->GetVariables();
+		vars[m_Name] = this;
+
 		m_pParent->m_Mutex.unlock();
 	}
 	else
@@ -18,7 +26,9 @@ NetVar::~NetVar()
 {
 	if (m_pParent->m_Mutex.try_lock())
 	{
-		m_pParent->m_Vars.erase(m_Name);
+		NetObject::VariableList_t& vars = m_pParent->GetVariables();
+		vars.erase(m_Name);
+
 		m_pParent->m_Mutex.unlock();
 	}
 }

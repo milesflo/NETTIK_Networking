@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #include "INetworkPacketFactory.hpp"
 #include "IController.hpp"
 #include <sstream>
@@ -51,7 +57,7 @@ INetworkCodes::msg_t IPacketFactory::GetCode(std::string& data)
 
 void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags, uint8_t channel)
 {
-	IController* controller = IController::GetPeerSingleton();
+	IController* controller = IController::GetSingleton();
 
 	// Drop the packet.
 	if (controller == nullptr)
@@ -67,7 +73,7 @@ void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCode
 
 void IPacketFactory::DispatchRaw(const enet_uint8* buffer, const size_t buffer_len, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags, uint8_t channel)
 {
-	IController* controller = IController::GetPeerSingleton();
+	IController* controller = IController::GetSingleton();
 
 	// Drop the packet.
 	if (controller == nullptr)
@@ -82,8 +88,7 @@ void IPacketFactory::DispatchRaw(const enet_uint8* buffer, const size_t buffer_l
 
 ENetPeer* IPacketFactory::GetFirstPeer()
 {
-	IController* controller;
-	controller = IController::GetPeerSingleton();
+	IController* controller = IController::GetSingleton();
 
 	if (controller == nullptr)
 		NETTIK_EXCEPTION("Failed to get global controller object, nullptr.");

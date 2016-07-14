@@ -162,6 +162,9 @@
     <ClInclude Include="NetBit.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="SynchronousTimer.h">
+      <Filter>Core\Controllers\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IController.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="CNetworkVector3.cpp">
       <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="SynchronousTimer.cpp">
+      <Filter>Core\Controllers\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

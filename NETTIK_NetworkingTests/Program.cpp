@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #include "NETTIK_Networking.hpp"
 #include "CPlayerRealm.h"
 #include <iostream>
@@ -26,8 +32,6 @@ BOOL WINAPI CtrlHandler(DWORD type)
 class CPlayer : public NetObject
 {
 public:
-	DEFINE_NETOBJECT("Player");
-
 	DEFINE_NetVar(char, m_Char, true);
 	DEFINE_NetVar(uint32_t, m_Int, false);
 

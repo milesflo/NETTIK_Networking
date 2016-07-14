@@ -1,10 +1,17 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #pragma once
 #include "NetVar.h"
 #include "Constraints.h"
 #include "SnapshotEntList.h"
 #include <cstddef>
-#define DEFINE_NetVar(type, name, reliable) \
-	CNetVarBase<type> name = CNetVarBase<type>(this, #name, reliable)
+
+#define NetworkVariable(type, name, reliable) \
+	CNetVarBase< type > name = CNetVarBase< type >( this, #name, reliable )
 
 //! A templated class for representing a fixed data type (non-pointer)
 //  network variable.

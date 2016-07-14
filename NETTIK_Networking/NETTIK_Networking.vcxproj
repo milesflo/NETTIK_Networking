@@ -220,6 +220,7 @@
     <ClInclude Include="SnapshotHeader.h" />
     <ClInclude Include="SnapshotOwnership.h" />
     <ClInclude Include="SnapshotStream.h" />
+    <ClInclude Include="SynchronousTimer.h" />
     <ClInclude Include="VirtualInstance.h" />
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +237,7 @@
     <ClCompile Include="NETTIK_Networking.cpp" />
     <ClCompile Include="NetVar.cpp" />
     <ClCompile Include="SnapshotHeader.cpp" />
+    <ClCompile Include="SynchronousTimer.cpp" />
     <ClCompile Include="VirtualInstance.cpp" />
   </ItemGroup>
   <ItemGroup>

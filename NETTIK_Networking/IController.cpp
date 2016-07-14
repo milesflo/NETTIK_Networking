@@ -1,28 +1,20 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #include "IController.hpp"
 #include "IDebug.h"
+#include "SynchronousTimer.h"
 #include <enet\enet.h>
 using namespace NETTIK;
 
 //! Global singleton for the ENET peer.
-static IController* s_PeerSingleton = nullptr;
+IController* IController::s_PeerSingleton = nullptr;
 
 //! Issue message for when an unhandled packet is processed.
 const char* s_issueUnhandledPacket = "Unhandled packet, code: %u, packet length: %d\n";
-
-IController::Timer::Timer(uint32_t rate) : m_rate(rate)
-{
-	m_begin = std::chrono::steady_clock::now();
-}
-
-IController::Timer::~Timer()
-{
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-	auto loop_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - m_begin);
-	auto desired_time = std::chrono::milliseconds(1000 / m_rate);
-
-	std::this_thread::sleep_for(desired_time - loop_time);
-}
 
 void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 {
@@ -53,8 +45,10 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 		}
 	}
 
-	auto var_it = target->m_Vars.find(frame.get_name());
-	if (var_it == target->m_Vars.end())
+	NetObject::VariableList_t& vars = target->GetVariables();
+
+	auto var_it = vars.find(frame.get_name());
+	if (var_it == vars.end())
 	{
 		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.get_name(), queryID);
 		return;
@@ -72,11 +66,6 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 bool IController::IsServer()
 {
 	return m_bServer;
-}
-
-IController* IController::GetPeerSingleton()
-{
-	return s_PeerSingleton;
 }
 
 void IController::Destroy()
@@ -129,23 +118,24 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 
 	// Processes the network stack.
-	m_pThread = new IThread([](void* pData, bool& bThreadStatus) {
-
+	m_pThread = new IThread([](void* pData, bool& bThreadStatus)
+	{
 		IController* self;
-		self = static_cast<IController*>(pData);
+		self = static_cast<IController*>(pData); 
 
 		self->Run(bThreadStatus);
 	}, this);
 
 	// Process entity synch.
-	m_pSyncThread = new IThread([](void* pData, bool& bThreadStatus) {
-
+	m_pSyncThread = new IThread([](void* pData, bool& bThreadStatus)
+	{
 		IController* self;
 		self = static_cast<IController*>(pData);
 
 		while (self->IsRunning() && bThreadStatus)
 		{
-			IController::Timer timer(self->GetNetworkRate());
+			SynchronousTimer timer( self->GetNetworkRate() );
+
 			self->Update(1000.0f / static_cast<float>(self->GetNetworkRate()));
 		}
 
@@ -440,7 +430,7 @@ int IController::ServiceHostSafe(ENetHost* pHost, ENetEvent* pEvent, enet_uint32
 
 void IController::ProcessNetStack()
 {
-	Timer timer(m_iNetworkRate);
+	SynchronousTimer timer( m_iNetworkRate );
 
 	if (!m_bRunning)
 		return;

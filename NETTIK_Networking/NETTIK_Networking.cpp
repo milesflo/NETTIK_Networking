@@ -1,2 +1,7 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #include "NETTIK_Networking.hpp"
-// TODO: Make the ENET library SEH handler safe for Release mode compilation.

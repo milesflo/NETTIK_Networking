@@ -1,11 +1,35 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #include "NetObject.h"
 #include "NetVar.h"
 #include "CEntities.h"
 
-void NetObject::DestroyNetworkedEntity()
+void NetObject::DestroyNetworkedEntity() const
 {
-	// yes... two way traffic :'(
-	m_pManager->Remove(this->m_NetCode);
+	m_pManager->Remove( m_NetCode );
+}
+
+std::string NetObject::GetPeerHost()
+{
+	if (m_pPeer == nullptr)
+		return "nullptr:0";
+
+	char buffer[32] = { 0 };
+	enet_address_get_host_ip(&m_pPeer->address, buffer, 32);
+
+	return std::string(buffer) + std::to_string(m_pPeer->address.port);
+}
+
+NetObject::~NetObject()
+{
+	if (m_pManager != nullptr)
+	{
+		DestroyNetworkedEntity();
+	}
 }
 
 void NetObject::TakeObjectSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& buffers, bool bReliableFlag, bool bForced)

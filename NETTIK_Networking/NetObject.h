@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #pragma once
 #include <enet/enet.h>
 #include <unordered_map>
@@ -8,10 +14,6 @@
 #include "SnapshotStream.h"
 #include "ReplicationInfo.h"
 
-// Static debug return information.
-#define DEFINE_NetObject(typeName) \
-	const std::string GetNetObject_Name() const { return typeName; }
-
 class NetVar;
 class VirtualInstance;
 class IEntityManager;
@@ -19,13 +21,12 @@ class IEntityManager;
 class NetObject
 {
 public:
+
+	using VariableList_t = std::unordered_map<std::string, NetVar*>;
+
 	uint32_t          m_NetCode;
 	uint32_t          m_RealmID;
 	uint32_t          m_Controller = NET_CONTROLLER_NONE;
-
-	std::unordered_map<std::string, NetVar*> m_Vars;
-	// These are set by DEFINE_NETOBJECT.
-	virtual const std::string GetNetObject_Name() const = 0;
 
 	// Snapshotting
 	// - size_t result is the LARGEST update element (for padding)
@@ -53,45 +54,55 @@ public:
 
 public:
 
-	std::string NetObject::GetPeerHost()
-	{
-		if (m_pPeer == nullptr)
-			return "nullptr:0";
-
-		char buffer[32] = { 0 };
-		enet_address_get_host_ip(&m_pPeer->address, buffer, 32);
-
-		return std::string(buffer) + std::to_string(m_pPeer->address.port);
-	}
-
 	std::recursive_mutex m_Mutex;
 
-	//! Is the object controlled by this.
-	bool IsNetworkLocal();
+	//--------------------------------------
+	// Calculates the peer's host in a 
+	// printable format.
+	//--------------------------------------
+	std::string NetObject::GetPeerHost();
 
-	//! Is the object remotely synched.
-	bool IsNetworkRemote();
+	//--------------------------------------
+	// Is the object controlled by this 
+	// controller.
+	//--------------------------------------
+	bool IsNetworkLocal() const;
 
-	void DestroyNetworkedEntity();
+	//--------------------------------------
+	// Is the object controlled by a remote
+	// peer.
+	//--------------------------------------
+	bool IsNetworkRemote() const;
 
-	virtual ~NetObject()
-	{
-		if (m_pManager != nullptr)
-			DestroyNetworkedEntity();
-	}
+	//--------------------------------------
+	// Informs the parent manager to erase
+	// this object from its list.
+	//--------------------------------------
+	void DestroyNetworkedEntity() const;
+
+	VariableList_t& GetVariables();
+
+	virtual ~NetObject();
 
 private:
 	bool m_bIsServer  = true;
 	bool m_bActive    = true;
+
+protected:
+	VariableList_t m_Vars;
 };
 
+inline NetObject::VariableList_t& NetObject::GetVariables()
+{
+	return m_Vars;
+}
 
-inline bool NetObject::IsNetworkLocal()
+inline bool NetObject::IsNetworkLocal() const
 {
 	return m_Controller == NET_CONTROLLER_LOCAL;
 }
 
-inline bool NetObject::IsNetworkRemote()
+inline bool NetObject::IsNetworkRemote() const
 {
 	return m_Controller != NET_CONTROLLER_LOCAL;
 }

@@ -1,13 +1,24 @@
+//-------------------------------------------------
+// NETTIK Networking
+// Copyright (c) 2015 - 2016 Jak Brierley
+//
+// See attached license inside "LICENSE".
+//-------------------------------------------------
 #pragma once
 #include "CNetVarBase.h"
 #include "CNetworkVector3.h"
 #include "IDebug.h"
-#define DEFINE_NetVector(name, reliable) \
-	CNetVarVector   name = CNetVarVector(this, #name, reliable)
+//#define DEFINE_NetVector(name, reliable) \
+//	CNetVarVector   name = CNetVarVector(this, #name, reliable)
 
-//! A three dimension network variable for representing
-//  X,Y,Z.
-class CNetVarVector : public CNetVarBase<NETTIK::CNetworkVector3>
+//-----------------------------------------------
+// Constructs a three dimension array to process
+// floating point positional data.
+//-----------------------------------------------
+#define NetworkVector(name, reliable) \
+	CNetVarVector   name = CNetVarVector( this, #name, reliable )
+
+class CNetVarVector : public CNetVarBase< NETTIK::CNetworkVector3 >
 {
 public:
 	
@@ -24,5 +35,9 @@ public:
 
 		m_Data = compose;
 	}
-	virtual ~CNetVarVector() { }
+	
+	virtual ~CNetVarVector()
+	{
+	
+	}
 };
