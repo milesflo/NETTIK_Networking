@@ -21,7 +21,6 @@ class CNetVarBase : public NetVar
 	static_assert(sizeof(VarType) < max_entvar_data, "Sizeof type templated to CNetVarBase is too large.");
 
 private:
-	size_t      m_iChanges	= 0;		// Number of changes performed to this variable.
 	bool        m_bChanged	= true;		// Set to true when the variable has differed.
 	bool        m_bLocked	= false;	// Set to true when the variable cannot be changed (remotely).
 	bool		m_bChangeForced = false;
@@ -49,13 +48,6 @@ public:
 	//! Takes a snapshot of the variable state.
 	size_t TakeVariableSnapshot(SnapshotStream& buffers, bool bForced);
 
-	//! Returns how times the variable has changed from last call.
-	size_t GetChanges();
-
-	void ClearChanges();
-
-	//! Increments the changes value to provoke a scripted update.
-	void InvalidateChanges();
 
 	//! Sets raw data and invalidates packet. Natural process is the function is called remotely.
 	void Set(unsigned char* ptr, size_t size, ENetPeer* pWho);
@@ -156,24 +148,6 @@ size_t CNetVarBase<VarType>::TakeVariableSnapshot(SnapshotStream& buffers, bool 
 	m_bChanged = false;
 	m_bChangeForced = false;
 	return buffer.size();
-}
-
-template< class VarType >
-inline size_t CNetVarBase<VarType>::GetChanges()
-{
-	return m_iChanges;
-}
-
-template< class VarType >
-inline void CNetVarBase<VarType>::ClearChanges()
-{
-	m_iChanges = 0;
-}
-
-template< class VarType >
-inline void CNetVarBase<VarType>::InvalidateChanges()
-{
-	++ m_iChanges;
 }
 
 
