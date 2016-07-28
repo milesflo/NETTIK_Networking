@@ -20,6 +20,14 @@ class IEntityManager;
 
 class NetObject
 {
+private:
+
+	// If compiled in debug mode, every network object is padded by 
+	// 1MB to simulate alloc/free at a larger scale. 
+#ifdef _DEBUG
+	unsigned char m_pDebugBuffer[ 1024 * 1024 ];
+#endif
+
 public:
 
 	using VariableList_t = std::unordered_map<std::string, NetVar*>;
@@ -43,12 +51,13 @@ public:
 
 	inline bool IsActive() const { return m_bActive; }
 	inline bool IsServer() const { return m_bIsServer; }
+
 	void SetIsServer(bool value) { m_bIsServer = value; }
 
 	// Accessors for ENET peer if this has one assigned.
-	ENetPeer*        m_pPeer = nullptr;
-	VirtualInstance* m_pInstance = nullptr;
-	IEntityManager*  m_pManager = nullptr;
+	ENetPeer*        m_pPeer      = nullptr;
+	VirtualInstance* m_pInstance  = nullptr;
+	IEntityManager*  m_pManager   = nullptr;
 
 	virtual void NetworkUpdate(ReplicationInfo& repinfo) = 0;
 
@@ -79,6 +88,8 @@ public:
 	// this object from its list.
 	//--------------------------------------
 	void DestroyNetworkedEntity() const;
+
+	virtual void InvalidateVars();
 
 	VariableList_t& GetVariables();
 

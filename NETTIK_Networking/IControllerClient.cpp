@@ -113,8 +113,6 @@ void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 	if (object == nullptr)
 		return;
 
-	manager->RemoveLocal(netID);
-
 	if (object->m_Controller == NET_CONTROLLER_LOCAL)
 	{
 		auto object = m_ControlledObjects.find(netID);
@@ -122,6 +120,9 @@ void IControllerClient::EntDeallocate(SnapshotEntList& frame)
 		if (object != m_ControlledObjects.end())
 			m_ControlledObjects.erase(object);
 	}
+
+	manager->RemoveLocal(netID);
+
 
 }
 

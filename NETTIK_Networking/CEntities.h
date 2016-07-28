@@ -390,8 +390,8 @@ bool CEntities<TypeObject>::Remove(uint32_t code)
 			if (map_it != m_ObjectRefs.end())
 				m_ObjectRefs.erase(map_it);
 
-			(*it)->m_pInstance = nullptr;
-			(*it)->m_pManager = nullptr;
+			//(*it)->m_pInstance = nullptr;
+			//(*it)->m_pManager = nullptr;
 
 			m_fCallbackDelete(static_cast<TypeObject*>(*it));
 			m_Objects.get()->erase(it);

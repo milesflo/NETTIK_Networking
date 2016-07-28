@@ -72,7 +72,7 @@ bool CPlayerRealm::RemoveByNetID(uint32_t netid)
 		if (it->second->m_NetCode == netid)
 		{
 			m_FreeList.push_back(it->second->m_RealmID);
-			it->second.release();
+			it->second.reset();
 			m_PlayerList.erase(it);
 			return true;
 		}

@@ -7,10 +7,21 @@
 #include "NetObject.h"
 #include "NetVar.h"
 #include "CEntities.h"
+#include <iostream>
 
 void NetObject::DestroyNetworkedEntity() const
 {
 	m_pManager->Remove( m_NetCode );
+}
+
+void NetObject::InvalidateVars()
+{
+	for (auto it = m_Vars.begin(); it != m_Vars.end(); ++it)
+	{
+		NetVar* pVar = (*it).second;
+		(*it).second->InvalidateChanges();
+		//		CNetVarBase (*it).second-
+	}
 }
 
 std::string NetObject::GetPeerHost()
@@ -30,6 +41,10 @@ NetObject::~NetObject()
 	{
 		DestroyNetworkedEntity();
 	}
+	else
+	{
+		std::cerr << "error: failed destroying nettik error, pManager is nullptr. possible memory leak." << std::endl, 0;
+	}
 }
 
 void NetObject::TakeObjectSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& buffers, bool bReliableFlag, bool bForced)
@@ -45,7 +60,6 @@ void NetObject::TakeObjectSnapshot(size_t& max_value, uint16_t& num_updates, Sna
 
 		if (max_size > max_value)
 			max_value = max_size;
-
 
 		num_updates++;
 	}
