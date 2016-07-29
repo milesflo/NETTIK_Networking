@@ -33,6 +33,8 @@ protected:
 
 public:
 
+	void* _get() { return static_cast<void*>( &m_Data ); }
+
 	//! Lock and prevent remote changes (disposed).
 	void Lock();
 

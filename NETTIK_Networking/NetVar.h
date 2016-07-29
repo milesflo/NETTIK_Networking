@@ -42,6 +42,12 @@ public:
 	//--------------------------
 	virtual void Set( unsigned char* ptr, size_t size, ENetPeer* pWho ) = 0;
 
+	//------------------------------
+	// Implementation to return
+	// the data stored in the var
+	//------------------------------
+	virtual void* _get() = 0;
+
 	inline const char*  GetName()     const { return m_Name; }
 	inline NetObject*   GetParent()   const { return m_pParent; }
 	inline bool const   GetReliable() const { return m_Reliable; }

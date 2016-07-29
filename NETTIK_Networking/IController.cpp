@@ -70,11 +70,13 @@ bool IController::IsServer()
 
 void IController::Destroy()
 {
+	Stop();
+
 	while (m_bShuttingDown)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
-	delete(this);
+
 }
 
 void IController::DeletePeerSingleton()
@@ -138,8 +140,6 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 			self->Update(1000.0f / static_cast<float>(self->GetNetworkRate()));
 		}
-
-		self->Destroy();
 
 	}, this);
 
