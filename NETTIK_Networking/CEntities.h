@@ -50,8 +50,8 @@ private:
 	std::string      m_name;
 	VirtualInstance* m_pBaseInstance;
 
-	std::function<void(TypeObject*)> m_fCallbackCreate;
-	std::function<void(TypeObject*)> m_fCallbackDelete;
+	std::function<void(TypeObject*)> m_fCallbackCreate = nullptr;
+	std::function<void(TypeObject*)> m_fCallbackDelete = nullptr;
 
 	NETTIK::IController*   m_pGlobalController;
 
@@ -114,7 +114,10 @@ public:
 		m_Objects.safe_unlock();
 		m_MaintainedObjects.safe_unlock();
 
-		m_fCallbackCreate(instance);
+		if (m_fCallbackCreate != nullptr)
+		{
+			m_fCallbackCreate(instance);
+		}
 		return instance;
 	}
 
@@ -146,10 +149,15 @@ public:
 		{
 			if ((*it)->m_NetCode == code)
 			{
-				// test___
-				m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
+				if (m_fCallbackDelete != nullptr)
+				{
+					m_fCallbackDelete(dynamic_cast<TypeObject*>(*it));
+				}
+
 				(*it)->m_pManager = nullptr;
+
 				delete(*it);
+
 				m_MaintainedObjects.get()->erase(it);
 
 				result = true;
@@ -353,7 +361,11 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 	}
 
 	m_Objects.safe_unlock();
-	m_fCallbackCreate(static_cast<TypeObject*>(object));
+
+	if (m_fCallbackCreate != nullptr)
+	{
+		m_fCallbackCreate(static_cast<TypeObject*>(object));
+	}
 
 	return object->m_NetCode;
 }
@@ -393,7 +405,10 @@ bool CEntities<TypeObject>::Remove(uint32_t code)
 			//(*it)->m_pInstance = nullptr;
 			//(*it)->m_pManager = nullptr;
 
-			m_fCallbackDelete(static_cast<TypeObject*>(*it));
+			if (m_fCallbackDelete != nullptr)
+			{
+				m_fCallbackDelete(static_cast<TypeObject*>(*it));
+			}
 			m_Objects.get()->erase(it);
 			result = true;
 			break;

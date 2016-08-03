@@ -47,7 +47,7 @@ public:
 	virtual ~VirtualInstance();
 
 	template <class T>
-	IEntityManager* CreateManager(std::string name, std::function<void(T*)> callbackCreate, std::function<void(T*)> callbackDelete)
+	IEntityManager* CreateManager(std::string name, std::function<void(T*)> callbackCreate = nullptr, std::function<void(T*)> callbackDelete = nullptr)
 	{
 		CEntities<T>* mgr = new CEntities<T>(this);
 		mgr->SetName(name);
