@@ -322,7 +322,7 @@ void IController::SendStream(SnapshotStream& stream, bool reliable, ENetPeer* pe
 void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, uint32_t flags, uint8_t channel)
 {
 	if (peer == nullptr)
-		NETTIK_EXCEPTION("Peer supplied to Send() is NULL.");
+		return;
 
 	if (!m_bRunning)
 		return;

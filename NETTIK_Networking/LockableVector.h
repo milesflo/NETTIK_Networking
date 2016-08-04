@@ -13,14 +13,16 @@ class LockableVector
 {
 private:
 	using my_vec = std::vector<T>;
-	using lock = std::lock_guard<std::recursive_mutex>;
-
 	my_vec m_contents;
 	std::recursive_mutex m_mutex;
 
 	typedef typename std::vector<T>::size_type size_type;
 
 public:
+
+	using lock = std::lock_guard<std::recursive_mutex>;
+
+	std::recursive_mutex& mutex();
 
 	void safe_lock();
 
@@ -36,6 +38,12 @@ public:
 
 	T at(size_type index);
 };
+
+template <typename T>
+inline std::recursive_mutex& LockableVector<T>::mutex()
+{
+	return m_mutex;
+}
 
 template <typename T>
 inline void LockableVector<T>::safe_lock()
