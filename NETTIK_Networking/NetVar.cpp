@@ -14,7 +14,7 @@ NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name
 	if (m_pParent->m_Mutex.try_lock())
 	{
 		NetObject::VariableList_t& vars = m_pParent->GetVariables();
-		vars[m_Name] = this;
+		vars.push_back(this);
 
 		m_pParent->m_Mutex.unlock();
 	}
@@ -27,7 +27,12 @@ NetVar::~NetVar()
 	if (m_pParent->m_Mutex.try_lock())
 	{
 		NetObject::VariableList_t& vars = m_pParent->GetVariables();
-		vars.erase(m_Name);
+		
+		auto it = std::find(vars.begin(), vars.end(), this);
+		if (it != vars.end())
+		{
+			vars.erase(it);
+		}
 
 		m_pParent->m_Mutex.unlock();
 	}

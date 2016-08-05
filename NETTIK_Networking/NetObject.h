@@ -6,7 +6,7 @@
 //-------------------------------------------------
 #pragma once
 #include <enet/enet.h>
-#include <unordered_map>
+#include <vector>
 #include <inttypes.h>
 #include <mutex>
 #include <string>
@@ -30,7 +30,7 @@ private:
 
 public:
 
-	using VariableList_t = std::unordered_map<std::string, NetVar*>;
+	using VariableList_t = std::vector<NetVar*>;
 
 	uint32_t          m_NetCode;
 	uint32_t          m_RealmID;

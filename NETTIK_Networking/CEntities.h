@@ -11,6 +11,7 @@
 #include <mutex>
 #include <algorithm>
 #include <inttypes.h>
+#include <unordered_map>
 #include "LockableVector.h"
 
 // TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
@@ -220,7 +221,13 @@ public:
 		m_Objects.safe_lock();
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
-			(*it)->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
+		{
+			// Only snapshot locally owned object.
+			if ((*it)->IsNetworkLocal())
+			{
+				(*it)->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
+			}
+		}
 
 		m_Objects.safe_unlock();
 	}
@@ -265,6 +272,7 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 	object->m_NetCode = (m_TotalEntities++);
 	object->m_pInstance = m_pBaseInstance;
 	object->m_pManager = this;
+	object->m_Controller = NET_CONTROLLER_LOCAL;
 
 	// For fast lookup.
 	m_ObjectRefs[object->m_NetCode] = object;

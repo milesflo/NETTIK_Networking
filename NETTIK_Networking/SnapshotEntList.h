@@ -67,6 +67,8 @@ private:
 
 public:
 
+	// high cpu load
+	// 22.47%
 	void write(SnapshotStream::Stream& data)
 	{
 		unsigned char* base_ptr;
@@ -74,6 +76,8 @@ public:
 
 		unsigned char* stream;
 		stream = base_ptr;
+
+		data.reserve(data.capacity() +  sizeof(SnapshotEntListDataEntry));
 
 		for (size_t i = 0; i < sizeof(FrameType); i++)
 			data.push_back(stream[i]);
@@ -84,7 +88,7 @@ public:
 		stream += sizeof(uint32_t);
 
 		for (size_t i = 0; i < sizeof(uint32_t); i++)
-			data.push_back(stream[i]);
+			data.emplace_back(stream[i]);
 		stream += sizeof(uint32_t);
 
 		//printf("writing forced = %d for %s\n", *stream, m_data.name);
@@ -96,7 +100,7 @@ public:
 		// Should get a terminating null character.
 		for (size_t i = 0; i < name_length + 1; i++)
 			data.push_back(stream[i]);
-		
+
 		stream = reinterpret_cast<unsigned char*>(&m_data.data);
 
 		for (size_t i = 0; i < m_typesize; i++)

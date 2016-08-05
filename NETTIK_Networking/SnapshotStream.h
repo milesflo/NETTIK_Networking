@@ -30,6 +30,11 @@ public:
 			return m_data.at(0);
 
 		Stream& header = m_data.at(0);
+
+		// Make some measurements to make the allocation less CPU intensive.
+		// Assume there will be a minimum of 8 stream entries.
+		header.reserve(header.capacity() + (m_data.size() * sizeof(StreamCollection) * ( sizeof(std::vector<unsigned char>) * 8)));
+
 		// Copy contents into header.
 		for (size_t i = 1; i < m_data.size(); ++i)
 		{
@@ -37,7 +42,7 @@ public:
 
 			for (auto it = stream.begin(); it != stream.end(); ++it)
 			{
-				header.push_back(*it);
+				header.emplace_back(*it);
 			}
 		}
 
@@ -64,6 +69,7 @@ public:
 
 	SnapshotStream()
 	{
+		m_data.reserve(32);
 		m_data.emplace_back();
 	}
 

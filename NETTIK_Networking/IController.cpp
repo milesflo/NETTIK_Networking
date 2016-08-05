@@ -46,9 +46,18 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 	}
 
 	NetObject::VariableList_t& vars = target->GetVariables();
+	NetVar* pVar = nullptr;
 
-	auto var_it = vars.find(frame.get_name());
-	if (var_it == vars.end())
+	for (auto it = vars.begin(); it != vars.end(); ++it)
+	{
+		if (strcmp((*it)->GetName(), frame.get_name()) == 0)
+		{
+			pVar = (*it);
+			break;
+		}
+	}
+
+	if (pVar == nullptr)
 	{
 		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.get_name(), queryID);
 		return;
@@ -59,7 +68,7 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 	}
 	else
 	{
-		var_it->second->Set(const_cast<unsigned char*>(frame.get_data()), 0, owner);
+		pVar->Set(const_cast<unsigned char*>(frame.get_data()), 0, owner);
 	}
 }
 

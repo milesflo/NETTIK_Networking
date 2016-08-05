@@ -18,9 +18,7 @@ void NetObject::InvalidateVars()
 {
 	for (auto it = m_Vars.begin(); it != m_Vars.end(); ++it)
 	{
-		NetVar* pVar = (*it).second;
-		(*it).second->InvalidateChanges();
-		//		CNetVarBase (*it).second-
+		(*it)->InvalidateChanges();
 	}
 }
 
@@ -47,14 +45,17 @@ NetObject::~NetObject()
 	}
 }
 
+// profile: high cpu usage (reporting 60%)
 void NetObject::TakeObjectSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& buffers, bool bReliableFlag, bool bForced)
 {
 	for (auto it = m_Vars.begin(); it != m_Vars.end(); ++it)
 	{
-		if (it->second->GetReliable() != bReliableFlag)
+		NetVar* pVar;
+		pVar = (*it);
+		if (pVar->GetReliable() != bReliableFlag)
 			continue;
 
-		size_t max_size = it->second->TakeVariableSnapshot(buffers, bForced);
+		size_t max_size = pVar->TakeVariableSnapshot(buffers, bForced);
 		if (max_size == 0)
 			continue;
 
