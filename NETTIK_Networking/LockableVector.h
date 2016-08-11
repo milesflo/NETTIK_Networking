@@ -8,36 +8,83 @@
 #include <vector>
 #include <mutex>
 
+//------------------------------------------------
+// A lockable vector container that controls 
+// element access.
+// 
+// NOTE: This vector isn't recursive safe. Do not
+// call safe functions while safe_lock retains
+// ownership.
+//
+// This will cause an assertation.
+//------------------------------------------------
 template <typename T>
 class LockableVector
 {
-private:
+public:
+	using lock   = std::lock_guard<std::recursive_mutex>;
 	using my_vec = std::vector<T>;
-	my_vec m_contents;
-	std::recursive_mutex m_mutex;
 
 	typedef typename std::vector<T>::size_type size_type;
 
-public:
-
-	using lock = std::lock_guard<std::recursive_mutex>;
-
 	std::recursive_mutex& mutex();
 
+	//-----------------------------------
+	// Locks the vector.
+	//-----------------------------------
 	void safe_lock();
 
+	//-----------------------------------
+	// Unlocks the vector.
+	//-----------------------------------
 	void safe_unlock();
 
+	//-----------------------------------
+	// Gets the underlying contents.
+	//-----------------------------------
 	my_vec* get();
 
+	//-----------------------------------
+	// Pushes the item onto the back of 
+	// the list, safely.
+	//-----------------------------------
 	void push_back(T v);
 
+	//-----------------------------------
+	// Gets the back element of the list,
+	// safely.
+	//-----------------------------------
 	T back();
 
+	//-----------------------------------
+	// Pops the last item of the list, 
+	// safely.
+	//-----------------------------------
 	void pop_back(T v);
 
+	//-----------------------------------
+	// Copies the value at the specified
+	// index, safely.
+	//-----------------------------------
 	T at(size_type index);
+
+	//-----------------------------------
+	// Clears the vector, safely.
+	//-----------------------------------
+	void clear();
+
+private:
+	my_vec                m_contents;
+	std::recursive_mutex  m_mutex;
+
 };
+
+template <typename T>
+inline void LockableVector<T>::clear()
+{
+	lock guard(m_mutex);
+	m_contents.clear();
+}
 
 template <typename T>
 inline std::recursive_mutex& LockableVector<T>::mutex()
@@ -66,27 +113,27 @@ inline typename LockableVector<T>::my_vec* LockableVector<T>::get()
 template <typename T>
 inline void LockableVector<T>::push_back(T v)
 {
-	lock(m_mutex);
+	lock guard(m_mutex);
 	m_contents.push_back(v);
 }
 
 template <typename T>
 inline T LockableVector<T>::back()
 {
-	lock(m_mutex);
+	lock guard(m_mutex);
 	return m_contents.back();
 }
 
 template <typename T>
 inline void LockableVector<T>::pop_back(T v)
 {
-	lock(m_mutex);
+	lock guard(m_mutex);
 	m_contents.pop_back();
 }
 
 template <typename T>
 inline T LockableVector<T>::at(size_type index)
 {
-	lock(m_mutex);
+	lock guard(m_mutex);
 	return m_contents.at(index);
 }
