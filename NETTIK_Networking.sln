@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NETTIK_Networking", "NETTIK_Networking\NETTIK_Networking.vcxproj", "{B80950FD-A68A-45D3-953E-2FC02D956ECB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NETTIK_UnitTests", "NETTIK_UnitTests\NETTIK_UnitTests.vcxproj", "{CB00EE05-8960-4A73-A040-40F15FE247F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,6 +31,22 @@ Global
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Release|Win32.ActiveCfg = Release|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Release|Win32.Build.0 = Release|Win32
 		{B80950FD-A68A-45D3-953E-2FC02D956ECB}.Release|x64.ActiveCfg = Release|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Debug|Win32.Build.0 = Debug|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Debug|x64.ActiveCfg = Debug|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Debug|x64.Build.0 = Debug|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicDebug|Win32.ActiveCfg = Debug|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicDebug|Win32.Build.0 = Debug|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicDebug|x64.ActiveCfg = Debug|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicDebug|x64.Build.0 = Debug|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicRelease|Win32.ActiveCfg = Release|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicRelease|Win32.Build.0 = Release|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicRelease|x64.ActiveCfg = Release|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.DynamicRelease|x64.Build.0 = Release|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Release|Win32.ActiveCfg = Release|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Release|Win32.Build.0 = Release|Win32
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Release|x64.ActiveCfg = Release|x64
+		{CB00EE05-8960-4A73-A040-40F15FE247F6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
