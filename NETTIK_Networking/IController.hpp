@@ -5,19 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <enet\enet.h>
-#include <google\protobuf\message.h>
-#include <string>
-#include <functional>
-#include <unordered_map>
-#include <vector>
-#include <memory>
-#include <mutex>
-
-#include "INetworkCodes.hpp"
-#include "IDebug.h"
-#include "IThread.h"
-#include "INetworkPacketFactory.hpp"
 #include "VirtualInstance.h"
 
 namespace NETTIK

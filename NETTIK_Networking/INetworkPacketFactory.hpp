@@ -9,7 +9,6 @@
 #include <enet\enet.h>
 #include <google\protobuf\wire_format.h>
 #include "INetworkCodes.hpp"
-#include "IDebug.h"
 
 #define DEFINE_GETSET(Type, MemberName, FaceName) \
 	Type Get##FaceName() const { \

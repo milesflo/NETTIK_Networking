@@ -4,10 +4,7 @@
 //
 // See attached license inside "LICENSE".
 //-------------------------------------------------
-#include "NetObject.h"
-#include "NetVar.h"
 #include "CEntities.h"
-#include <iostream>
 
 void NetObject::DestroyNetworkedEntity() const
 {

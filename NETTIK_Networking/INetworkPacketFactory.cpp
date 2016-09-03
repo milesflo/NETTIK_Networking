@@ -5,7 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "INetworkPacketFactory.hpp"
-#include "IController.hpp"
 #include <sstream>
 using namespace NETTIK;
 

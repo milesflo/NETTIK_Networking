@@ -5,14 +5,7 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <vector>
-#include <unordered_map>
-#include <string>
-#include <memory>
-#include <functional>
 #include "CEntities.h"
-#include "SnapshotStream.h"
-#include "NetObject.h"
 
 namespace NETTIK
 {

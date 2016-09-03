@@ -5,7 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "SnapshotHeader.h"
-#include <iostream>
 
 void SnapshotHeader::write()
 {

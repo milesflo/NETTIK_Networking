@@ -5,9 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "VirtualInstance.h"
-#include "IController.hpp"
-#include "SnapshotHeader.h"
-#include <vector>
 using namespace NETTIK;
 
 NetObject* VirtualInstance::FindObject(uint32_t netid)

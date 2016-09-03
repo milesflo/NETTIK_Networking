@@ -5,9 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "IController.hpp"
-#include "IDebug.h"
-#include "SynchronousTimer.h"
-#include <enet\enet.h>
 using namespace NETTIK;
 
 //! Global singleton for the ENET peer.

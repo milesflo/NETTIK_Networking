@@ -5,11 +5,8 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <memory>
-#include <inttypes.h>
 #include <list>
 #include <map>
-#include "NETTIK_Networking.hpp"
 
 class CPlayerRealm
 {

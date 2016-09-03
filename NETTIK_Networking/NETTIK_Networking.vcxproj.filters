@@ -73,6 +73,18 @@
     <Filter Include="Entities\Entity Manager\source">
       <UniqueIdentifier>{3019b1b7-d57e-4d7e-80c6-893393f65dc9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Network Data">
+      <UniqueIdentifier>{371706f7-ce0d-4638-849b-cfd6a3b4d268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Data\headers">
+      <UniqueIdentifier>{535ba02f-4fe4-42e6-90b1-92f3287eafa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Data\source">
+      <UniqueIdentifier>{a9f17ae5-3372-453b-97ff-bd24913b11ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Precompiled Header">
+      <UniqueIdentifier>{8c069c12-5240-4bbb-89ec-300595543d60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IController.hpp">
@@ -108,9 +120,6 @@
     <ClInclude Include="EntityMessages.pb.h">
       <Filter>Protocol Buffers\headers</Filter>
     </ClInclude>
-    <ClInclude Include="NETTIK_Networking.hpp">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="ReplicationInfo.h">
       <Filter>Core\Serialization\headers</Filter>
     </ClInclude>
@@ -124,12 +133,6 @@
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
     <ClInclude Include="NetVar.h">
-      <Filter>Core\Network Object\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="CNetVarBase.h">
-      <Filter>Core\Network Object\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="CNetVarVector.h">
       <Filter>Core\Network Object\headers</Filter>
     </ClInclude>
     <ClInclude Include="NetObject.h">
@@ -150,20 +153,32 @@
     <ClInclude Include="IThread.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
-    <ClInclude Include="IDebug.h">
-      <Filter>Standard Libraries\headers</Filter>
-    </ClInclude>
     <ClInclude Include="CNetworkVector3.h">
       <Filter>Standard Libraries\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="CNetVarString.h">
-      <Filter>Core\Network Object\headers</Filter>
     </ClInclude>
     <ClInclude Include="NetBit.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="SynchronousTimer.h">
       <Filter>Core\Controllers\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarBase.h">
+      <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarString.h">
+      <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarVector.h">
+      <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NETTIK_Networking.hpp">
+      <Filter>Core\Precompiled Header</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggingUtil.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Core\Precompiled Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -203,14 +218,17 @@
     <ClCompile Include="CEntities.cpp">
       <Filter>Entities\Entity Manager\source</Filter>
     </ClCompile>
-    <ClCompile Include="NETTIK_Networking.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="CNetworkVector3.cpp">
       <Filter>Standard Libraries\source</Filter>
     </ClCompile>
     <ClCompile Include="SynchronousTimer.cpp">
       <Filter>Core\Controllers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NETTIK_Networking.cpp">
+      <Filter>Core\Precompiled Header</Filter>
+    </ClCompile>
+    <ClCompile Include="LoggingUtil.cpp">
+      <Filter>Standard Libraries\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

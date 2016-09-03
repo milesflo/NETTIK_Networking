@@ -7,7 +7,6 @@
 #pragma once
 #include "CNetVarBase.h"
 #include "CNetworkVector3.h"
-#include "IDebug.h"
 //#define DEFINE_NetVector(name, reliable) \
 //	CNetVarVector   name = CNetVarVector(this, #name, reliable)
 

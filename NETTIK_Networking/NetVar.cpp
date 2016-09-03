@@ -4,13 +4,15 @@
 //
 // See attached license inside "LICENSE".
 //-------------------------------------------------
-#include "NetVar.h"
-#include "NetObject.h"
-#include "IDebug.h"
 using namespace NETTIK;
 
 NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name), m_pParent(parent), m_Reliable(reliable)
 {
+	if (m_pParent == nullptr)
+	{
+		return;
+	}
+
 	if (m_pParent->m_Mutex.try_lock())
 	{
 		NetObject::VariableList_t& vars = m_pParent->GetVariables();
@@ -24,7 +26,7 @@ NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name
 
 NetVar::~NetVar()
 {
-	if (m_pParent->m_Mutex.try_lock())
+	if (m_pParent != nullptr && m_pParent->m_Mutex.try_lock())
 	{
 		NetObject::VariableList_t& vars = m_pParent->GetVariables();
 		

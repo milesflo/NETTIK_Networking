@@ -189,7 +189,7 @@ void CNetVarBase<VarType>::Set(VarType data)
 template< class VarType >
 inline bool CNetVarBase<VarType>::SetGuard(VarType& data)
 {
-	if (!m_pParent->IsActive())
+	if (m_pParent != nullptr && !m_pParent->IsActive())
 		return false;
 
 	if (m_Data == data)

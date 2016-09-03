@@ -7,7 +7,6 @@
 #pragma once
 #include "SnapshotStream.h"
 #include "INetworkCodes.hpp"
-#include "IDebug.h"
 #include "SnapshotHeader.h"
 #include "Constraints.h"
 #include <enet\types.h>

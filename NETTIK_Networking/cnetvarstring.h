@@ -5,7 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <string>
 #include "CNetVarBase.h"
 
 //-----------------------------------------------

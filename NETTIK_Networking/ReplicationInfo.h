@@ -5,9 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <cinttypes>
-#include "ControllerFlags.h"
-#include <enet\enet.h>
 
 class ReplicationInfo
 {

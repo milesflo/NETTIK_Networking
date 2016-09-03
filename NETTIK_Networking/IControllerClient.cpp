@@ -5,8 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "IControllerClient.hpp"
-#include "SnapshotHeader.h"
-#include "SnapshotEntList.h"
 using namespace std::placeholders;
 using namespace NETTIK;
 
