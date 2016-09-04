@@ -5,41 +5,47 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <inttypes.h>
-
+#include <cinttypes>
 namespace NETTIK
 {
-
 	class INetworkCodes
 	{
-
 	public:
+		//----------------------------------------
+		// The cross application data type for
+		// network RPC codes. Take data alignment
+		// into consideration.
+		//----------------------------------------
+		typedef std::uint16_t  msg_t;
+		#define MSG_CAST( data ) static_cast<msg_t>( data )
 
-		// 14.03.16: Take consideration into data alignment when using this datatype.
-		typedef uint16_t  msg_t;
-
+		//----------------------------------------
+		// Codes for internal RPC operations for
+		// NETTIK. In unsinged form to allow 
+		// the app to build on the network codes
+		// without overloading these accidentally.
+		//----------------------------------------
 		enum NetworkCodesShared : msg_t
 		{
-			SharedNull = 0,
-			SharedPing = 1,
+			//----------------------------------------
+			// Call when allocating a key/value
+			// pair into a networked list.
+			//----------------------------------------
+			internal_evt_list_add    = MSG_CAST( -1 ),
 
-			_MaxShared = SharedPing,
+			//----------------------------------------
+			// Call when there has been data changed
+			// to a list element.
+			//----------------------------------------
+			internal_evt_list_data   = MSG_CAST( -2 ),
+
+			//----------------------------------------
+			// Call when deallocating a key/value
+			// pair into a networked list.
+			//----------------------------------------
+			internal_evt_list_remove = MSG_CAST( -3 )
 		};
 
-		enum NetworkCodesClient : msg_t
-		{
-			ClientNull = _MaxShared + 1,
-
-			_MaxCodesClient = ClientNull
-		};
-
-		enum NetworkCodesServer : msg_t
-		{
-			ServerNull = _MaxCodesClient + 1,
-
-			_MaxCodesServer = ServerNull
-		};
-
-
+		#undef MSG_CAST
 	};
 };

@@ -41,4 +41,12 @@ public:
 	{
 
 	}
+
+	LockableVector<NetObject*>& GetObjects()
+	{
+		return m_Objects;
+	}
+
+protected:
+	LockableVector<NetObject*>  m_Objects;
 };

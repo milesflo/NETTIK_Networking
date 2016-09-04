@@ -10,7 +10,6 @@ using namespace NETTIK;
 
 IControllerClient::~IControllerClient()
 {
-
 }
 
 IControllerClient::IControllerClient(uint32_t rate) : IController(rate)

@@ -43,8 +43,7 @@ template <class TypeObject>
 class CEntities : public IEntityManager
 {
 private:
-	LockableVector<TypeObject*> m_MaintainedObjects;
-	LockableVector<NetObject*>  m_Objects;
+	LockableVector<TypeObject*>  m_MaintainedObjects;
 
 	std::unordered_map<uint32_t, NetObject*> m_ObjectRefs;
 
@@ -63,11 +62,6 @@ public:
 
 	// Returns a controlled object specified in the index.
 	TypeObject* GetControlled(uint32_t index = 0);
-
-	LockableVector<NetObject*>& GetObjects()
-	{
-		return m_Objects;
-	}
 
 	void SetCallbackCreate(std::function<void(TypeObject*)> func)
 	{
@@ -331,6 +325,7 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 		// Send it to the new peer.
 		if (object->m_pPeer)
 		{
+			(*object_it)->SendLists(object->m_pPeer);
 			server->SendStream(creationStreamReliable, true, object->m_pPeer);
 		}
 
@@ -357,7 +352,6 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 	m_pBaseInstance->DoSnapshot(reliableStream, true, true);
 	m_pBaseInstance->DoSnapshot(unreliableStream, false, true);
 
-
 	// Inform this object to player.
 	if (object->m_pPeer)
 	{
@@ -370,10 +364,14 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 
 	m_Objects.safe_unlock();
 
+	// Emit callback event.
 	if (m_fCallbackCreate != nullptr)
 	{
 		m_fCallbackCreate(static_cast<TypeObject*>(object));
 	}
+
+	// Send all lists inside entity manager.
+
 
 	return object->m_NetCode;
 }

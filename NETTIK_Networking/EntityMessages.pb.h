@@ -34,37 +34,39 @@ void protobuf_AddDesc_EntityMessages_2eproto();
 void protobuf_AssignDesc_EntityMessages_2eproto();
 void protobuf_ShutdownFile_EntityMessages_2eproto();
 
-class ProtoMessageVector;
-class ProtoMessageRPC;
+class INetworkAssociatedObject;
+class INetworkMapAdd;
+class INetworkMapRemove;
+class INetworkMapUpdate;
 
 // ===================================================================
 
-class ProtoMessageVector : public ::google::protobuf::Message {
+class INetworkAssociatedObject : public ::google::protobuf::Message {
  public:
-  ProtoMessageVector();
-  virtual ~ProtoMessageVector();
+  INetworkAssociatedObject();
+  virtual ~INetworkAssociatedObject();
 
-  ProtoMessageVector(const ProtoMessageVector& from);
+  INetworkAssociatedObject(const INetworkAssociatedObject& from);
 
-  inline ProtoMessageVector& operator=(const ProtoMessageVector& from) {
+  inline INetworkAssociatedObject& operator=(const INetworkAssociatedObject& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ProtoMessageVector& default_instance();
+  static const INetworkAssociatedObject& default_instance();
 
-  void Swap(ProtoMessageVector* other);
+  void Swap(INetworkAssociatedObject* other);
 
   // implements Message ----------------------------------------------
 
-  inline ProtoMessageVector* New() const { return New(NULL); }
+  inline INetworkAssociatedObject* New() const { return New(NULL); }
 
-  ProtoMessageVector* New(::google::protobuf::Arena* arena) const;
+  INetworkAssociatedObject* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ProtoMessageVector& from);
-  void MergeFrom(const ProtoMessageVector& from);
+  void CopyFrom(const INetworkAssociatedObject& from);
+  void MergeFrom(const INetworkAssociatedObject& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -79,7 +81,7 @@ class ProtoMessageVector : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(ProtoMessageVector* other);
+  void InternalSwap(INetworkAssociatedObject* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -95,61 +97,66 @@ class ProtoMessageVector : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional float x = 1;
-  void clear_x();
-  static const int kXFieldNumber = 1;
-  float x() const;
-  void set_x(float value);
+  // optional string instance_name = 1;
+  void clear_instance_name();
+  static const int kInstanceNameFieldNumber = 1;
+  const ::std::string& instance_name() const;
+  void set_instance_name(const ::std::string& value);
+  void set_instance_name(const char* value);
+  void set_instance_name(const char* value, size_t size);
+  ::std::string* mutable_instance_name();
+  ::std::string* release_instance_name();
+  void set_allocated_instance_name(::std::string* instance_name);
 
-  // optional float y = 2;
-  void clear_y();
-  static const int kYFieldNumber = 2;
-  float y() const;
-  void set_y(float value);
+  // optional uint32 network_code = 2;
+  void clear_network_code();
+  static const int kNetworkCodeFieldNumber = 2;
+  ::google::protobuf::uint32 network_code() const;
+  void set_network_code(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:ProtoMessageVector)
+  // @@protoc_insertion_point(class_scope:INetworkAssociatedObject)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  float x_;
-  float y_;
+  ::google::protobuf::internal::ArenaStringPtr instance_name_;
+  ::google::protobuf::uint32 network_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
   friend void protobuf_AssignDesc_EntityMessages_2eproto();
   friend void protobuf_ShutdownFile_EntityMessages_2eproto();
 
   void InitAsDefaultInstance();
-  static ProtoMessageVector* default_instance_;
+  static INetworkAssociatedObject* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ProtoMessageRPC : public ::google::protobuf::Message {
+class INetworkMapAdd : public ::google::protobuf::Message {
  public:
-  ProtoMessageRPC();
-  virtual ~ProtoMessageRPC();
+  INetworkMapAdd();
+  virtual ~INetworkMapAdd();
 
-  ProtoMessageRPC(const ProtoMessageRPC& from);
+  INetworkMapAdd(const INetworkMapAdd& from);
 
-  inline ProtoMessageRPC& operator=(const ProtoMessageRPC& from) {
+  inline INetworkMapAdd& operator=(const INetworkMapAdd& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ProtoMessageRPC& default_instance();
+  static const INetworkMapAdd& default_instance();
 
-  void Swap(ProtoMessageRPC* other);
+  void Swap(INetworkMapAdd* other);
 
   // implements Message ----------------------------------------------
 
-  inline ProtoMessageRPC* New() const { return New(NULL); }
+  inline INetworkMapAdd* New() const { return New(NULL); }
 
-  ProtoMessageRPC* New(::google::protobuf::Arena* arena) const;
+  INetworkMapAdd* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ProtoMessageRPC& from);
-  void MergeFrom(const ProtoMessageRPC& from);
+  void CopyFrom(const INetworkMapAdd& from);
+  void MergeFrom(const INetworkMapAdd& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -164,7 +171,7 @@ class ProtoMessageRPC : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(ProtoMessageRPC* other);
+  void InternalSwap(INetworkMapAdd* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -180,25 +187,235 @@ class ProtoMessageRPC : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional bool val = 1;
-  void clear_val();
-  static const int kValFieldNumber = 1;
-  bool val() const;
-  void set_val(bool value);
+  // optional .INetworkAssociatedObject target_object = 1;
+  bool has_target_object() const;
+  void clear_target_object();
+  static const int kTargetObjectFieldNumber = 1;
+  const ::INetworkAssociatedObject& target_object() const;
+  ::INetworkAssociatedObject* mutable_target_object();
+  ::INetworkAssociatedObject* release_target_object();
+  void set_allocated_target_object(::INetworkAssociatedObject* target_object);
 
-  // @@protoc_insertion_point(class_scope:ProtoMessageRPC)
+  // optional uint32 key = 2;
+  void clear_key();
+  static const int kKeyFieldNumber = 2;
+  ::google::protobuf::uint32 key() const;
+  void set_key(::google::protobuf::uint32 value);
+
+  // optional bytes value = 3;
+  void clear_value();
+  static const int kValueFieldNumber = 3;
+  const ::std::string& value() const;
+  void set_value(const ::std::string& value);
+  void set_value(const char* value);
+  void set_value(const void* value, size_t size);
+  ::std::string* mutable_value();
+  ::std::string* release_value();
+  void set_allocated_value(::std::string* value);
+
+  // @@protoc_insertion_point(class_scope:INetworkMapAdd)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  bool val_;
+  ::INetworkAssociatedObject* target_object_;
+  ::google::protobuf::internal::ArenaStringPtr value_;
+  ::google::protobuf::uint32 key_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
   friend void protobuf_AssignDesc_EntityMessages_2eproto();
   friend void protobuf_ShutdownFile_EntityMessages_2eproto();
 
   void InitAsDefaultInstance();
-  static ProtoMessageRPC* default_instance_;
+  static INetworkMapAdd* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class INetworkMapRemove : public ::google::protobuf::Message {
+ public:
+  INetworkMapRemove();
+  virtual ~INetworkMapRemove();
+
+  INetworkMapRemove(const INetworkMapRemove& from);
+
+  inline INetworkMapRemove& operator=(const INetworkMapRemove& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const INetworkMapRemove& default_instance();
+
+  void Swap(INetworkMapRemove* other);
+
+  // implements Message ----------------------------------------------
+
+  inline INetworkMapRemove* New() const { return New(NULL); }
+
+  INetworkMapRemove* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const INetworkMapRemove& from);
+  void MergeFrom(const INetworkMapRemove& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(INetworkMapRemove* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .INetworkAssociatedObject target_object = 1;
+  bool has_target_object() const;
+  void clear_target_object();
+  static const int kTargetObjectFieldNumber = 1;
+  const ::INetworkAssociatedObject& target_object() const;
+  ::INetworkAssociatedObject* mutable_target_object();
+  ::INetworkAssociatedObject* release_target_object();
+  void set_allocated_target_object(::INetworkAssociatedObject* target_object);
+
+  // optional uint32 key = 2;
+  void clear_key();
+  static const int kKeyFieldNumber = 2;
+  ::google::protobuf::uint32 key() const;
+  void set_key(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:INetworkMapRemove)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::INetworkAssociatedObject* target_object_;
+  ::google::protobuf::uint32 key_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_EntityMessages_2eproto();
+  friend void protobuf_AssignDesc_EntityMessages_2eproto();
+  friend void protobuf_ShutdownFile_EntityMessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static INetworkMapRemove* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class INetworkMapUpdate : public ::google::protobuf::Message {
+ public:
+  INetworkMapUpdate();
+  virtual ~INetworkMapUpdate();
+
+  INetworkMapUpdate(const INetworkMapUpdate& from);
+
+  inline INetworkMapUpdate& operator=(const INetworkMapUpdate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const INetworkMapUpdate& default_instance();
+
+  void Swap(INetworkMapUpdate* other);
+
+  // implements Message ----------------------------------------------
+
+  inline INetworkMapUpdate* New() const { return New(NULL); }
+
+  INetworkMapUpdate* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const INetworkMapUpdate& from);
+  void MergeFrom(const INetworkMapUpdate& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(INetworkMapUpdate* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .INetworkAssociatedObject target_object = 1;
+  bool has_target_object() const;
+  void clear_target_object();
+  static const int kTargetObjectFieldNumber = 1;
+  const ::INetworkAssociatedObject& target_object() const;
+  ::INetworkAssociatedObject* mutable_target_object();
+  ::INetworkAssociatedObject* release_target_object();
+  void set_allocated_target_object(::INetworkAssociatedObject* target_object);
+
+  // optional uint32 key = 2;
+  void clear_key();
+  static const int kKeyFieldNumber = 2;
+  ::google::protobuf::uint32 key() const;
+  void set_key(::google::protobuf::uint32 value);
+
+  // optional bytes value = 3;
+  void clear_value();
+  static const int kValueFieldNumber = 3;
+  const ::std::string& value() const;
+  void set_value(const ::std::string& value);
+  void set_value(const char* value);
+  void set_value(const void* value, size_t size);
+  ::std::string* mutable_value();
+  ::std::string* release_value();
+  void set_allocated_value(::std::string* value);
+
+  // @@protoc_insertion_point(class_scope:INetworkMapUpdate)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::INetworkAssociatedObject* target_object_;
+  ::google::protobuf::internal::ArenaStringPtr value_;
+  ::google::protobuf::uint32 key_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_EntityMessages_2eproto();
+  friend void protobuf_AssignDesc_EntityMessages_2eproto();
+  friend void protobuf_ShutdownFile_EntityMessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static INetworkMapUpdate* default_instance_;
 };
 // ===================================================================
 
@@ -206,55 +423,321 @@ class ProtoMessageRPC : public ::google::protobuf::Message {
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// ProtoMessageVector
+// INetworkAssociatedObject
 
-// optional float x = 1;
-inline void ProtoMessageVector::clear_x() {
-  x_ = 0;
+// optional string instance_name = 1;
+inline void INetworkAssociatedObject::clear_instance_name() {
+  instance_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline float ProtoMessageVector::x() const {
-  // @@protoc_insertion_point(field_get:ProtoMessageVector.x)
-  return x_;
+inline const ::std::string& INetworkAssociatedObject::instance_name() const {
+  // @@protoc_insertion_point(field_get:INetworkAssociatedObject.instance_name)
+  return instance_name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ProtoMessageVector::set_x(float value) {
+inline void INetworkAssociatedObject::set_instance_name(const ::std::string& value) {
   
-  x_ = value;
-  // @@protoc_insertion_point(field_set:ProtoMessageVector.x)
+  instance_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkAssociatedObject.instance_name)
+}
+inline void INetworkAssociatedObject::set_instance_name(const char* value) {
+  
+  instance_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkAssociatedObject.instance_name)
+}
+inline void INetworkAssociatedObject::set_instance_name(const char* value, size_t size) {
+  
+  instance_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkAssociatedObject.instance_name)
+}
+inline ::std::string* INetworkAssociatedObject::mutable_instance_name() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkAssociatedObject.instance_name)
+  return instance_name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* INetworkAssociatedObject::release_instance_name() {
+  
+  return instance_name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkAssociatedObject::set_allocated_instance_name(::std::string* instance_name) {
+  if (instance_name != NULL) {
+    
+  } else {
+    
+  }
+  instance_name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), instance_name);
+  // @@protoc_insertion_point(field_set_allocated:INetworkAssociatedObject.instance_name)
 }
 
-// optional float y = 2;
-inline void ProtoMessageVector::clear_y() {
-  y_ = 0;
+// optional uint32 network_code = 2;
+inline void INetworkAssociatedObject::clear_network_code() {
+  network_code_ = 0u;
 }
-inline float ProtoMessageVector::y() const {
-  // @@protoc_insertion_point(field_get:ProtoMessageVector.y)
-  return y_;
+inline ::google::protobuf::uint32 INetworkAssociatedObject::network_code() const {
+  // @@protoc_insertion_point(field_get:INetworkAssociatedObject.network_code)
+  return network_code_;
 }
-inline void ProtoMessageVector::set_y(float value) {
+inline void INetworkAssociatedObject::set_network_code(::google::protobuf::uint32 value) {
   
-  y_ = value;
-  // @@protoc_insertion_point(field_set:ProtoMessageVector.y)
+  network_code_ = value;
+  // @@protoc_insertion_point(field_set:INetworkAssociatedObject.network_code)
 }
 
 // -------------------------------------------------------------------
 
-// ProtoMessageRPC
+// INetworkMapAdd
 
-// optional bool val = 1;
-inline void ProtoMessageRPC::clear_val() {
-  val_ = false;
+// optional .INetworkAssociatedObject target_object = 1;
+inline bool INetworkMapAdd::has_target_object() const {
+  return !_is_default_instance_ && target_object_ != NULL;
 }
-inline bool ProtoMessageRPC::val() const {
-  // @@protoc_insertion_point(field_get:ProtoMessageRPC.val)
-  return val_;
+inline void INetworkMapAdd::clear_target_object() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
 }
-inline void ProtoMessageRPC::set_val(bool value) {
+inline const ::INetworkAssociatedObject& INetworkMapAdd::target_object() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.target_object)
+  return target_object_ != NULL ? *target_object_ : *default_instance_->target_object_;
+}
+inline ::INetworkAssociatedObject* INetworkMapAdd::mutable_target_object() {
   
-  val_ = value;
-  // @@protoc_insertion_point(field_set:ProtoMessageRPC.val)
+  if (target_object_ == NULL) {
+    target_object_ = new ::INetworkAssociatedObject;
+  }
+  // @@protoc_insertion_point(field_mutable:INetworkMapAdd.target_object)
+  return target_object_;
+}
+inline ::INetworkAssociatedObject* INetworkMapAdd::release_target_object() {
+  
+  ::INetworkAssociatedObject* temp = target_object_;
+  target_object_ = NULL;
+  return temp;
+}
+inline void INetworkMapAdd::set_allocated_target_object(::INetworkAssociatedObject* target_object) {
+  delete target_object_;
+  target_object_ = target_object;
+  if (target_object) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapAdd.target_object)
+}
+
+// optional uint32 key = 2;
+inline void INetworkMapAdd::clear_key() {
+  key_ = 0u;
+}
+inline ::google::protobuf::uint32 INetworkMapAdd::key() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.key)
+  return key_;
+}
+inline void INetworkMapAdd::set_key(::google::protobuf::uint32 value) {
+  
+  key_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapAdd.key)
+}
+
+// optional bytes value = 3;
+inline void INetworkMapAdd::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& INetworkMapAdd::value() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.value)
+  return value_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkMapAdd::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkMapAdd.value)
+}
+inline void INetworkMapAdd::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkMapAdd.value)
+}
+inline void INetworkMapAdd::set_value(const void* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkMapAdd.value)
+}
+inline ::std::string* INetworkMapAdd::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkMapAdd.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* INetworkMapAdd::release_value() {
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkMapAdd::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapAdd.value)
+}
+
+// -------------------------------------------------------------------
+
+// INetworkMapRemove
+
+// optional .INetworkAssociatedObject target_object = 1;
+inline bool INetworkMapRemove::has_target_object() const {
+  return !_is_default_instance_ && target_object_ != NULL;
+}
+inline void INetworkMapRemove::clear_target_object() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+}
+inline const ::INetworkAssociatedObject& INetworkMapRemove::target_object() const {
+  // @@protoc_insertion_point(field_get:INetworkMapRemove.target_object)
+  return target_object_ != NULL ? *target_object_ : *default_instance_->target_object_;
+}
+inline ::INetworkAssociatedObject* INetworkMapRemove::mutable_target_object() {
+  
+  if (target_object_ == NULL) {
+    target_object_ = new ::INetworkAssociatedObject;
+  }
+  // @@protoc_insertion_point(field_mutable:INetworkMapRemove.target_object)
+  return target_object_;
+}
+inline ::INetworkAssociatedObject* INetworkMapRemove::release_target_object() {
+  
+  ::INetworkAssociatedObject* temp = target_object_;
+  target_object_ = NULL;
+  return temp;
+}
+inline void INetworkMapRemove::set_allocated_target_object(::INetworkAssociatedObject* target_object) {
+  delete target_object_;
+  target_object_ = target_object;
+  if (target_object) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapRemove.target_object)
+}
+
+// optional uint32 key = 2;
+inline void INetworkMapRemove::clear_key() {
+  key_ = 0u;
+}
+inline ::google::protobuf::uint32 INetworkMapRemove::key() const {
+  // @@protoc_insertion_point(field_get:INetworkMapRemove.key)
+  return key_;
+}
+inline void INetworkMapRemove::set_key(::google::protobuf::uint32 value) {
+  
+  key_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapRemove.key)
+}
+
+// -------------------------------------------------------------------
+
+// INetworkMapUpdate
+
+// optional .INetworkAssociatedObject target_object = 1;
+inline bool INetworkMapUpdate::has_target_object() const {
+  return !_is_default_instance_ && target_object_ != NULL;
+}
+inline void INetworkMapUpdate::clear_target_object() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+}
+inline const ::INetworkAssociatedObject& INetworkMapUpdate::target_object() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.target_object)
+  return target_object_ != NULL ? *target_object_ : *default_instance_->target_object_;
+}
+inline ::INetworkAssociatedObject* INetworkMapUpdate::mutable_target_object() {
+  
+  if (target_object_ == NULL) {
+    target_object_ = new ::INetworkAssociatedObject;
+  }
+  // @@protoc_insertion_point(field_mutable:INetworkMapUpdate.target_object)
+  return target_object_;
+}
+inline ::INetworkAssociatedObject* INetworkMapUpdate::release_target_object() {
+  
+  ::INetworkAssociatedObject* temp = target_object_;
+  target_object_ = NULL;
+  return temp;
+}
+inline void INetworkMapUpdate::set_allocated_target_object(::INetworkAssociatedObject* target_object) {
+  delete target_object_;
+  target_object_ = target_object;
+  if (target_object) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapUpdate.target_object)
+}
+
+// optional uint32 key = 2;
+inline void INetworkMapUpdate::clear_key() {
+  key_ = 0u;
+}
+inline ::google::protobuf::uint32 INetworkMapUpdate::key() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.key)
+  return key_;
+}
+inline void INetworkMapUpdate::set_key(::google::protobuf::uint32 value) {
+  
+  key_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapUpdate.key)
+}
+
+// optional bytes value = 3;
+inline void INetworkMapUpdate::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& INetworkMapUpdate::value() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.value)
+  return value_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkMapUpdate::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkMapUpdate.value)
+}
+inline void INetworkMapUpdate::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkMapUpdate.value)
+}
+inline void INetworkMapUpdate::set_value(const void* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkMapUpdate.value)
+}
+inline ::std::string* INetworkMapUpdate::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkMapUpdate.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* INetworkMapUpdate::release_value() {
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkMapUpdate::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapUpdate.value)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 

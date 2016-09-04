@@ -11,14 +11,14 @@
 // A fixed size string blob.
 //-----------------------------------------------
 #define NetworkString(name, size) \
-	CNetVarString< char, std::string, size >     name   = CNetVarString< char, std::string, size >( this, #name )
+	CNetVarString< char, std::string, size >     name   = { this, #name }
 
 //-----------------------------------------------
 // A fixed size string blob that supports
 // unicode content.
 //-----------------------------------------------
 #define NetworkUnicodeString(name, size) \
-	CNetVarString< wchar_t, std::wstring, size > name   = CNetVarString<  wchar_t, std::wstring, size >( this, #name );
+	CNetVarString< wchar_t, std::wstring, size > name   = { this, #name };
 
 //-----------------------------------------------
 // Represents an array that stores and manipulates

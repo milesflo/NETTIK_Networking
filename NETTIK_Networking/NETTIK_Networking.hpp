@@ -32,6 +32,7 @@
 #include "CNetVarBase.h"
 #include "CNetVarVector.h"
 #include "CNetVarString.h"
+#include "CNetVarList.h"
 
 #include "SnapshotHeader.h"
 #include "SnapshotEntList.h"

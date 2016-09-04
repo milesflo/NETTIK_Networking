@@ -32,6 +32,7 @@ public:
 
 	void DoPostUpdate(float elapsedTime);
 	void DoSnapshot(SnapshotStream& collection, bool bReliableFlag, bool bForced = false);
+	void DoListUpdate();
 
 	void DestroyEntityManager(std::string name);
 	void DestroyEntityManager(IEntityManager* mgr);

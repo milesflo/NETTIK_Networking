@@ -18,12 +18,18 @@
 
 namespace {
 
-const ::google::protobuf::Descriptor* ProtoMessageVector_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* INetworkAssociatedObject_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  ProtoMessageVector_reflection_ = NULL;
-const ::google::protobuf::Descriptor* ProtoMessageRPC_descriptor_ = NULL;
+  INetworkAssociatedObject_reflection_ = NULL;
+const ::google::protobuf::Descriptor* INetworkMapAdd_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  ProtoMessageRPC_reflection_ = NULL;
+  INetworkMapAdd_reflection_ = NULL;
+const ::google::protobuf::Descriptor* INetworkMapRemove_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  INetworkMapRemove_reflection_ = NULL;
+const ::google::protobuf::Descriptor* INetworkMapUpdate_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  INetworkMapUpdate_reflection_ = NULL;
 
 }  // namespace
 
@@ -34,37 +40,72 @@ void protobuf_AssignDesc_EntityMessages_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "EntityMessages.proto");
   GOOGLE_CHECK(file != NULL);
-  ProtoMessageVector_descriptor_ = file->message_type(0);
-  static const int ProtoMessageVector_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageVector, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageVector, y_),
+  INetworkAssociatedObject_descriptor_ = file->message_type(0);
+  static const int INetworkAssociatedObject_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, instance_name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, network_code_),
   };
-  ProtoMessageVector_reflection_ =
+  INetworkAssociatedObject_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      ProtoMessageVector_descriptor_,
-      ProtoMessageVector::default_instance_,
-      ProtoMessageVector_offsets_,
+      INetworkAssociatedObject_descriptor_,
+      INetworkAssociatedObject::default_instance_,
+      INetworkAssociatedObject_offsets_,
       -1,
       -1,
       -1,
-      sizeof(ProtoMessageVector),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageVector, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageVector, _is_default_instance_));
-  ProtoMessageRPC_descriptor_ = file->message_type(1);
-  static const int ProtoMessageRPC_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageRPC, val_),
+      sizeof(INetworkAssociatedObject),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, _is_default_instance_));
+  INetworkMapAdd_descriptor_ = file->message_type(1);
+  static const int INetworkMapAdd_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, target_object_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, key_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, value_),
   };
-  ProtoMessageRPC_reflection_ =
+  INetworkMapAdd_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      ProtoMessageRPC_descriptor_,
-      ProtoMessageRPC::default_instance_,
-      ProtoMessageRPC_offsets_,
+      INetworkMapAdd_descriptor_,
+      INetworkMapAdd::default_instance_,
+      INetworkMapAdd_offsets_,
       -1,
       -1,
       -1,
-      sizeof(ProtoMessageRPC),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageRPC, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ProtoMessageRPC, _is_default_instance_));
+      sizeof(INetworkMapAdd),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, _is_default_instance_));
+  INetworkMapRemove_descriptor_ = file->message_type(2);
+  static const int INetworkMapRemove_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, target_object_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, key_),
+  };
+  INetworkMapRemove_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      INetworkMapRemove_descriptor_,
+      INetworkMapRemove::default_instance_,
+      INetworkMapRemove_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(INetworkMapRemove),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, _is_default_instance_));
+  INetworkMapUpdate_descriptor_ = file->message_type(3);
+  static const int INetworkMapUpdate_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, target_object_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, key_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, value_),
+  };
+  INetworkMapUpdate_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      INetworkMapUpdate_descriptor_,
+      INetworkMapUpdate::default_instance_,
+      INetworkMapUpdate_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(INetworkMapUpdate),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, _is_default_instance_));
 }
 
 namespace {
@@ -78,18 +119,26 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      ProtoMessageVector_descriptor_, &ProtoMessageVector::default_instance());
+      INetworkAssociatedObject_descriptor_, &INetworkAssociatedObject::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      ProtoMessageRPC_descriptor_, &ProtoMessageRPC::default_instance());
+      INetworkMapAdd_descriptor_, &INetworkMapAdd::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      INetworkMapRemove_descriptor_, &INetworkMapRemove::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      INetworkMapUpdate_descriptor_, &INetworkMapUpdate::default_instance());
 }
 
 }  // namespace
 
 void protobuf_ShutdownFile_EntityMessages_2eproto() {
-  delete ProtoMessageVector::default_instance_;
-  delete ProtoMessageVector_reflection_;
-  delete ProtoMessageRPC::default_instance_;
-  delete ProtoMessageRPC_reflection_;
+  delete INetworkAssociatedObject::default_instance_;
+  delete INetworkAssociatedObject_reflection_;
+  delete INetworkMapAdd::default_instance_;
+  delete INetworkMapAdd_reflection_;
+  delete INetworkMapRemove::default_instance_;
+  delete INetworkMapRemove_reflection_;
+  delete INetworkMapUpdate::default_instance_;
+  delete INetworkMapUpdate_reflection_;
 }
 
 void protobuf_AddDesc_EntityMessages_2eproto() {
@@ -99,15 +148,26 @@ void protobuf_AddDesc_EntityMessages_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024EntityMessages.proto\"*\n\022ProtoMessageVe"
-    "ctor\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\"\036\n\017ProtoMessa"
-    "geRPC\022\013\n\003val\030\001 \001(\010b\006proto3", 106);
+    "\n\024EntityMessages.proto\"G\n\030INetworkAssoci"
+    "atedObject\022\025\n\rinstance_name\030\001 \001(\t\022\024\n\014net"
+    "work_code\030\002 \001(\r\"^\n\016INetworkMapAdd\0220\n\rtar"
+    "get_object\030\001 \001(\0132\031.INetworkAssociatedObj"
+    "ect\022\013\n\003key\030\002 \001(\r\022\r\n\005value\030\003 \001(\014\"R\n\021INetw"
+    "orkMapRemove\0220\n\rtarget_object\030\001 \001(\0132\031.IN"
+    "etworkAssociatedObject\022\013\n\003key\030\002 \001(\r\"a\n\021I"
+    "NetworkMapUpdate\0220\n\rtarget_object\030\001 \001(\0132"
+    "\031.INetworkAssociatedObject\022\013\n\003key\030\002 \001(\r\022"
+    "\r\n\005value\030\003 \001(\014b\006proto3", 382);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "EntityMessages.proto", &protobuf_RegisterTypes);
-  ProtoMessageVector::default_instance_ = new ProtoMessageVector();
-  ProtoMessageRPC::default_instance_ = new ProtoMessageRPC();
-  ProtoMessageVector::default_instance_->InitAsDefaultInstance();
-  ProtoMessageRPC::default_instance_->InitAsDefaultInstance();
+  INetworkAssociatedObject::default_instance_ = new INetworkAssociatedObject();
+  INetworkMapAdd::default_instance_ = new INetworkMapAdd();
+  INetworkMapRemove::default_instance_ = new INetworkMapRemove();
+  INetworkMapUpdate::default_instance_ = new INetworkMapUpdate();
+  INetworkAssociatedObject::default_instance_->InitAsDefaultInstance();
+  INetworkMapAdd::default_instance_->InitAsDefaultInstance();
+  INetworkMapRemove::default_instance_->InitAsDefaultInstance();
+  INetworkMapUpdate::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_EntityMessages_2eproto);
 }
 
@@ -131,117 +191,110 @@ static void MergeFromFail(int line) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int ProtoMessageVector::kXFieldNumber;
-const int ProtoMessageVector::kYFieldNumber;
+const int INetworkAssociatedObject::kInstanceNameFieldNumber;
+const int INetworkAssociatedObject::kNetworkCodeFieldNumber;
 #endif  // !_MSC_VER
 
-ProtoMessageVector::ProtoMessageVector()
+INetworkAssociatedObject::INetworkAssociatedObject()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:ProtoMessageVector)
+  // @@protoc_insertion_point(constructor:INetworkAssociatedObject)
 }
 
-void ProtoMessageVector::InitAsDefaultInstance() {
+void INetworkAssociatedObject::InitAsDefaultInstance() {
   _is_default_instance_ = true;
 }
 
-ProtoMessageVector::ProtoMessageVector(const ProtoMessageVector& from)
+INetworkAssociatedObject::INetworkAssociatedObject(const INetworkAssociatedObject& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:ProtoMessageVector)
+  // @@protoc_insertion_point(copy_constructor:INetworkAssociatedObject)
 }
 
-void ProtoMessageVector::SharedCtor() {
+void INetworkAssociatedObject::SharedCtor() {
     _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  x_ = 0;
-  y_ = 0;
+  instance_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  network_code_ = 0u;
 }
 
-ProtoMessageVector::~ProtoMessageVector() {
-  // @@protoc_insertion_point(destructor:ProtoMessageVector)
+INetworkAssociatedObject::~INetworkAssociatedObject() {
+  // @@protoc_insertion_point(destructor:INetworkAssociatedObject)
   SharedDtor();
 }
 
-void ProtoMessageVector::SharedDtor() {
+void INetworkAssociatedObject::SharedDtor() {
+  instance_name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
 
-void ProtoMessageVector::SetCachedSize(int size) const {
+void INetworkAssociatedObject::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* ProtoMessageVector::descriptor() {
+const ::google::protobuf::Descriptor* INetworkAssociatedObject::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ProtoMessageVector_descriptor_;
+  return INetworkAssociatedObject_descriptor_;
 }
 
-const ProtoMessageVector& ProtoMessageVector::default_instance() {
+const INetworkAssociatedObject& INetworkAssociatedObject::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_EntityMessages_2eproto();
   return *default_instance_;
 }
 
-ProtoMessageVector* ProtoMessageVector::default_instance_ = NULL;
+INetworkAssociatedObject* INetworkAssociatedObject::default_instance_ = NULL;
 
-ProtoMessageVector* ProtoMessageVector::New(::google::protobuf::Arena* arena) const {
-  ProtoMessageVector* n = new ProtoMessageVector;
+INetworkAssociatedObject* INetworkAssociatedObject::New(::google::protobuf::Arena* arena) const {
+  INetworkAssociatedObject* n = new INetworkAssociatedObject;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void ProtoMessageVector::Clear() {
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<ProtoMessageVector*>(16)->f)
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(x_, y_);
-
-#undef ZR_HELPER_
-#undef ZR_
-
+void INetworkAssociatedObject::Clear() {
+  instance_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  network_code_ = 0u;
 }
 
-bool ProtoMessageVector::MergePartialFromCodedStream(
+bool INetworkAssociatedObject::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:ProtoMessageVector)
+  // @@protoc_insertion_point(parse_start:INetworkAssociatedObject)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional float x = 1;
+      // optional string instance_name = 1;
       case 1: {
-        if (tag == 13) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &x_)));
-
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_instance_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->instance_name().data(), this->instance_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "INetworkAssociatedObject.instance_name");
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(21)) goto parse_y;
+        if (input->ExpectTag(16)) goto parse_network_code;
         break;
       }
 
-      // optional float y = 2;
+      // optional uint32 network_code = 2;
       case 2: {
-        if (tag == 21) {
-         parse_y:
+        if (tag == 16) {
+         parse_network_code:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &y_)));
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &network_code_)));
 
         } else {
           goto handle_unusual;
@@ -263,58 +316,73 @@ bool ProtoMessageVector::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:ProtoMessageVector)
+  // @@protoc_insertion_point(parse_success:INetworkAssociatedObject)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:ProtoMessageVector)
+  // @@protoc_insertion_point(parse_failure:INetworkAssociatedObject)
   return false;
 #undef DO_
 }
 
-void ProtoMessageVector::SerializeWithCachedSizes(
+void INetworkAssociatedObject::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:ProtoMessageVector)
-  // optional float x = 1;
-  if (this->x() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->x(), output);
+  // @@protoc_insertion_point(serialize_start:INetworkAssociatedObject)
+  // optional string instance_name = 1;
+  if (this->instance_name().size() > 0) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->instance_name().data(), this->instance_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "INetworkAssociatedObject.instance_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->instance_name(), output);
   }
 
-  // optional float y = 2;
-  if (this->y() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->y(), output);
+  // optional uint32 network_code = 2;
+  if (this->network_code() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->network_code(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:ProtoMessageVector)
+  // @@protoc_insertion_point(serialize_end:INetworkAssociatedObject)
 }
 
-::google::protobuf::uint8* ProtoMessageVector::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* INetworkAssociatedObject::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:ProtoMessageVector)
-  // optional float x = 1;
-  if (this->x() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->x(), target);
+  // @@protoc_insertion_point(serialize_to_array_start:INetworkAssociatedObject)
+  // optional string instance_name = 1;
+  if (this->instance_name().size() > 0) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->instance_name().data(), this->instance_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "INetworkAssociatedObject.instance_name");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->instance_name(), target);
   }
 
-  // optional float y = 2;
-  if (this->y() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->y(), target);
+  // optional uint32 network_code = 2;
+  if (this->network_code() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->network_code(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:ProtoMessageVector)
+  // @@protoc_insertion_point(serialize_to_array_end:INetworkAssociatedObject)
   return target;
 }
 
-int ProtoMessageVector::ByteSize() const {
+int INetworkAssociatedObject::ByteSize() const {
   int total_size = 0;
 
-  // optional float x = 1;
-  if (this->x() != 0) {
-    total_size += 1 + 4;
+  // optional string instance_name = 1;
+  if (this->instance_name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->instance_name());
   }
 
-  // optional float y = 2;
-  if (this->y() != 0) {
-    total_size += 1 + 4;
+  // optional uint32 network_code = 2;
+  if (this->network_code() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->network_code());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -323,10 +391,10 @@ int ProtoMessageVector::ByteSize() const {
   return total_size;
 }
 
-void ProtoMessageVector::MergeFrom(const ::google::protobuf::Message& from) {
+void INetworkAssociatedObject::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const ProtoMessageVector* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const ProtoMessageVector>(
+  const INetworkAssociatedObject* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const INetworkAssociatedObject>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -335,81 +403,111 @@ void ProtoMessageVector::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void ProtoMessageVector::MergeFrom(const ProtoMessageVector& from) {
+void INetworkAssociatedObject::MergeFrom(const INetworkAssociatedObject& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.x() != 0) {
-    set_x(from.x());
+  if (from.instance_name().size() > 0) {
+
+    instance_name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.instance_name_);
   }
-  if (from.y() != 0) {
-    set_y(from.y());
+  if (from.network_code() != 0) {
+    set_network_code(from.network_code());
   }
 }
 
-void ProtoMessageVector::CopyFrom(const ::google::protobuf::Message& from) {
+void INetworkAssociatedObject::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void ProtoMessageVector::CopyFrom(const ProtoMessageVector& from) {
+void INetworkAssociatedObject::CopyFrom(const INetworkAssociatedObject& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool ProtoMessageVector::IsInitialized() const {
+bool INetworkAssociatedObject::IsInitialized() const {
 
   return true;
 }
 
-void ProtoMessageVector::Swap(ProtoMessageVector* other) {
+void INetworkAssociatedObject::Swap(INetworkAssociatedObject* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void ProtoMessageVector::InternalSwap(ProtoMessageVector* other) {
-  std::swap(x_, other->x_);
-  std::swap(y_, other->y_);
+void INetworkAssociatedObject::InternalSwap(INetworkAssociatedObject* other) {
+  instance_name_.Swap(&other->instance_name_);
+  std::swap(network_code_, other->network_code_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata ProtoMessageVector::GetMetadata() const {
+::google::protobuf::Metadata INetworkAssociatedObject::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ProtoMessageVector_descriptor_;
-  metadata.reflection = ProtoMessageVector_reflection_;
+  metadata.descriptor = INetworkAssociatedObject_descriptor_;
+  metadata.reflection = INetworkAssociatedObject_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// ProtoMessageVector
+// INetworkAssociatedObject
 
-// optional float x = 1;
-void ProtoMessageVector::clear_x() {
-  x_ = 0;
+// optional string instance_name = 1;
+void INetworkAssociatedObject::clear_instance_name() {
+  instance_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- float ProtoMessageVector::x() const {
-  // @@protoc_insertion_point(field_get:ProtoMessageVector.x)
-  return x_;
+ const ::std::string& INetworkAssociatedObject::instance_name() const {
+  // @@protoc_insertion_point(field_get:INetworkAssociatedObject.instance_name)
+  return instance_name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void ProtoMessageVector::set_x(float value) {
+ void INetworkAssociatedObject::set_instance_name(const ::std::string& value) {
   
-  x_ = value;
-  // @@protoc_insertion_point(field_set:ProtoMessageVector.x)
+  instance_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkAssociatedObject.instance_name)
+}
+ void INetworkAssociatedObject::set_instance_name(const char* value) {
+  
+  instance_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkAssociatedObject.instance_name)
+}
+ void INetworkAssociatedObject::set_instance_name(const char* value, size_t size) {
+  
+  instance_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkAssociatedObject.instance_name)
+}
+ ::std::string* INetworkAssociatedObject::mutable_instance_name() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkAssociatedObject.instance_name)
+  return instance_name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* INetworkAssociatedObject::release_instance_name() {
+  
+  return instance_name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkAssociatedObject::set_allocated_instance_name(::std::string* instance_name) {
+  if (instance_name != NULL) {
+    
+  } else {
+    
+  }
+  instance_name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), instance_name);
+  // @@protoc_insertion_point(field_set_allocated:INetworkAssociatedObject.instance_name)
 }
 
-// optional float y = 2;
-void ProtoMessageVector::clear_y() {
-  y_ = 0;
+// optional uint32 network_code = 2;
+void INetworkAssociatedObject::clear_network_code() {
+  network_code_ = 0u;
 }
- float ProtoMessageVector::y() const {
-  // @@protoc_insertion_point(field_get:ProtoMessageVector.y)
-  return y_;
+ ::google::protobuf::uint32 INetworkAssociatedObject::network_code() const {
+  // @@protoc_insertion_point(field_get:INetworkAssociatedObject.network_code)
+  return network_code_;
 }
- void ProtoMessageVector::set_y(float value) {
+ void INetworkAssociatedObject::set_network_code(::google::protobuf::uint32 value) {
   
-  y_ = value;
-  // @@protoc_insertion_point(field_set:ProtoMessageVector.y)
+  network_code_ = value;
+  // @@protoc_insertion_point(field_set:INetworkAssociatedObject.network_code)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -417,88 +515,499 @@ void ProtoMessageVector::clear_y() {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int ProtoMessageRPC::kValFieldNumber;
+const int INetworkMapAdd::kTargetObjectFieldNumber;
+const int INetworkMapAdd::kKeyFieldNumber;
+const int INetworkMapAdd::kValueFieldNumber;
 #endif  // !_MSC_VER
 
-ProtoMessageRPC::ProtoMessageRPC()
+INetworkMapAdd::INetworkMapAdd()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:ProtoMessageRPC)
+  // @@protoc_insertion_point(constructor:INetworkMapAdd)
 }
 
-void ProtoMessageRPC::InitAsDefaultInstance() {
+void INetworkMapAdd::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  target_object_ = const_cast< ::INetworkAssociatedObject*>(&::INetworkAssociatedObject::default_instance());
 }
 
-ProtoMessageRPC::ProtoMessageRPC(const ProtoMessageRPC& from)
+INetworkMapAdd::INetworkMapAdd(const INetworkMapAdd& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:ProtoMessageRPC)
+  // @@protoc_insertion_point(copy_constructor:INetworkMapAdd)
 }
 
-void ProtoMessageRPC::SharedCtor() {
+void INetworkMapAdd::SharedCtor() {
     _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  val_ = false;
+  target_object_ = NULL;
+  key_ = 0u;
+  value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-ProtoMessageRPC::~ProtoMessageRPC() {
-  // @@protoc_insertion_point(destructor:ProtoMessageRPC)
+INetworkMapAdd::~INetworkMapAdd() {
+  // @@protoc_insertion_point(destructor:INetworkMapAdd)
   SharedDtor();
 }
 
-void ProtoMessageRPC::SharedDtor() {
+void INetworkMapAdd::SharedDtor() {
+  value_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
+    delete target_object_;
   }
 }
 
-void ProtoMessageRPC::SetCachedSize(int size) const {
+void INetworkMapAdd::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* ProtoMessageRPC::descriptor() {
+const ::google::protobuf::Descriptor* INetworkMapAdd::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ProtoMessageRPC_descriptor_;
+  return INetworkMapAdd_descriptor_;
 }
 
-const ProtoMessageRPC& ProtoMessageRPC::default_instance() {
+const INetworkMapAdd& INetworkMapAdd::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_EntityMessages_2eproto();
   return *default_instance_;
 }
 
-ProtoMessageRPC* ProtoMessageRPC::default_instance_ = NULL;
+INetworkMapAdd* INetworkMapAdd::default_instance_ = NULL;
 
-ProtoMessageRPC* ProtoMessageRPC::New(::google::protobuf::Arena* arena) const {
-  ProtoMessageRPC* n = new ProtoMessageRPC;
+INetworkMapAdd* INetworkMapAdd::New(::google::protobuf::Arena* arena) const {
+  INetworkMapAdd* n = new INetworkMapAdd;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void ProtoMessageRPC::Clear() {
-  val_ = false;
+void INetworkMapAdd::Clear() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+  key_ = 0u;
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-bool ProtoMessageRPC::MergePartialFromCodedStream(
+bool INetworkMapAdd::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:ProtoMessageRPC)
+  // @@protoc_insertion_point(parse_start:INetworkMapAdd)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional bool val = 1;
+      // optional .INetworkAssociatedObject target_object = 1;
       case 1: {
-        if (tag == 8) {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_target_object()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_key;
+        break;
+      }
+
+      // optional uint32 key = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_key:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &val_)));
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &key_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_value;
+        break;
+      }
+
+      // optional bytes value = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_value:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_value()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:INetworkMapAdd)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:INetworkMapAdd)
+  return false;
+#undef DO_
+}
+
+void INetworkMapAdd::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:INetworkMapAdd)
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->target_object_, output);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->key(), output);
+  }
+
+  // optional bytes value = 3;
+  if (this->value().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->value(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:INetworkMapAdd)
+}
+
+::google::protobuf::uint8* INetworkMapAdd::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:INetworkMapAdd)
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->target_object_, target);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->key(), target);
+  }
+
+  // optional bytes value = 3;
+  if (this->value().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->value(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:INetworkMapAdd)
+  return target;
+}
+
+int INetworkMapAdd::ByteSize() const {
+  int total_size = 0;
+
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->target_object_);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->key());
+  }
+
+  // optional bytes value = 3;
+  if (this->value().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->value());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void INetworkMapAdd::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const INetworkMapAdd* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const INetworkMapAdd>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void INetworkMapAdd::MergeFrom(const INetworkMapAdd& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.has_target_object()) {
+    mutable_target_object()->::INetworkAssociatedObject::MergeFrom(from.target_object());
+  }
+  if (from.key() != 0) {
+    set_key(from.key());
+  }
+  if (from.value().size() > 0) {
+
+    value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
+  }
+}
+
+void INetworkMapAdd::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void INetworkMapAdd::CopyFrom(const INetworkMapAdd& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool INetworkMapAdd::IsInitialized() const {
+
+  return true;
+}
+
+void INetworkMapAdd::Swap(INetworkMapAdd* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void INetworkMapAdd::InternalSwap(INetworkMapAdd* other) {
+  std::swap(target_object_, other->target_object_);
+  std::swap(key_, other->key_);
+  value_.Swap(&other->value_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata INetworkMapAdd::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = INetworkMapAdd_descriptor_;
+  metadata.reflection = INetworkMapAdd_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// INetworkMapAdd
+
+// optional .INetworkAssociatedObject target_object = 1;
+bool INetworkMapAdd::has_target_object() const {
+  return !_is_default_instance_ && target_object_ != NULL;
+}
+void INetworkMapAdd::clear_target_object() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+}
+ const ::INetworkAssociatedObject& INetworkMapAdd::target_object() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.target_object)
+  return target_object_ != NULL ? *target_object_ : *default_instance_->target_object_;
+}
+ ::INetworkAssociatedObject* INetworkMapAdd::mutable_target_object() {
+  
+  if (target_object_ == NULL) {
+    target_object_ = new ::INetworkAssociatedObject;
+  }
+  // @@protoc_insertion_point(field_mutable:INetworkMapAdd.target_object)
+  return target_object_;
+}
+ ::INetworkAssociatedObject* INetworkMapAdd::release_target_object() {
+  
+  ::INetworkAssociatedObject* temp = target_object_;
+  target_object_ = NULL;
+  return temp;
+}
+ void INetworkMapAdd::set_allocated_target_object(::INetworkAssociatedObject* target_object) {
+  delete target_object_;
+  target_object_ = target_object;
+  if (target_object) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapAdd.target_object)
+}
+
+// optional uint32 key = 2;
+void INetworkMapAdd::clear_key() {
+  key_ = 0u;
+}
+ ::google::protobuf::uint32 INetworkMapAdd::key() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.key)
+  return key_;
+}
+ void INetworkMapAdd::set_key(::google::protobuf::uint32 value) {
+  
+  key_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapAdd.key)
+}
+
+// optional bytes value = 3;
+void INetworkMapAdd::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& INetworkMapAdd::value() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.value)
+  return value_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkMapAdd::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkMapAdd.value)
+}
+ void INetworkMapAdd::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkMapAdd.value)
+}
+ void INetworkMapAdd::set_value(const void* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkMapAdd.value)
+}
+ ::std::string* INetworkMapAdd::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkMapAdd.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* INetworkMapAdd::release_value() {
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkMapAdd::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapAdd.value)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int INetworkMapRemove::kTargetObjectFieldNumber;
+const int INetworkMapRemove::kKeyFieldNumber;
+#endif  // !_MSC_VER
+
+INetworkMapRemove::INetworkMapRemove()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:INetworkMapRemove)
+}
+
+void INetworkMapRemove::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  target_object_ = const_cast< ::INetworkAssociatedObject*>(&::INetworkAssociatedObject::default_instance());
+}
+
+INetworkMapRemove::INetworkMapRemove(const INetworkMapRemove& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:INetworkMapRemove)
+}
+
+void INetworkMapRemove::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  target_object_ = NULL;
+  key_ = 0u;
+}
+
+INetworkMapRemove::~INetworkMapRemove() {
+  // @@protoc_insertion_point(destructor:INetworkMapRemove)
+  SharedDtor();
+}
+
+void INetworkMapRemove::SharedDtor() {
+  if (this != default_instance_) {
+    delete target_object_;
+  }
+}
+
+void INetworkMapRemove::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* INetworkMapRemove::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return INetworkMapRemove_descriptor_;
+}
+
+const INetworkMapRemove& INetworkMapRemove::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_EntityMessages_2eproto();
+  return *default_instance_;
+}
+
+INetworkMapRemove* INetworkMapRemove::default_instance_ = NULL;
+
+INetworkMapRemove* INetworkMapRemove::New(::google::protobuf::Arena* arena) const {
+  INetworkMapRemove* n = new INetworkMapRemove;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void INetworkMapRemove::Clear() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+  key_ = 0u;
+}
+
+bool INetworkMapRemove::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:INetworkMapRemove)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .INetworkAssociatedObject target_object = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_target_object()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_key;
+        break;
+      }
+
+      // optional uint32 key = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_key:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &key_)));
 
         } else {
           goto handle_unusual;
@@ -520,43 +1029,65 @@ bool ProtoMessageRPC::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:ProtoMessageRPC)
+  // @@protoc_insertion_point(parse_success:INetworkMapRemove)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:ProtoMessageRPC)
+  // @@protoc_insertion_point(parse_failure:INetworkMapRemove)
   return false;
 #undef DO_
 }
 
-void ProtoMessageRPC::SerializeWithCachedSizes(
+void INetworkMapRemove::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:ProtoMessageRPC)
-  // optional bool val = 1;
-  if (this->val() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->val(), output);
+  // @@protoc_insertion_point(serialize_start:INetworkMapRemove)
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->target_object_, output);
   }
 
-  // @@protoc_insertion_point(serialize_end:ProtoMessageRPC)
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->key(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:INetworkMapRemove)
 }
 
-::google::protobuf::uint8* ProtoMessageRPC::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* INetworkMapRemove::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:ProtoMessageRPC)
-  // optional bool val = 1;
-  if (this->val() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->val(), target);
+  // @@protoc_insertion_point(serialize_to_array_start:INetworkMapRemove)
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->target_object_, target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:ProtoMessageRPC)
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->key(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:INetworkMapRemove)
   return target;
 }
 
-int ProtoMessageRPC::ByteSize() const {
+int INetworkMapRemove::ByteSize() const {
   int total_size = 0;
 
-  // optional bool val = 1;
-  if (this->val() != 0) {
-    total_size += 1 + 1;
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->target_object_);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->key());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -565,10 +1096,10 @@ int ProtoMessageRPC::ByteSize() const {
   return total_size;
 }
 
-void ProtoMessageRPC::MergeFrom(const ::google::protobuf::Message& from) {
+void INetworkMapRemove::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const ProtoMessageRPC* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const ProtoMessageRPC>(
+  const INetworkMapRemove* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const INetworkMapRemove>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -577,63 +1108,496 @@ void ProtoMessageRPC::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void ProtoMessageRPC::MergeFrom(const ProtoMessageRPC& from) {
+void INetworkMapRemove::MergeFrom(const INetworkMapRemove& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  if (from.val() != 0) {
-    set_val(from.val());
+  if (from.has_target_object()) {
+    mutable_target_object()->::INetworkAssociatedObject::MergeFrom(from.target_object());
+  }
+  if (from.key() != 0) {
+    set_key(from.key());
   }
 }
 
-void ProtoMessageRPC::CopyFrom(const ::google::protobuf::Message& from) {
+void INetworkMapRemove::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void ProtoMessageRPC::CopyFrom(const ProtoMessageRPC& from) {
+void INetworkMapRemove::CopyFrom(const INetworkMapRemove& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool ProtoMessageRPC::IsInitialized() const {
+bool INetworkMapRemove::IsInitialized() const {
 
   return true;
 }
 
-void ProtoMessageRPC::Swap(ProtoMessageRPC* other) {
+void INetworkMapRemove::Swap(INetworkMapRemove* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void ProtoMessageRPC::InternalSwap(ProtoMessageRPC* other) {
-  std::swap(val_, other->val_);
+void INetworkMapRemove::InternalSwap(INetworkMapRemove* other) {
+  std::swap(target_object_, other->target_object_);
+  std::swap(key_, other->key_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata ProtoMessageRPC::GetMetadata() const {
+::google::protobuf::Metadata INetworkMapRemove::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ProtoMessageRPC_descriptor_;
-  metadata.reflection = ProtoMessageRPC_reflection_;
+  metadata.descriptor = INetworkMapRemove_descriptor_;
+  metadata.reflection = INetworkMapRemove_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// ProtoMessageRPC
+// INetworkMapRemove
 
-// optional bool val = 1;
-void ProtoMessageRPC::clear_val() {
-  val_ = false;
+// optional .INetworkAssociatedObject target_object = 1;
+bool INetworkMapRemove::has_target_object() const {
+  return !_is_default_instance_ && target_object_ != NULL;
 }
- bool ProtoMessageRPC::val() const {
-  // @@protoc_insertion_point(field_get:ProtoMessageRPC.val)
-  return val_;
+void INetworkMapRemove::clear_target_object() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
 }
- void ProtoMessageRPC::set_val(bool value) {
+ const ::INetworkAssociatedObject& INetworkMapRemove::target_object() const {
+  // @@protoc_insertion_point(field_get:INetworkMapRemove.target_object)
+  return target_object_ != NULL ? *target_object_ : *default_instance_->target_object_;
+}
+ ::INetworkAssociatedObject* INetworkMapRemove::mutable_target_object() {
   
-  val_ = value;
-  // @@protoc_insertion_point(field_set:ProtoMessageRPC.val)
+  if (target_object_ == NULL) {
+    target_object_ = new ::INetworkAssociatedObject;
+  }
+  // @@protoc_insertion_point(field_mutable:INetworkMapRemove.target_object)
+  return target_object_;
+}
+ ::INetworkAssociatedObject* INetworkMapRemove::release_target_object() {
+  
+  ::INetworkAssociatedObject* temp = target_object_;
+  target_object_ = NULL;
+  return temp;
+}
+ void INetworkMapRemove::set_allocated_target_object(::INetworkAssociatedObject* target_object) {
+  delete target_object_;
+  target_object_ = target_object;
+  if (target_object) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapRemove.target_object)
+}
+
+// optional uint32 key = 2;
+void INetworkMapRemove::clear_key() {
+  key_ = 0u;
+}
+ ::google::protobuf::uint32 INetworkMapRemove::key() const {
+  // @@protoc_insertion_point(field_get:INetworkMapRemove.key)
+  return key_;
+}
+ void INetworkMapRemove::set_key(::google::protobuf::uint32 value) {
+  
+  key_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapRemove.key)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int INetworkMapUpdate::kTargetObjectFieldNumber;
+const int INetworkMapUpdate::kKeyFieldNumber;
+const int INetworkMapUpdate::kValueFieldNumber;
+#endif  // !_MSC_VER
+
+INetworkMapUpdate::INetworkMapUpdate()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:INetworkMapUpdate)
+}
+
+void INetworkMapUpdate::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  target_object_ = const_cast< ::INetworkAssociatedObject*>(&::INetworkAssociatedObject::default_instance());
+}
+
+INetworkMapUpdate::INetworkMapUpdate(const INetworkMapUpdate& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:INetworkMapUpdate)
+}
+
+void INetworkMapUpdate::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  target_object_ = NULL;
+  key_ = 0u;
+  value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+INetworkMapUpdate::~INetworkMapUpdate() {
+  // @@protoc_insertion_point(destructor:INetworkMapUpdate)
+  SharedDtor();
+}
+
+void INetworkMapUpdate::SharedDtor() {
+  value_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+    delete target_object_;
+  }
+}
+
+void INetworkMapUpdate::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* INetworkMapUpdate::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return INetworkMapUpdate_descriptor_;
+}
+
+const INetworkMapUpdate& INetworkMapUpdate::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_EntityMessages_2eproto();
+  return *default_instance_;
+}
+
+INetworkMapUpdate* INetworkMapUpdate::default_instance_ = NULL;
+
+INetworkMapUpdate* INetworkMapUpdate::New(::google::protobuf::Arena* arena) const {
+  INetworkMapUpdate* n = new INetworkMapUpdate;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void INetworkMapUpdate::Clear() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+  key_ = 0u;
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool INetworkMapUpdate::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:INetworkMapUpdate)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .INetworkAssociatedObject target_object = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_target_object()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_key;
+        break;
+      }
+
+      // optional uint32 key = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_key:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &key_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_value;
+        break;
+      }
+
+      // optional bytes value = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_value:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_value()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:INetworkMapUpdate)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:INetworkMapUpdate)
+  return false;
+#undef DO_
+}
+
+void INetworkMapUpdate::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:INetworkMapUpdate)
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->target_object_, output);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->key(), output);
+  }
+
+  // optional bytes value = 3;
+  if (this->value().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->value(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:INetworkMapUpdate)
+}
+
+::google::protobuf::uint8* INetworkMapUpdate::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:INetworkMapUpdate)
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->target_object_, target);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->key(), target);
+  }
+
+  // optional bytes value = 3;
+  if (this->value().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->value(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:INetworkMapUpdate)
+  return target;
+}
+
+int INetworkMapUpdate::ByteSize() const {
+  int total_size = 0;
+
+  // optional .INetworkAssociatedObject target_object = 1;
+  if (this->has_target_object()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->target_object_);
+  }
+
+  // optional uint32 key = 2;
+  if (this->key() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->key());
+  }
+
+  // optional bytes value = 3;
+  if (this->value().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->value());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void INetworkMapUpdate::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const INetworkMapUpdate* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const INetworkMapUpdate>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void INetworkMapUpdate::MergeFrom(const INetworkMapUpdate& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.has_target_object()) {
+    mutable_target_object()->::INetworkAssociatedObject::MergeFrom(from.target_object());
+  }
+  if (from.key() != 0) {
+    set_key(from.key());
+  }
+  if (from.value().size() > 0) {
+
+    value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
+  }
+}
+
+void INetworkMapUpdate::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void INetworkMapUpdate::CopyFrom(const INetworkMapUpdate& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool INetworkMapUpdate::IsInitialized() const {
+
+  return true;
+}
+
+void INetworkMapUpdate::Swap(INetworkMapUpdate* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void INetworkMapUpdate::InternalSwap(INetworkMapUpdate* other) {
+  std::swap(target_object_, other->target_object_);
+  std::swap(key_, other->key_);
+  value_.Swap(&other->value_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata INetworkMapUpdate::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = INetworkMapUpdate_descriptor_;
+  metadata.reflection = INetworkMapUpdate_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// INetworkMapUpdate
+
+// optional .INetworkAssociatedObject target_object = 1;
+bool INetworkMapUpdate::has_target_object() const {
+  return !_is_default_instance_ && target_object_ != NULL;
+}
+void INetworkMapUpdate::clear_target_object() {
+  if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
+  target_object_ = NULL;
+}
+ const ::INetworkAssociatedObject& INetworkMapUpdate::target_object() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.target_object)
+  return target_object_ != NULL ? *target_object_ : *default_instance_->target_object_;
+}
+ ::INetworkAssociatedObject* INetworkMapUpdate::mutable_target_object() {
+  
+  if (target_object_ == NULL) {
+    target_object_ = new ::INetworkAssociatedObject;
+  }
+  // @@protoc_insertion_point(field_mutable:INetworkMapUpdate.target_object)
+  return target_object_;
+}
+ ::INetworkAssociatedObject* INetworkMapUpdate::release_target_object() {
+  
+  ::INetworkAssociatedObject* temp = target_object_;
+  target_object_ = NULL;
+  return temp;
+}
+ void INetworkMapUpdate::set_allocated_target_object(::INetworkAssociatedObject* target_object) {
+  delete target_object_;
+  target_object_ = target_object;
+  if (target_object) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapUpdate.target_object)
+}
+
+// optional uint32 key = 2;
+void INetworkMapUpdate::clear_key() {
+  key_ = 0u;
+}
+ ::google::protobuf::uint32 INetworkMapUpdate::key() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.key)
+  return key_;
+}
+ void INetworkMapUpdate::set_key(::google::protobuf::uint32 value) {
+  
+  key_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapUpdate.key)
+}
+
+// optional bytes value = 3;
+void INetworkMapUpdate::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& INetworkMapUpdate::value() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.value)
+  return value_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkMapUpdate::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkMapUpdate.value)
+}
+ void INetworkMapUpdate::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkMapUpdate.value)
+}
+ void INetworkMapUpdate::set_value(const void* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkMapUpdate.value)
+}
+ ::std::string* INetworkMapUpdate::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkMapUpdate.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* INetworkMapUpdate::release_value() {
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkMapUpdate::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:INetworkMapUpdate.value)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

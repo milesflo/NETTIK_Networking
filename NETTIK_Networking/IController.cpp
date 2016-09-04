@@ -384,12 +384,7 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 	if (data_length < sizeof(INetworkCodes::msg_t))
 		NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
 
-	INetworkCodes::msg_t code;
-	code = *(INetworkCodes::msg_t*)(data);
-	//for (unsigned long i = 0; i < data_length; i++)
-	//{
-	//	printf("%1x ", (unsigned char)data[i]);
-	//};  printf("\n");
+	INetworkCodes::msg_t code = *(INetworkCodes::msg_t*)(data);
 
 	auto callbacks = m_Callbacks.find(code);
 	if (callbacks != m_Callbacks.end())

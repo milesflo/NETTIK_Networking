@@ -21,7 +21,9 @@ NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name
 		m_pParent->m_Mutex.unlock();
 	}
 	else
+	{
 		NETTIK_EXCEPTION("Attempted to lock parent mutex on netvar but failed, inconsistent class tables.");
+	}
 }
 
 NetVar::~NetVar()

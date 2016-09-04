@@ -11,7 +11,7 @@
 #include <cstddef>
 
 #define NetworkVariable(type, name, reliable) \
-	CNetVarBase< type > name = CNetVarBase< type >( this, #name, reliable )
+	CNetVarBase< type > name = { this, #name, reliable }
 
 //! A templated class for representing a fixed data type (non-pointer)
 //  network variable.
@@ -57,7 +57,6 @@ public:
 	//! Sets the data with type safeness and invalidates the packet.
 	void Set(VarType data);
 
-	CNetVarBase(const CNetVarBase& from);
 	CNetVarBase(NetObject* parent, const char* name, bool reliable);
 
 	virtual ~CNetVarBase();
@@ -106,13 +105,6 @@ template< class VarType >
 inline VarType& CNetVarBase<VarType>::get()
 {
 	return m_Data;
-}
-
-template< class VarType >
-CNetVarBase<VarType>::CNetVarBase(const CNetVarBase& from)
-{
-	m_Name = from.m_Name;
-	m_bChanged = from.m_bChanged;
 }
 
 template< class VarType >

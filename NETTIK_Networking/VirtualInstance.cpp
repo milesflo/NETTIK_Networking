@@ -40,6 +40,25 @@ void VirtualInstance::DoPostUpdate(float elapsedTime)
 
 }
 
+void VirtualInstance::DoListUpdate()
+{
+	std::vector<NetObject*>* pObjects;
+
+	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
+	{
+		auto& object_manager = (*it).second->GetObjects();
+
+		object_manager.safe_lock();
+		pObjects = (*it).second->GetObjects().get();
+
+		for (auto object_it = pObjects->begin(); object_it != pObjects->end(); ++object_it)
+		{
+			(*object_it)->UpdateListDelta();
+		}
+		object_manager.safe_unlock();
+	}
+}
+
 void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, bool bForced)
 {
 	size_t max_value = 0;

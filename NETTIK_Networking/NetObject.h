@@ -15,30 +15,35 @@
 #include "ReplicationInfo.h"
 
 class NetVar;
+class CNetVarList;
 class VirtualInstance;
 class IEntityManager;
 
 class NetObject
 {
+#ifdef _DEBUG
 private:
-
 	// If compiled in debug mode, every network object is padded by 
 	// 1MB to simulate alloc/free at a larger scale. 
-#ifdef _DEBUG
 	unsigned char m_pDebugBuffer[ 1024 * 1024 ];
 #endif
 
 public:
 
 	using VariableList_t = std::vector<NetVar*>;
-
+	using MapList_t      = std::vector<CNetVarList*>;
+	
 	uint32_t          m_NetCode;
 	uint32_t          m_RealmID;
 	uint32_t          m_Controller = NET_CONTROLLER_NONE;
 
-	// Snapshotting
-	// - size_t result is the LARGEST update element (for padding)
-	// TODO: Pass reliable flag for generating reliable/unsequenced snapshots.
+	//---------------------------------------------------
+	// Takes a variable snapshot and creates a new entry
+	// to a passes SnapshotStream. Setting bForced will
+	// make a full snapshot of all variables, regardless
+	// of delta compression. max_value will update to the
+	// largest updated element (for future padding).
+	//---------------------------------------------------
 	void TakeObjectSnapshot
 	(
 		size_t&				max_value,
@@ -59,6 +64,9 @@ public:
 	VirtualInstance* m_pInstance  = nullptr;
 	IEntityManager*  m_pManager   = nullptr;
 
+	//--------------------------------------
+	// Called on each network synch tick.
+	//--------------------------------------
 	virtual void NetworkUpdate(ReplicationInfo& repinfo) = 0;
 
 public:
@@ -89,9 +97,25 @@ public:
 	//--------------------------------------
 	void DestroyNetworkedEntity() const;
 
+	//--------------------------------------
+	// Flags all variables to be transmitted
+	// over all associated peers.
+	//--------------------------------------
 	virtual void InvalidateVars();
 
+	//--------------------------------------
+	// Returns the list of variable objects.
+	//--------------------------------------
 	VariableList_t& GetVariables();
+
+	//--------------------------------------
+	// Returns the list of map objects.
+	//--------------------------------------
+	MapList_t& GetMaps();
+
+	void UpdateListDelta();
+
+	void SendLists(ENetPeer* pRemotePeer);
 
 	virtual ~NetObject();
 
@@ -101,7 +125,13 @@ private:
 
 protected:
 	VariableList_t m_Vars;
+	MapList_t      m_MapList;
 };
+
+inline NetObject::MapList_t& NetObject::GetMaps()
+{
+	return m_MapList;
+}
 
 inline NetObject::VariableList_t& NetObject::GetVariables()
 {

@@ -171,14 +171,17 @@
     <ClInclude Include="CNetVarVector.h">
       <Filter>Core\Network Data\headers</Filter>
     </ClInclude>
-    <ClInclude Include="NETTIK_Networking.hpp">
-      <Filter>Core\Precompiled Header</Filter>
-    </ClInclude>
     <ClInclude Include="LoggingUtil.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Core\Precompiled Header</Filter>
+    </ClInclude>
+    <ClInclude Include="NETTIK_Networking.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarList.h">
+      <Filter>Core\Network Data\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -224,11 +227,14 @@
     <ClCompile Include="SynchronousTimer.cpp">
       <Filter>Core\Controllers\source</Filter>
     </ClCompile>
-    <ClCompile Include="NETTIK_Networking.cpp">
-      <Filter>Core\Precompiled Header</Filter>
-    </ClCompile>
     <ClCompile Include="LoggingUtil.cpp">
       <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NETTIK_Networking.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetVarList.cpp">
+      <Filter>Core\Network Data\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

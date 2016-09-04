@@ -198,6 +198,7 @@
   <ItemGroup>
     <ClInclude Include="CEntities.h" />
     <ClInclude Include="CNetVarBase.h" />
+    <ClInclude Include="CNetVarList.h" />
     <ClInclude Include="CNetVarString.h" />
     <ClInclude Include="CNetVarVector.h" />
     <ClInclude Include="Constraints.h" />
@@ -230,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CEntities.cpp" />
+    <ClCompile Include="CNetVarList.cpp" />
     <ClCompile Include="CPlayerRealm.cpp" />
     <ClCompile Include="CNetworkVector3.cpp" />
     <ClCompile Include="EntityMessages.pb.cc">

@@ -19,6 +19,23 @@ void NetObject::InvalidateVars()
 	}
 }
 
+void NetObject::UpdateListDelta()
+{
+	for (auto it = m_MapList.begin(); it != m_MapList.end(); ++it)
+	{
+		(*it)->SendDelta(m_pManager);
+		(*it)->Flush();
+	}
+}
+
+void NetObject::SendLists(ENetPeer* pRemotePeer)
+{
+	for (auto it = m_MapList.begin(); it != m_MapList.end(); ++it)
+	{
+		(*it)->SendContents(pRemotePeer);
+	}
+}
+
 std::string NetObject::GetPeerHost()
 {
 	if (m_pPeer == nullptr)
