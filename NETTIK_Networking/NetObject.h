@@ -117,6 +117,12 @@ public:
 
 	void SendLists(ENetPeer* pRemotePeer);
 
+	//--------------------------------------
+	// Called after the structure has been
+	// fully prepared for network use.
+	//--------------------------------------
+	virtual void Initialize();
+
 	virtual ~NetObject();
 
 private:

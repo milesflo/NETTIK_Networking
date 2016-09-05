@@ -113,6 +113,8 @@ public:
 		{
 			m_fCallbackCreate(instance);
 		}
+		object->Initialize();
+
 		return instance;
 	}
 
@@ -325,8 +327,8 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 		// Send it to the new peer.
 		if (object->m_pPeer)
 		{
-			(*object_it)->SendLists(object->m_pPeer);
 			server->SendStream(creationStreamReliable, true, object->m_pPeer);
+			(*object_it)->SendLists(object->m_pPeer);
 		}
 
 		// Inform all the objects of the snapshot changes (new objects)
@@ -370,8 +372,7 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 		m_fCallbackCreate(static_cast<TypeObject*>(object));
 	}
 
-	// Send all lists inside entity manager.
-
+	object->Initialize();
 
 	return object->m_NetCode;
 }

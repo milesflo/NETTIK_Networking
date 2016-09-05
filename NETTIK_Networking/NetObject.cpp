@@ -6,6 +6,11 @@
 //-------------------------------------------------
 #include "CEntities.h"
 
+void NetObject::Initialize()
+{
+
+}
+
 void NetObject::DestroyNetworkedEntity() const
 {
 	m_pManager->Remove( m_NetCode );

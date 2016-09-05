@@ -108,9 +108,20 @@ class INetworkAssociatedObject : public ::google::protobuf::Message {
   ::std::string* release_instance_name();
   void set_allocated_instance_name(::std::string* instance_name);
 
-  // optional uint32 network_code = 2;
+  // optional string manager_name = 2;
+  void clear_manager_name();
+  static const int kManagerNameFieldNumber = 2;
+  const ::std::string& manager_name() const;
+  void set_manager_name(const ::std::string& value);
+  void set_manager_name(const char* value);
+  void set_manager_name(const char* value, size_t size);
+  ::std::string* mutable_manager_name();
+  ::std::string* release_manager_name();
+  void set_allocated_manager_name(::std::string* manager_name);
+
+  // optional uint32 network_code = 3;
   void clear_network_code();
-  static const int kNetworkCodeFieldNumber = 2;
+  static const int kNetworkCodeFieldNumber = 3;
   ::google::protobuf::uint32 network_code() const;
   void set_network_code(::google::protobuf::uint32 value);
 
@@ -120,6 +131,7 @@ class INetworkAssociatedObject : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr instance_name_;
+  ::google::protobuf::internal::ArenaStringPtr manager_name_;
   ::google::protobuf::uint32 network_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
@@ -213,6 +225,12 @@ class INetworkMapAdd : public ::google::protobuf::Message {
   ::std::string* release_value();
   void set_allocated_value(::std::string* value);
 
+  // optional uint32 list_id = 4;
+  void clear_list_id();
+  static const int kListIdFieldNumber = 4;
+  ::google::protobuf::uint32 list_id() const;
+  void set_list_id(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:INetworkMapAdd)
  private:
 
@@ -221,6 +239,7 @@ class INetworkMapAdd : public ::google::protobuf::Message {
   ::INetworkAssociatedObject* target_object_;
   ::google::protobuf::internal::ArenaStringPtr value_;
   ::google::protobuf::uint32 key_;
+  ::google::protobuf::uint32 list_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
   friend void protobuf_AssignDesc_EntityMessages_2eproto();
@@ -302,6 +321,12 @@ class INetworkMapRemove : public ::google::protobuf::Message {
   ::google::protobuf::uint32 key() const;
   void set_key(::google::protobuf::uint32 value);
 
+  // optional uint32 list_id = 3;
+  void clear_list_id();
+  static const int kListIdFieldNumber = 3;
+  ::google::protobuf::uint32 list_id() const;
+  void set_list_id(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:INetworkMapRemove)
  private:
 
@@ -309,6 +334,7 @@ class INetworkMapRemove : public ::google::protobuf::Message {
   bool _is_default_instance_;
   ::INetworkAssociatedObject* target_object_;
   ::google::protobuf::uint32 key_;
+  ::google::protobuf::uint32 list_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
   friend void protobuf_AssignDesc_EntityMessages_2eproto();
@@ -401,6 +427,12 @@ class INetworkMapUpdate : public ::google::protobuf::Message {
   ::std::string* release_value();
   void set_allocated_value(::std::string* value);
 
+  // optional uint32 list_id = 4;
+  void clear_list_id();
+  static const int kListIdFieldNumber = 4;
+  ::google::protobuf::uint32 list_id() const;
+  void set_list_id(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:INetworkMapUpdate)
  private:
 
@@ -409,6 +441,7 @@ class INetworkMapUpdate : public ::google::protobuf::Message {
   ::INetworkAssociatedObject* target_object_;
   ::google::protobuf::internal::ArenaStringPtr value_;
   ::google::protobuf::uint32 key_;
+  ::google::protobuf::uint32 list_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_EntityMessages_2eproto();
   friend void protobuf_AssignDesc_EntityMessages_2eproto();
@@ -468,7 +501,50 @@ inline void INetworkAssociatedObject::set_allocated_instance_name(::std::string*
   // @@protoc_insertion_point(field_set_allocated:INetworkAssociatedObject.instance_name)
 }
 
-// optional uint32 network_code = 2;
+// optional string manager_name = 2;
+inline void INetworkAssociatedObject::clear_manager_name() {
+  manager_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& INetworkAssociatedObject::manager_name() const {
+  // @@protoc_insertion_point(field_get:INetworkAssociatedObject.manager_name)
+  return manager_name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkAssociatedObject::set_manager_name(const ::std::string& value) {
+  
+  manager_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkAssociatedObject.manager_name)
+}
+inline void INetworkAssociatedObject::set_manager_name(const char* value) {
+  
+  manager_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkAssociatedObject.manager_name)
+}
+inline void INetworkAssociatedObject::set_manager_name(const char* value, size_t size) {
+  
+  manager_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkAssociatedObject.manager_name)
+}
+inline ::std::string* INetworkAssociatedObject::mutable_manager_name() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkAssociatedObject.manager_name)
+  return manager_name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* INetworkAssociatedObject::release_manager_name() {
+  
+  return manager_name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void INetworkAssociatedObject::set_allocated_manager_name(::std::string* manager_name) {
+  if (manager_name != NULL) {
+    
+  } else {
+    
+  }
+  manager_name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), manager_name);
+  // @@protoc_insertion_point(field_set_allocated:INetworkAssociatedObject.manager_name)
+}
+
+// optional uint32 network_code = 3;
 inline void INetworkAssociatedObject::clear_network_code() {
   network_code_ = 0u;
 }
@@ -580,6 +656,20 @@ inline void INetworkMapAdd::set_allocated_value(::std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:INetworkMapAdd.value)
 }
 
+// optional uint32 list_id = 4;
+inline void INetworkMapAdd::clear_list_id() {
+  list_id_ = 0u;
+}
+inline ::google::protobuf::uint32 INetworkMapAdd::list_id() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.list_id)
+  return list_id_;
+}
+inline void INetworkMapAdd::set_list_id(::google::protobuf::uint32 value) {
+  
+  list_id_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapAdd.list_id)
+}
+
 // -------------------------------------------------------------------
 
 // INetworkMapRemove
@@ -633,6 +723,20 @@ inline void INetworkMapRemove::set_key(::google::protobuf::uint32 value) {
   
   key_ = value;
   // @@protoc_insertion_point(field_set:INetworkMapRemove.key)
+}
+
+// optional uint32 list_id = 3;
+inline void INetworkMapRemove::clear_list_id() {
+  list_id_ = 0u;
+}
+inline ::google::protobuf::uint32 INetworkMapRemove::list_id() const {
+  // @@protoc_insertion_point(field_get:INetworkMapRemove.list_id)
+  return list_id_;
+}
+inline void INetworkMapRemove::set_list_id(::google::protobuf::uint32 value) {
+  
+  list_id_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapRemove.list_id)
 }
 
 // -------------------------------------------------------------------
@@ -731,6 +835,20 @@ inline void INetworkMapUpdate::set_allocated_value(::std::string* value) {
   }
   value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set_allocated:INetworkMapUpdate.value)
+}
+
+// optional uint32 list_id = 4;
+inline void INetworkMapUpdate::clear_list_id() {
+  list_id_ = 0u;
+}
+inline ::google::protobuf::uint32 INetworkMapUpdate::list_id() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.list_id)
+  return list_id_;
+}
+inline void INetworkMapUpdate::set_list_id(::google::protobuf::uint32 value) {
+  
+  list_id_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapUpdate.list_id)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -38,6 +38,7 @@ void VirtualInstance::DoPostUpdate(float elapsedTime)
 		it->second->PostUpdate(elapsedTime);
 	}
 
+	DoListUpdate();
 }
 
 void VirtualInstance::DoListUpdate()

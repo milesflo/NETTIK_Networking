@@ -41,8 +41,9 @@ void protobuf_AssignDesc_EntityMessages_2eproto() {
       "EntityMessages.proto");
   GOOGLE_CHECK(file != NULL);
   INetworkAssociatedObject_descriptor_ = file->message_type(0);
-  static const int INetworkAssociatedObject_offsets_[2] = {
+  static const int INetworkAssociatedObject_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, instance_name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, manager_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, network_code_),
   };
   INetworkAssociatedObject_reflection_ =
@@ -57,10 +58,11 @@ void protobuf_AssignDesc_EntityMessages_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkAssociatedObject, _is_default_instance_));
   INetworkMapAdd_descriptor_ = file->message_type(1);
-  static const int INetworkMapAdd_offsets_[3] = {
+  static const int INetworkMapAdd_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, target_object_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, value_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, list_id_),
   };
   INetworkMapAdd_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -74,9 +76,10 @@ void protobuf_AssignDesc_EntityMessages_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapAdd, _is_default_instance_));
   INetworkMapRemove_descriptor_ = file->message_type(2);
-  static const int INetworkMapRemove_offsets_[2] = {
+  static const int INetworkMapRemove_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, target_object_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, key_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, list_id_),
   };
   INetworkMapRemove_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -90,10 +93,11 @@ void protobuf_AssignDesc_EntityMessages_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapRemove, _is_default_instance_));
   INetworkMapUpdate_descriptor_ = file->message_type(3);
-  static const int INetworkMapUpdate_offsets_[3] = {
+  static const int INetworkMapUpdate_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, target_object_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, value_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(INetworkMapUpdate, list_id_),
   };
   INetworkMapUpdate_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -148,16 +152,18 @@ void protobuf_AddDesc_EntityMessages_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024EntityMessages.proto\"G\n\030INetworkAssoci"
-    "atedObject\022\025\n\rinstance_name\030\001 \001(\t\022\024\n\014net"
-    "work_code\030\002 \001(\r\"^\n\016INetworkMapAdd\0220\n\rtar"
-    "get_object\030\001 \001(\0132\031.INetworkAssociatedObj"
-    "ect\022\013\n\003key\030\002 \001(\r\022\r\n\005value\030\003 \001(\014\"R\n\021INetw"
-    "orkMapRemove\0220\n\rtarget_object\030\001 \001(\0132\031.IN"
-    "etworkAssociatedObject\022\013\n\003key\030\002 \001(\r\"a\n\021I"
-    "NetworkMapUpdate\0220\n\rtarget_object\030\001 \001(\0132"
-    "\031.INetworkAssociatedObject\022\013\n\003key\030\002 \001(\r\022"
-    "\r\n\005value\030\003 \001(\014b\006proto3", 382);
+    "\n\024EntityMessages.proto\"]\n\030INetworkAssoci"
+    "atedObject\022\025\n\rinstance_name\030\001 \001(\t\022\024\n\014man"
+    "ager_name\030\002 \001(\t\022\024\n\014network_code\030\003 \001(\r\"o\n"
+    "\016INetworkMapAdd\0220\n\rtarget_object\030\001 \001(\0132\031"
+    ".INetworkAssociatedObject\022\013\n\003key\030\002 \001(\r\022\r"
+    "\n\005value\030\003 \001(\014\022\017\n\007list_id\030\004 \001(\r\"c\n\021INetwo"
+    "rkMapRemove\0220\n\rtarget_object\030\001 \001(\0132\031.INe"
+    "tworkAssociatedObject\022\013\n\003key\030\002 \001(\r\022\017\n\007li"
+    "st_id\030\003 \001(\r\"r\n\021INetworkMapUpdate\0220\n\rtarg"
+    "et_object\030\001 \001(\0132\031.INetworkAssociatedObje"
+    "ct\022\013\n\003key\030\002 \001(\r\022\r\n\005value\030\003 \001(\014\022\017\n\007list_i"
+    "d\030\004 \001(\rb\006proto3", 455);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "EntityMessages.proto", &protobuf_RegisterTypes);
   INetworkAssociatedObject::default_instance_ = new INetworkAssociatedObject();
@@ -192,6 +198,7 @@ static void MergeFromFail(int line) {
 
 #ifndef _MSC_VER
 const int INetworkAssociatedObject::kInstanceNameFieldNumber;
+const int INetworkAssociatedObject::kManagerNameFieldNumber;
 const int INetworkAssociatedObject::kNetworkCodeFieldNumber;
 #endif  // !_MSC_VER
 
@@ -218,6 +225,7 @@ void INetworkAssociatedObject::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   instance_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  manager_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   network_code_ = 0u;
 }
 
@@ -228,6 +236,7 @@ INetworkAssociatedObject::~INetworkAssociatedObject() {
 
 void INetworkAssociatedObject::SharedDtor() {
   instance_name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  manager_name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
@@ -259,6 +268,7 @@ INetworkAssociatedObject* INetworkAssociatedObject::New(::google::protobuf::Aren
 
 void INetworkAssociatedObject::Clear() {
   instance_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  manager_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   network_code_ = 0u;
 }
 
@@ -284,13 +294,30 @@ bool INetworkAssociatedObject::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(16)) goto parse_network_code;
+        if (input->ExpectTag(18)) goto parse_manager_name;
         break;
       }
 
-      // optional uint32 network_code = 2;
+      // optional string manager_name = 2;
       case 2: {
-        if (tag == 16) {
+        if (tag == 18) {
+         parse_manager_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_manager_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->manager_name().data(), this->manager_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "INetworkAssociatedObject.manager_name");
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_network_code;
+        break;
+      }
+
+      // optional uint32 network_code = 3;
+      case 3: {
+        if (tag == 24) {
          parse_network_code:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -337,9 +364,19 @@ void INetworkAssociatedObject::SerializeWithCachedSizes(
       1, this->instance_name(), output);
   }
 
-  // optional uint32 network_code = 2;
+  // optional string manager_name = 2;
+  if (this->manager_name().size() > 0) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->manager_name().data(), this->manager_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "INetworkAssociatedObject.manager_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->manager_name(), output);
+  }
+
+  // optional uint32 network_code = 3;
   if (this->network_code() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->network_code(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->network_code(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:INetworkAssociatedObject)
@@ -359,9 +396,20 @@ void INetworkAssociatedObject::SerializeWithCachedSizes(
         1, this->instance_name(), target);
   }
 
-  // optional uint32 network_code = 2;
+  // optional string manager_name = 2;
+  if (this->manager_name().size() > 0) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->manager_name().data(), this->manager_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "INetworkAssociatedObject.manager_name");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->manager_name(), target);
+  }
+
+  // optional uint32 network_code = 3;
   if (this->network_code() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->network_code(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->network_code(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:INetworkAssociatedObject)
@@ -378,7 +426,14 @@ int INetworkAssociatedObject::ByteSize() const {
         this->instance_name());
   }
 
-  // optional uint32 network_code = 2;
+  // optional string manager_name = 2;
+  if (this->manager_name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->manager_name());
+  }
+
+  // optional uint32 network_code = 3;
   if (this->network_code() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
@@ -409,6 +464,10 @@ void INetworkAssociatedObject::MergeFrom(const INetworkAssociatedObject& from) {
 
     instance_name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.instance_name_);
   }
+  if (from.manager_name().size() > 0) {
+
+    manager_name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.manager_name_);
+  }
   if (from.network_code() != 0) {
     set_network_code(from.network_code());
   }
@@ -437,6 +496,7 @@ void INetworkAssociatedObject::Swap(INetworkAssociatedObject* other) {
 }
 void INetworkAssociatedObject::InternalSwap(INetworkAssociatedObject* other) {
   instance_name_.Swap(&other->instance_name_);
+  manager_name_.Swap(&other->manager_name_);
   std::swap(network_code_, other->network_code_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -496,7 +556,50 @@ void INetworkAssociatedObject::clear_instance_name() {
   // @@protoc_insertion_point(field_set_allocated:INetworkAssociatedObject.instance_name)
 }
 
-// optional uint32 network_code = 2;
+// optional string manager_name = 2;
+void INetworkAssociatedObject::clear_manager_name() {
+  manager_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& INetworkAssociatedObject::manager_name() const {
+  // @@protoc_insertion_point(field_get:INetworkAssociatedObject.manager_name)
+  return manager_name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkAssociatedObject::set_manager_name(const ::std::string& value) {
+  
+  manager_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:INetworkAssociatedObject.manager_name)
+}
+ void INetworkAssociatedObject::set_manager_name(const char* value) {
+  
+  manager_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:INetworkAssociatedObject.manager_name)
+}
+ void INetworkAssociatedObject::set_manager_name(const char* value, size_t size) {
+  
+  manager_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:INetworkAssociatedObject.manager_name)
+}
+ ::std::string* INetworkAssociatedObject::mutable_manager_name() {
+  
+  // @@protoc_insertion_point(field_mutable:INetworkAssociatedObject.manager_name)
+  return manager_name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* INetworkAssociatedObject::release_manager_name() {
+  
+  return manager_name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void INetworkAssociatedObject::set_allocated_manager_name(::std::string* manager_name) {
+  if (manager_name != NULL) {
+    
+  } else {
+    
+  }
+  manager_name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), manager_name);
+  // @@protoc_insertion_point(field_set_allocated:INetworkAssociatedObject.manager_name)
+}
+
+// optional uint32 network_code = 3;
 void INetworkAssociatedObject::clear_network_code() {
   network_code_ = 0u;
 }
@@ -518,6 +621,7 @@ void INetworkAssociatedObject::clear_network_code() {
 const int INetworkMapAdd::kTargetObjectFieldNumber;
 const int INetworkMapAdd::kKeyFieldNumber;
 const int INetworkMapAdd::kValueFieldNumber;
+const int INetworkMapAdd::kListIdFieldNumber;
 #endif  // !_MSC_VER
 
 INetworkMapAdd::INetworkMapAdd()
@@ -546,6 +650,7 @@ void INetworkMapAdd::SharedCtor() {
   target_object_ = NULL;
   key_ = 0u;
   value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  list_id_ = 0u;
 }
 
 INetworkMapAdd::~INetworkMapAdd() {
@@ -586,10 +691,22 @@ INetworkMapAdd* INetworkMapAdd::New(::google::protobuf::Arena* arena) const {
 }
 
 void INetworkMapAdd::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<INetworkMapAdd*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(key_, list_id_);
   if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
   target_object_ = NULL;
-  key_ = 0u;
   value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+
+#undef ZR_HELPER_
+#undef ZR_
+
 }
 
 bool INetworkMapAdd::MergePartialFromCodedStream(
@@ -638,6 +755,21 @@ bool INetworkMapAdd::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(32)) goto parse_list_id;
+        break;
+      }
+
+      // optional uint32 list_id = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_list_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &list_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -683,6 +815,11 @@ void INetworkMapAdd::SerializeWithCachedSizes(
       3, this->value(), output);
   }
 
+  // optional uint32 list_id = 4;
+  if (this->list_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->list_id(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:INetworkMapAdd)
 }
 
@@ -706,6 +843,11 @@ void INetworkMapAdd::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->value(), target);
+  }
+
+  // optional uint32 list_id = 4;
+  if (this->list_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->list_id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:INetworkMapAdd)
@@ -734,6 +876,13 @@ int INetworkMapAdd::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->value());
+  }
+
+  // optional uint32 list_id = 4;
+  if (this->list_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->list_id());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -766,6 +915,9 @@ void INetworkMapAdd::MergeFrom(const INetworkMapAdd& from) {
 
     value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
   }
+  if (from.list_id() != 0) {
+    set_list_id(from.list_id());
+  }
 }
 
 void INetworkMapAdd::CopyFrom(const ::google::protobuf::Message& from) {
@@ -793,6 +945,7 @@ void INetworkMapAdd::InternalSwap(INetworkMapAdd* other) {
   std::swap(target_object_, other->target_object_);
   std::swap(key_, other->key_);
   value_.Swap(&other->value_);
+  std::swap(list_id_, other->list_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -902,6 +1055,20 @@ void INetworkMapAdd::clear_value() {
   // @@protoc_insertion_point(field_set_allocated:INetworkMapAdd.value)
 }
 
+// optional uint32 list_id = 4;
+void INetworkMapAdd::clear_list_id() {
+  list_id_ = 0u;
+}
+ ::google::protobuf::uint32 INetworkMapAdd::list_id() const {
+  // @@protoc_insertion_point(field_get:INetworkMapAdd.list_id)
+  return list_id_;
+}
+ void INetworkMapAdd::set_list_id(::google::protobuf::uint32 value) {
+  
+  list_id_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapAdd.list_id)
+}
+
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
@@ -909,6 +1076,7 @@ void INetworkMapAdd::clear_value() {
 #ifndef _MSC_VER
 const int INetworkMapRemove::kTargetObjectFieldNumber;
 const int INetworkMapRemove::kKeyFieldNumber;
+const int INetworkMapRemove::kListIdFieldNumber;
 #endif  // !_MSC_VER
 
 INetworkMapRemove::INetworkMapRemove()
@@ -935,6 +1103,7 @@ void INetworkMapRemove::SharedCtor() {
   _cached_size_ = 0;
   target_object_ = NULL;
   key_ = 0u;
+  list_id_ = 0u;
 }
 
 INetworkMapRemove::~INetworkMapRemove() {
@@ -974,9 +1143,21 @@ INetworkMapRemove* INetworkMapRemove::New(::google::protobuf::Arena* arena) cons
 }
 
 void INetworkMapRemove::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<INetworkMapRemove*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(key_, list_id_);
   if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
   target_object_ = NULL;
-  key_ = 0u;
+
+#undef ZR_HELPER_
+#undef ZR_
+
 }
 
 bool INetworkMapRemove::MergePartialFromCodedStream(
@@ -1008,6 +1189,21 @@ bool INetworkMapRemove::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &key_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_list_id;
+        break;
+      }
+
+      // optional uint32 list_id = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_list_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &list_id_)));
 
         } else {
           goto handle_unusual;
@@ -1051,6 +1247,11 @@ void INetworkMapRemove::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->key(), output);
   }
 
+  // optional uint32 list_id = 3;
+  if (this->list_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->list_id(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:INetworkMapRemove)
 }
 
@@ -1067,6 +1268,11 @@ void INetworkMapRemove::SerializeWithCachedSizes(
   // optional uint32 key = 2;
   if (this->key() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->key(), target);
+  }
+
+  // optional uint32 list_id = 3;
+  if (this->list_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->list_id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:INetworkMapRemove)
@@ -1088,6 +1294,13 @@ int INetworkMapRemove::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->key());
+  }
+
+  // optional uint32 list_id = 3;
+  if (this->list_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->list_id());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -1116,6 +1329,9 @@ void INetworkMapRemove::MergeFrom(const INetworkMapRemove& from) {
   if (from.key() != 0) {
     set_key(from.key());
   }
+  if (from.list_id() != 0) {
+    set_list_id(from.list_id());
+  }
 }
 
 void INetworkMapRemove::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1142,6 +1358,7 @@ void INetworkMapRemove::Swap(INetworkMapRemove* other) {
 void INetworkMapRemove::InternalSwap(INetworkMapRemove* other) {
   std::swap(target_object_, other->target_object_);
   std::swap(key_, other->key_);
+  std::swap(list_id_, other->list_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -1208,6 +1425,20 @@ void INetworkMapRemove::clear_key() {
   // @@protoc_insertion_point(field_set:INetworkMapRemove.key)
 }
 
+// optional uint32 list_id = 3;
+void INetworkMapRemove::clear_list_id() {
+  list_id_ = 0u;
+}
+ ::google::protobuf::uint32 INetworkMapRemove::list_id() const {
+  // @@protoc_insertion_point(field_get:INetworkMapRemove.list_id)
+  return list_id_;
+}
+ void INetworkMapRemove::set_list_id(::google::protobuf::uint32 value) {
+  
+  list_id_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapRemove.list_id)
+}
+
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
@@ -1216,6 +1447,7 @@ void INetworkMapRemove::clear_key() {
 const int INetworkMapUpdate::kTargetObjectFieldNumber;
 const int INetworkMapUpdate::kKeyFieldNumber;
 const int INetworkMapUpdate::kValueFieldNumber;
+const int INetworkMapUpdate::kListIdFieldNumber;
 #endif  // !_MSC_VER
 
 INetworkMapUpdate::INetworkMapUpdate()
@@ -1244,6 +1476,7 @@ void INetworkMapUpdate::SharedCtor() {
   target_object_ = NULL;
   key_ = 0u;
   value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  list_id_ = 0u;
 }
 
 INetworkMapUpdate::~INetworkMapUpdate() {
@@ -1284,10 +1517,22 @@ INetworkMapUpdate* INetworkMapUpdate::New(::google::protobuf::Arena* arena) cons
 }
 
 void INetworkMapUpdate::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<INetworkMapUpdate*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(key_, list_id_);
   if (GetArenaNoVirtual() == NULL && target_object_ != NULL) delete target_object_;
   target_object_ = NULL;
-  key_ = 0u;
   value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+
+#undef ZR_HELPER_
+#undef ZR_
+
 }
 
 bool INetworkMapUpdate::MergePartialFromCodedStream(
@@ -1336,6 +1581,21 @@ bool INetworkMapUpdate::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(32)) goto parse_list_id;
+        break;
+      }
+
+      // optional uint32 list_id = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_list_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &list_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -1381,6 +1641,11 @@ void INetworkMapUpdate::SerializeWithCachedSizes(
       3, this->value(), output);
   }
 
+  // optional uint32 list_id = 4;
+  if (this->list_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->list_id(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:INetworkMapUpdate)
 }
 
@@ -1404,6 +1669,11 @@ void INetworkMapUpdate::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->value(), target);
+  }
+
+  // optional uint32 list_id = 4;
+  if (this->list_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->list_id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:INetworkMapUpdate)
@@ -1432,6 +1702,13 @@ int INetworkMapUpdate::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->value());
+  }
+
+  // optional uint32 list_id = 4;
+  if (this->list_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->list_id());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -1464,6 +1741,9 @@ void INetworkMapUpdate::MergeFrom(const INetworkMapUpdate& from) {
 
     value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
   }
+  if (from.list_id() != 0) {
+    set_list_id(from.list_id());
+  }
 }
 
 void INetworkMapUpdate::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1491,6 +1771,7 @@ void INetworkMapUpdate::InternalSwap(INetworkMapUpdate* other) {
   std::swap(target_object_, other->target_object_);
   std::swap(key_, other->key_);
   value_.Swap(&other->value_);
+  std::swap(list_id_, other->list_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -1598,6 +1879,20 @@ void INetworkMapUpdate::clear_value() {
   }
   value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set_allocated:INetworkMapUpdate.value)
+}
+
+// optional uint32 list_id = 4;
+void INetworkMapUpdate::clear_list_id() {
+  list_id_ = 0u;
+}
+ ::google::protobuf::uint32 INetworkMapUpdate::list_id() const {
+  // @@protoc_insertion_point(field_get:INetworkMapUpdate.list_id)
+  return list_id_;
+}
+ void INetworkMapUpdate::set_list_id(::google::protobuf::uint32 value) {
+  
+  list_id_ = value;
+  // @@protoc_insertion_point(field_set:INetworkMapUpdate.list_id)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

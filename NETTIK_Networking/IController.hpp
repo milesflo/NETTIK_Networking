@@ -304,7 +304,6 @@ namespace NETTIK
 		// Services the ENET host internally
 		//------------------------------------
 		int ServiceHostSafe(ENetHost *, ENetEvent *, enet_uint32);
-
 	};
 
 }

@@ -37,3 +37,4 @@
 #include "SnapshotHeader.h"
 #include "SnapshotEntList.h"
 #include "SnapshotStream.h"
+#include "NETRPC.h"
