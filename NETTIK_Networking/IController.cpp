@@ -150,9 +150,9 @@ IController::IController(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 	}, this);
 
-	on(INetworkCodes::internal_evt_list_add,    CALL_RPC_FAR_PROTO(INetworkMapAdd,     ::CNetVarList::on_remote_add    ));
-	on(INetworkCodes::internal_evt_list_data,   CALL_RPC_FAR_PROTO(INetworkMapUpdate,  ::CNetVarList::on_remote_update ));
-	on(INetworkCodes::internal_evt_list_remove, CALL_RPC_FAR_PROTO(INetworkMapRemove,  ::CNetVarList::on_remote_remove ));
+	// The controller needs to handle dynamic list updates
+	// transmitted over the network.
+	NetVarListBase::bind_controller( this );
 }
 
 VirtualInstance* IController::CreateInstance(std::string name)

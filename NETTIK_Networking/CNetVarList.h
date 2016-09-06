@@ -1,8 +1,8 @@
 #pragma once
-#include <unordered_map>
-#include <vector>
-#define NetworkList( name )  CNetVarList name = { this, #name }
+#include "NetVarListBase.h"
+#define NetworkList( type, name )  CNetVarList<type> name = { this, #name }
 
+class NetObject;
 //------------------------------------------
 // A dynamic list that updates its contents 
 // across the network to associated peers. 
@@ -11,17 +11,59 @@
 // but controls data access to dispatch
 // updates via RPC and not via snapshot.
 //------------------------------------------
-class CNetVarList
+
+template <class example_t>
+class CNetVarList : public NetVarListBase
 {
 public:
 	// change when ready for template initialization.
-	using example_t   = int;
-	using mutex_guard = std::lock_guard<std::mutex>;
-
 	using proto_add    = NETTIK::IPacketFactory::CProtoPacket<INetworkMapAdd>;
 	using proto_update = NETTIK::IPacketFactory::CProtoPacket<INetworkMapUpdate>;
 	using proto_remove = NETTIK::IPacketFactory::CProtoPacket<INetworkMapRemove>;
+	
+	CNetVarList(NetObject* parent, const char* name) : NetVarListBase(sizeof( example_t ), name, parent)
+	{
+		if (m_pParent == nullptr)
+		{
+			return;
+		}
 
+		if (m_pParent->m_Mutex.try_lock())
+		{
+			NetObject::MapList_t& lists = m_pParent->GetMaps();
+			lists.push_back(this);
+			m_ListID = lists.size() - 1;
+
+			m_pParent->m_Mutex.unlock();
+			return;
+		}
+		NETTIK_EXCEPTION("Attempted to lock parent mutex on netlist but failed, inconsistent class tables.");
+	}
+
+	virtual ~CNetVarList()
+	{
+		if (m_pParent != nullptr && m_pParent->m_Mutex.try_lock())
+		{
+			NetObject::MapList_t& lists = m_pParent->GetMaps();
+
+			auto it = std::find(lists.begin(), lists.end(), this);
+			if (it != lists.end())
+			{
+				lists.erase(it);
+			}
+
+			m_pParent->m_Mutex.unlock();
+		}
+	}
+
+	//-------------------------------------------
+	// Static callback handlers
+	//-------------------------------------------
+	// Called when a remote peer invokes an 
+	// item to be created (with data).
+
+protected:
+	
 	template <class T>
 	inline std::unique_ptr<proto_add> construct_protoadd(INetworkAssociatedObject* object, std::uint32_t key, T& value, std::uint32_t list_id)
 	{
@@ -45,50 +87,48 @@ public:
 		return std::move(result);
 	}
 
+	template <class T>
+	inline std::unique_ptr<proto_update> construct_protoupdate(INetworkAssociatedObject* object, std::uint32_t key, T& value, std::uint32_t list_id)
+	{
+		const void   * element_stream = reinterpret_cast<const void*>(&value);
+		const size_t   element_size   = sizeof( T );
 
-	CNetVarList(NetObject* parent, const char* name);
+		std::unique_ptr<proto_update> result;
+		result.reset( new proto_update( NETTIK::INetworkCodes::internal_evt_list_data ) );
 
-	virtual ~CNetVarList();
+		if (object != nullptr)
+		{
+			result->mutable_target_object()->CopyFrom(*object);
+		}
+		
+		result->set_key(key);
+		result->set_value(element_stream, element_size);
+		result->set_list_id(list_id);
 
-	//-------------------------------------------
-	// Static callback handlers
-	//-------------------------------------------
-	// Called when a remote peer invokes an 
-	// item to be created (with data).
+		result->SetReliable();
 
-private:
-	//-------------------------------------------
-	// Finds a list object on an entity using
-	// the index. Returns nullptr if no avail.
-	//-------------------------------------------
-	static CNetVarList* FetchObjectList(NetObject* pNetworkObject, std::uint32_t index);
-	
-	//-------------------------------------------
-	// Checks to see if the current network 
-	// controller has write access to an object.
-	//
-	// Server has full control.
-	//-------------------------------------------
-	static bool HasWritePermission(ENetPeer* pCallee, NetObject* pCheckObject);
+		return std::move(result);
+	}
 
-	//-------------------------------------------
-	// Converts a network associated object to
-	// it's literal memory location. Throws
-	// exceptions on lookup errors, returns
-	// nullptr if object cannot be found.
-	//-------------------------------------------
-	static NetObject* DecodeObject(const INetworkAssociatedObject& associated_object);
+	inline std::unique_ptr<proto_remove> construct_protoremove(INetworkAssociatedObject* object, std::uint32_t key, std::uint32_t list_id)
+	{
+		std::unique_ptr<proto_remove> result;
+		result.reset( new proto_remove( NETTIK::INetworkCodes::internal_evt_list_remove ) );
+
+		if (object != nullptr)
+		{
+			result->mutable_target_object()->CopyFrom(*object);
+		}
+		
+		result->set_key(key);
+		result->set_list_id(list_id);
+
+		result->SetReliable();
+
+		return std::move(result);
+	}
 
 public:
-	static void on_remote_add( ENetPeer* pPeer, INetworkMapAdd& packet );
-	
-	// Called when a remote peer updates an items
-	// contents.
-	static void on_remote_update( ENetPeer* pPeer, INetworkMapUpdate& packet );
-
-	// Called when a remote peer deletes an item
-	// from the list.
-	static void on_remote_remove( ENetPeer* pPeer, INetworkMapRemove& packet );
 
 	//-------------------------------------------
 	// Item modification
@@ -96,34 +136,220 @@ public:
 	// Creates a new entry into the internal map,
 	// and schedules it for update to associated
 	// peers. Returns new element.
-	example_t* create(std::uint32_t element_key, example_t data);
+	
+	example_t* create(std::uint32_t element_key, example_t data)
+	{
+		mutex_guard guard( m_Mutex );
 
+		auto existing_it = m_Data.find( element_key );
+		if ( existing_it != m_Data.end() )
+		{
+			printf("key already exists in list.\n");
+			return &existing_it->second;
+		}
+
+		m_Data.insert(std::make_pair(element_key, data));
+		existing_it = m_Data.find( element_key );
+
+		VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+		IEntityManager   * pManager  = m_pParent->m_pManager;   // "players"
+
+		if (pManager == nullptr || pInstance == nullptr)
+		{
+			NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+		}
+
+		INetworkAssociatedObject object_ref;
+		object_ref.set_instance_name( pInstance->GetName() ); // "wasteland"
+		object_ref.set_manager_name( pManager->GetName() );   // "players"
+		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
+	
+		auto packet = construct_protoadd(&object_ref, element_key, data, m_ListID);
+		m_UpdateQueue.push_back( std::move(packet) );
+
+		return (existing_it != m_Data.end() ? &existing_it->second : nullptr);
+	}
+	//-------------------------------------------
+	// Removes an element using the specified
+	// key. Returns false if the object failed 
+	// to remove.
+	//-------------------------------------------
+	bool remove(std::uint32_t element_key)
+	{
+		mutex_guard guard(m_Mutex);
+
+		auto existing_it = m_Data.find(element_key);
+		if (existing_it == m_Data.end())
+		{
+			printf("warning: tried removing invalid key in networked list\n");
+			return false;
+		}
+
+		m_Data.erase(existing_it);
+
+		VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+		IEntityManager   * pManager  = m_pParent->m_pManager;  // "players"
+
+		if (pManager == nullptr || pInstance == nullptr)
+		{
+			NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+		}
+
+		INetworkAssociatedObject object_ref;
+		object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
+		object_ref.set_manager_name(pManager->GetName());   // "players"
+		object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+
+		auto packet = construct_protoremove(&object_ref, element_key, m_ListID);
+		m_UpdateQueue.push_back(std::move(packet));
+
+		return true;
+	}
+
+	//-------------------------------------------
+	// Sets data using the specified key. Data
+	// will be binary copied.
+	//-------------------------------------------
+	void set(std::uint32_t element_key, example_t data)
+	{
+		mutex_guard guard( m_Mutex );
+	
+		auto existing_it = m_Data.find( element_key );
+		if ( existing_it == m_Data.end() )
+		{
+			printf("warning: tried setting invalid key in networked list\n");
+			return;
+		}
+
+		// Do the standard copy into the map.
+		m_Data[ element_key ] = data;
+
+		VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+		IEntityManager   * pManager = m_pParent->m_pManager;  // "players"
+
+		if (pManager == nullptr || pInstance == nullptr)
+		{
+			NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+		}
+
+		INetworkAssociatedObject object_ref;
+		object_ref.set_instance_name( pInstance->GetName() ); // "wasteland"
+		object_ref.set_manager_name( pManager->GetName() );   // "players"
+		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
+	
+		auto packet = construct_protoupdate(&object_ref, element_key, data, m_ListID);
+		m_UpdateQueue.push_back( std::move(packet) );
+	}
+
+
+	//-------------------------------------------
 	// Returns an element with the associated key.
-	example_t* get(std::uint32_t element_key);
-
-	// Removes an element by the associated key.
-	void remove(std::uint32_t element_key);
+	//-------------------------------------------
+	const example_t* get(std::uint32_t element_key)
+	{
+		mutex_guard guard( m_Mutex );
+		return &m_Data.at( element_key );
+	}
 
 	//-------------------------------------------
 	// Sends the entire list's contents to
 	// a peer, disregarding changes.
 	//-------------------------------------------
-	void SendContents(ENetPeer* pPeer);
+	void SendContents(ENetPeer* pPeer)
+	{
+		mutex_guard guard( m_Mutex );
+
+		VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+		IEntityManager   * pManager  = m_pParent->m_pManager;  // "players"
+
+		if (pPeer == nullptr)
+		{
+			NETTIK_EXCEPTION("Passed peer is nullptr");
+		}
+
+		if (pManager == nullptr || pInstance == nullptr)
+		{
+			NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+		}
+
+		INetworkAssociatedObject object_ref;
+		object_ref.set_instance_name( pInstance->GetName() ); // "wasteland"
+		object_ref.set_manager_name( pManager->GetName() );   // "players"
+		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
+	
+		for (auto map_item = m_Data.begin(); map_item != m_Data.end(); ++map_item)
+		{
+			auto packet = construct_protoadd(&object_ref, map_item->first, map_item->second, m_ListID);
+			packet->AddPeer(pPeer);
+			packet->Dispatch();
+		}
+	}
 
 	//-------------------------------------------
 	// Schedules the entity manager's objects to
 	// receive delta changes to the object.
 	//-------------------------------------------
-	void SendDelta(IEntityManager* pManager);
+	void SendDelta(IEntityManager* pManager)
+	{
+		std::vector<ENetPeer*> pTargets;
+		// Get all of the parent instance's peers and push them 
+		// into a target list. 
+		{
+			LockableVector<NetObject*>& object_list = pManager->GetObjects();
+			object_list.safe_lock();
 
-	//---------------------------
-	// Flushs the update queue
-	//---------------------------
-	void Flush();
+			auto object_list_raw = object_list.get();
 
-private:
+			for (auto object = object_list_raw->begin(); object != object_list_raw->end(); ++object)
+			{
+				// Bots don't have peers, make sure we're not pushing nullptr
+				// bot objects into the firing line.
+				if ((*object)->m_pPeer != nullptr)
+				{
+					pTargets.push_back((*object)->m_pPeer);
+				}
+			}
 
-	using data_point = std::pair<void*, size_t>;
+			object_list.safe_unlock();
+		}
+
+		// Add all the peers to each update queue entry. Call flush afterwards to
+		// invoke the dispatch of the packet data.
+		mutex_guard guard(m_Mutex);
+	
+		for (auto update_item = m_UpdateQueue.begin(); update_item != m_UpdateQueue.end(); ++update_item)
+		{
+			for (auto peer = pTargets.begin(); peer != pTargets.end(); ++peer)
+			{
+				(*update_item)->AddPeer(*peer);
+			}
+		}
+	}
+
+protected:
+
+	//-----------------------------------------------
+	// Looks up an index and returns info about the
+	// elements location in memory.
+	//
+	// Does not dispatch to RPC. Use internally.
+	// Throws std::runtime_error if internal 
+	// unordered_map::find returns end of list.
+	//-----------------------------------------------
+	data_point get_at(std::uint32_t index)
+	{
+		mutex_guard guard(m_Mutex);
+
+		auto lookup_result = m_Data.find(index);
+
+		if (lookup_result == m_Data.end())
+		{
+			throw std::runtime_error("lookup failed");
+		}
+
+		void* pItem = static_cast<void*>( &(*lookup_result).second );
+		return std::make_pair(pItem, m_iDataSize);
+	}
 
 	//-----------------------------------------------
 	// Builds a new element at the index using the 
@@ -137,6 +363,8 @@ private:
 	//-----------------------------------------------
 	data_point build_at(std::uint32_t index)
 	{
+		mutex_guard guard( m_Mutex );
+
 		// If the index already exists, just return that.
 		auto lookup_result = m_Data.find(index);
 		if ( lookup_result != m_Data.end() )
@@ -156,39 +384,31 @@ private:
 	}
 
 	//-----------------------------------------------
-	// Looks up an index and returns info about the
-	// elements location in memory.
-	//
+	// Removes an element at the specified index. 
+	// 
 	// Does not dispatch to RPC. Use internally.
-	// Throws std::runtime_error if internal 
+	// Throws std::runtime_error if internal
 	// unordered_map::find returns end of list.
+	//
+	// Standard list::erase, no explicit heap clean.
 	//-----------------------------------------------
-	data_point get_at(std::uint32_t index)
+	
+	void remove_at(std::uint32_t index)
 	{
-		auto lookup_result = m_Data.find( index );
+		mutex_guard guard( m_Mutex );
+
+		auto lookup_result = m_Data.find(index);
 
 		if ( lookup_result == m_Data.end() )
 		{
 			throw std::runtime_error("lookup failed");
 		}
 
-		example_t* pItem = &(*lookup_result).second;
-		return std::make_pair(pItem, sizeof(example_t));
+		m_Data.erase( lookup_result );
 	}
 
-
-	// Protection level
-	std::mutex m_Mutex;
-
-	// Standard netvar data.
-	NetObject   * m_pParent = nullptr;
-	const char  * m_psName;
-	std::uint32_t m_ListID;
 
 	// Storage for all data elements.
 	std::unordered_map<std::uint32_t, example_t> m_Data;
 
-	// Cache update queue for items that need to be dispatched
-	// to parent's peers.
-	std::vector<std::unique_ptr<NETTIK::IPacketFactory::CBasePacket>> m_UpdateQueue;
 };

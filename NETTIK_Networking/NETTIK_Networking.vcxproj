@@ -221,6 +221,7 @@
     <ClInclude Include="NETRPC.h" />
     <ClInclude Include="NETTIK_Networking.hpp" />
     <ClInclude Include="NetVar.h" />
+    <ClInclude Include="NetVarListBase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ReplicationInfo.h" />
     <ClInclude Include="SnapshotEntList.h" />
@@ -263,6 +264,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DynamicDebug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NetVar.cpp" />
+    <ClCompile Include="NetVarListBase.cpp" />
     <ClCompile Include="SnapshotHeader.cpp" />
     <ClCompile Include="SynchronousTimer.cpp" />
     <ClCompile Include="VirtualInstance.cpp" />

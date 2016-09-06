@@ -15,7 +15,7 @@
 #include "ReplicationInfo.h"
 
 class NetVar;
-class CNetVarList;
+class NetVarListBase;
 class VirtualInstance;
 class IEntityManager;
 
@@ -23,15 +23,14 @@ class NetObject
 {
 #ifdef _DEBUG
 private:
+	unsigned char m_pDebugBuffer[ 1024 * 1024 ];
 	// If compiled in debug mode, every network object is padded by 
 	// 1MB to simulate alloc/free at a larger scale. 
-	unsigned char m_pDebugBuffer[ 1024 * 1024 ];
 #endif
 
 public:
-
 	using VariableList_t = std::vector<NetVar*>;
-	using MapList_t      = std::vector<CNetVarList*>;
+	using MapList_t      = std::vector<NetVarListBase*>;
 	
 	uint32_t          m_NetCode;
 	uint32_t          m_RealmID;

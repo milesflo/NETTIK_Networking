@@ -186,6 +186,9 @@
     <ClInclude Include="NETRPC.h">
       <Filter>Core\Serialization\headers</Filter>
     </ClInclude>
+    <ClInclude Include="NetVarListBase.h">
+      <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IController.cpp">
@@ -237,6 +240,9 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="CNetVarList.cpp">
+      <Filter>Core\Network Data\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NetVarListBase.cpp">
       <Filter>Core\Network Data\source</Filter>
     </ClCompile>
   </ItemGroup>
