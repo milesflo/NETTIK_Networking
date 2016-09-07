@@ -169,6 +169,19 @@ public:
 
 		return (existing_it != m_Data.end() ? &existing_it->second : nullptr);
 	}
+
+	void remove_all()
+	{
+		mutex_guard guard( m_Mutex );
+
+		auto data_copy = m_Data;
+		for (auto it = data_copy.begin(); it != data_copy.end(); ++it)
+		{
+			printf("remove item.\n");
+			remove(it->first);
+		}
+	}
+
 	//-------------------------------------------
 	// Removes an element using the specified
 	// key. Returns false if the object failed 
@@ -176,7 +189,7 @@ public:
 	//-------------------------------------------
 	bool remove(std::uint32_t element_key)
 	{
-		mutex_guard guard(m_Mutex);
+		mutex_guard guard( m_Mutex );
 
 		auto existing_it = m_Data.find(element_key);
 		if (existing_it == m_Data.end())
@@ -245,10 +258,17 @@ public:
 	//-------------------------------------------
 	// Returns an element with the associated key.
 	//-------------------------------------------
-	const example_t* get(std::uint32_t element_key)
+	example_t* get(std::uint32_t element_key)
 	{
 		mutex_guard guard( m_Mutex );
-		return &m_Data.at( element_key );
+		
+		auto item_it = m_Data.find(element_key);
+		if (item_it == m_Data.end())
+		{
+			return nullptr;
+		}
+
+		return &(item_it->second);
 	}
 
 	//-------------------------------------------
