@@ -16,11 +16,9 @@ template <class example_t>
 class CNetVarList : public NetVarListBase
 {
 public:
-	// change when ready for template initialization.
-	using proto_add    = NETTIK::IPacketFactory::CProtoPacket<INetworkMapAdd>;
-	using proto_update = NETTIK::IPacketFactory::CProtoPacket<INetworkMapUpdate>;
-	using proto_remove = NETTIK::IPacketFactory::CProtoPacket<INetworkMapRemove>;
-	
+
+	using list_callback = std::function<void(std::uint32_t, example_t&)>;
+
 	CNetVarList(NetObject* parent, const char* name) : NetVarListBase(sizeof( example_t ), name, parent)
 	{
 		if (m_pParent == nullptr)
@@ -254,6 +252,15 @@ public:
 		m_UpdateQueue.push_back( std::move(packet) );
 	}
 
+	//-------------------------------------------
+	// Returns a copy of the list's contents.
+	//-------------------------------------------
+	std::unordered_map<std::uint32_t, example_t> get_list_copy()
+	{
+		mutex_guard guard( m_Mutex );
+
+		return m_Data;
+	}
 
 	//-------------------------------------------
 	// Returns an element with the associated key.
@@ -277,7 +284,7 @@ public:
 	//-------------------------------------------
 	void SendContents(ENetPeer* pPeer)
 	{
-		mutex_guard guard( m_Mutex );
+		// mutex_guard guard( m_Mutex );
 
 		VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
 		IEntityManager   * pManager  = m_pParent->m_pManager;  // "players"
@@ -335,7 +342,7 @@ public:
 
 		// Add all the peers to each update queue entry. Call flush afterwards to
 		// invoke the dispatch of the packet data.
-		mutex_guard guard(m_Mutex);
+		// mutex_guard guard(m_Mutex);
 	
 		for (auto update_item = m_UpdateQueue.begin(); update_item != m_UpdateQueue.end(); ++update_item)
 		{
@@ -344,6 +351,11 @@ public:
 				(*update_item)->AddPeer(*peer);
 			}
 		}
+	}
+
+	void bind(ListEvent evt, list_callback callback)
+	{
+		m_Callbacks[evt] = callback;
 	}
 
 protected:
@@ -427,8 +439,37 @@ protected:
 		m_Data.erase( lookup_result );
 	}
 
+	void dispatch_add(std::uint32_t key)
+	{
+		// Dispatch callback.
+		auto callback_it = m_Callbacks.find(kListEvent_Add);
+		if (callback_it != m_Callbacks.end())
+		{
+			callback_it->second(key, m_Data[key]);
+		}
+	}
+	
+	void dispatch_update(std::uint32_t key)
+	{
+		// Dispatch callback.
+		auto callback_it = m_Callbacks.find(kListEvent_Update);
+		if (callback_it != m_Callbacks.end())
+		{
+			callback_it->second(key, m_Data[key]);
+		}
+	}
+
+	void dispatch_remove(std::uint32_t key)
+	{
+		// Dispatch callback.
+		auto callback_it = m_Callbacks.find(kListEvent_Remove);
+		if (callback_it != m_Callbacks.end())
+		{
+			callback_it->second(key, m_Data[key]);
+		}
+	}
 
 	// Storage for all data elements.
 	std::unordered_map<std::uint32_t, example_t> m_Data;
-
+	std::unordered_map<ListEvent, list_callback> m_Callbacks;
 };

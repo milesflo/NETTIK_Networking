@@ -90,6 +90,8 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 	}
 
 	printf("debug (set) = %d\n", *reinterpret_cast<const int*>( pRemoteData ) );
+
+	pList->dispatch_update(item_key);
 }
 
 void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet)
@@ -122,6 +124,9 @@ void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet
 	}
 
 	std::uint32_t item_key = packet.key();
+
+	// Dispatch callback before removing item in memory.
+	pList->dispatch_remove(item_key);
 
 	try {
 		pList->remove_at(item_key);
@@ -199,6 +204,7 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 	}
 
 	printf("debug = %d\n", *reinterpret_cast<const int*>( pRemoteData ) );
+	pList->dispatch_add(item_key);
 }
 
 NetObject* NetVarListBase::DecodeObject(const INetworkAssociatedObject& associated_object)

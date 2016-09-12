@@ -3,7 +3,6 @@
 class NetVarListBase
 {
 protected:
-
 	using data_point  = std::pair<void*, size_t>;
 	using mutex_guard = std::lock_guard<std::recursive_mutex>;
 	
@@ -42,13 +41,28 @@ protected:
 	//-------------------------------------------
 	static NetObject* DecodeObject(const INetworkAssociatedObject& associated_object);
 
-	virtual data_point get_at(std::uint32_t index)   = 0;
+	virtual data_point get_at(std::uint32_t index)    = 0;
 	
-	virtual data_point build_at(std::uint32_t index) = 0;
+	virtual data_point build_at(std::uint32_t index)  = 0;
 	
-	virtual void remove_at(std::uint32_t index)      = 0;
+	virtual void remove_at(std::uint32_t index)       = 0;
 
+	virtual void dispatch_add(std::uint32_t index)    = 0;
+	virtual void dispatch_update(std::uint32_t index) = 0;
+	virtual void dispatch_remove(std::uint32_t index) = 0;
 public:
+
+	enum ListEvent
+	{
+		kListEvent_Add,
+		kListEvent_Update,
+		kListEvent_Remove
+	};
+
+	using proto_add    = NETTIK::IPacketFactory::CProtoPacket<INetworkMapAdd>;
+	using proto_update = NETTIK::IPacketFactory::CProtoPacket<INetworkMapUpdate>;
+	using proto_remove = NETTIK::IPacketFactory::CProtoPacket<INetworkMapRemove>;
+
 	virtual void SendContents(ENetPeer* pPeer)       = 0;
 
 	virtual void SendDelta(IEntityManager* pManager) = 0;
