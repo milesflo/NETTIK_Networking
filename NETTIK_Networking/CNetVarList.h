@@ -1,5 +1,6 @@
 #pragma once
 #include "NetVarListBase.h"
+#include <deque>
 #define NetworkList( type, name )  CNetVarList<type> name = { this, #name }
 
 class NetObject;
@@ -17,7 +18,7 @@ class CNetVarList : public NetVarListBase
 {
 public:
 
-	using list_callback = std::function<void(std::uint32_t, example_t&)>;
+	using list_callback = std::function<bool(std::uint32_t, example_t&)>;
 
 	CNetVarList(NetObject* parent, const char* name) : NetVarListBase(sizeof( example_t ), name, parent)
 	{
@@ -312,6 +313,17 @@ public:
 		}
 	}
 
+	void SendContents(IEntityManager* pManager)
+	{
+		std::vector<ENetPeer*> pTargets;
+		get_players(pManager, pTargets);
+
+		for (auto it = pTargets.begin(); it != pTargets.end(); ++it)
+		{
+			SendContents(*it);
+		}
+	}
+
 	//-------------------------------------------
 	// Schedules the entity manager's objects to
 	// receive delta changes to the object.
@@ -319,26 +331,7 @@ public:
 	void SendDelta(IEntityManager* pManager)
 	{
 		std::vector<ENetPeer*> pTargets;
-		// Get all of the parent instance's peers and push them 
-		// into a target list. 
-		{
-			LockableVector<NetObject*>& object_list = pManager->GetObjects();
-			object_list.safe_lock();
-
-			auto object_list_raw = object_list.get();
-
-			for (auto object = object_list_raw->begin(); object != object_list_raw->end(); ++object)
-			{
-				// Bots don't have peers, make sure we're not pushing nullptr
-				// bot objects into the firing line.
-				if ((*object)->m_pPeer != nullptr)
-				{
-					pTargets.push_back((*object)->m_pPeer);
-				}
-			}
-
-			object_list.safe_unlock();
-		}
+		get_players(pManager, pTargets);
 
 		// Add all the peers to each update queue entry. Call flush afterwards to
 		// invoke the dispatch of the packet data.
@@ -358,7 +351,52 @@ public:
 		m_Callbacks[evt] = callback;
 	}
 
+	//-----------------------------------------------
+	// Think needs to be ran frequently to recheck
+	// local processing of remote events that could 
+	// have been scheduled for a later time.
+	//-----------------------------------------------
+	void think()
+	{
+		dispatcher_think();
+	}
+
+	void invalidate_ents()
+	{
+		mutex_guard guard(m_Mutex);
+
+		for (auto it = m_Data.begin(); it != m_Data.end(); ++it)
+		{
+			this->dispatch_add(it->first);
+		}
+		
+	}
+
 protected:
+
+	void get_players(IEntityManager* pManager, std::vector<ENetPeer*>& target_list)
+	{
+		// Get all of the parent instance's peers and push them 
+		// into a target list. 
+		{
+			LockableVector<NetObject*>& object_list = pManager->GetObjects();
+			object_list.safe_lock();
+
+			auto object_list_raw = object_list.get();
+
+			for (auto object = object_list_raw->begin(); object != object_list_raw->end(); ++object)
+			{
+				// Bots don't have peers, make sure we're not pushing nullptr
+				// bot objects into the firing line.
+				if ((*object)->m_pPeer != nullptr)
+				{
+					target_list.push_back((*object)->m_pPeer);
+				}
+			}
+
+			object_list.safe_unlock();
+		}
+	}
 
 	//-----------------------------------------------
 	// Looks up an index and returns info about the
@@ -424,7 +462,6 @@ protected:
 	//
 	// Standard list::erase, no explicit heap clean.
 	//-----------------------------------------------
-	
 	void remove_at(std::uint32_t index)
 	{
 		mutex_guard guard( m_Mutex );
@@ -439,13 +476,34 @@ protected:
 		m_Data.erase( lookup_result );
 	}
 
+	bool needs_scheduling(std::uint32_t key, list_callback dest)
+	{
+		auto schedule_it = m_Callbacks.find(kListEvent_ScheduleCheck);
+		if (schedule_it == m_Callbacks.end())
+		{
+			return false;
+		}
+
+		if (!schedule_it->second(key, m_Data[key]))
+		{
+			mutex_guard guard(m_QueuedEventsMutex);
+			m_QueuedEvents.push_back({ key, dest });
+			return true;
+		}
+
+		return false;
+	}
+
 	void dispatch_add(std::uint32_t key)
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Add);
 		if (callback_it != m_Callbacks.end())
 		{
-			callback_it->second(key, m_Data[key]);
+			if (!needs_scheduling(key, callback_it->second))
+			{
+				callback_it->second(key, m_Data[key]);
+			}
 		}
 	}
 	
@@ -455,7 +513,10 @@ protected:
 		auto callback_it = m_Callbacks.find(kListEvent_Update);
 		if (callback_it != m_Callbacks.end())
 		{
-			callback_it->second(key, m_Data[key]);
+			if (!needs_scheduling(key, callback_it->second))
+			{
+				callback_it->second(key, m_Data[key]);
+			}
 		}
 	}
 
@@ -465,11 +526,50 @@ protected:
 		auto callback_it = m_Callbacks.find(kListEvent_Remove);
 		if (callback_it != m_Callbacks.end())
 		{
-			callback_it->second(key, m_Data[key]);
+			if (!needs_scheduling(key, callback_it->second))
+			{
+				callback_it->second(key, m_Data[key]);
+			}
 		}
+	}
+
+	void dispatcher_think()
+	{
+		// If the schedule event doesn't exist, nothing should 
+		// really write to the queued events list as this is
+		// invoked via a previous schedule check.
+		auto schedule_it = m_Callbacks.find(kListEvent_ScheduleCheck);
+		if (schedule_it == m_Callbacks.end())
+		{
+			return;
+		}
+
+		if (!schedule_it->second(0, m_Data[0]))
+		{
+			return;
+		}
+
+		mutex_guard guard(m_QueuedEventsMutex);
+
+		for (auto it = m_QueuedEvents.begin(); it != m_QueuedEvents.end(); ++it)
+		{
+			printf("dispatched element\n");
+			it->dest( it->key, m_Data[ it->key ] );
+		}
+
+		m_QueuedEvents.clear();
 	}
 
 	// Storage for all data elements.
 	std::unordered_map<std::uint32_t, example_t> m_Data;
 	std::unordered_map<ListEvent, list_callback> m_Callbacks;
+
+	struct QueuedEvent
+	{
+		std::uint32_t key;
+		list_callback dest;
+	};
+
+	std::recursive_mutex m_QueuedEventsMutex;
+	std::deque<QueuedEvent> m_QueuedEvents;
 };

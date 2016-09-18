@@ -48,20 +48,37 @@ protected:
 	virtual void remove_at(std::uint32_t index)       = 0;
 
 	virtual void dispatch_add(std::uint32_t index)    = 0;
+
 	virtual void dispatch_update(std::uint32_t index) = 0;
+
 	virtual void dispatch_remove(std::uint32_t index) = 0;
+
 public:
+
+	//-----------------------------------------------
+	// Internal processing of a list implementation.
+	//-----------------------------------------------
+	virtual void think() = 0;
 
 	enum ListEvent
 	{
 		kListEvent_Add,
 		kListEvent_Update,
-		kListEvent_Remove
+		kListEvent_Remove,
+
+		//-------------------------------------------------
+		// Validates whether a list manipulation is
+		// allowed to be dispatched, or whether it should
+		// be re-queued.
+		//-------------------------------------------------
+		kListEvent_ScheduleCheck
 	};
 
 	using proto_add    = NETTIK::IPacketFactory::CProtoPacket<INetworkMapAdd>;
 	using proto_update = NETTIK::IPacketFactory::CProtoPacket<INetworkMapUpdate>;
 	using proto_remove = NETTIK::IPacketFactory::CProtoPacket<INetworkMapRemove>;
+
+	virtual void SendContents(IEntityManager* pManager) = 0;
 
 	virtual void SendContents(ENetPeer* pPeer)       = 0;
 

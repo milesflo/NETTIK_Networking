@@ -133,7 +133,7 @@ void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet
 	}
 	catch (std::exception& e)
 	{
-		printf("error: delete lookup for item failed, %s", e.what());
+		printf("error: delete lookup for item failed, %s\n", e.what());
 	}
 
 	printf("debug (delete) = %d\n", item_key );
