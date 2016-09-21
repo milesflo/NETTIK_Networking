@@ -18,7 +18,7 @@ class CNetVarList : public NetVarListBase
 {
 public:
 
-	using list_callback = std::function<bool(std::uint32_t, example_t&)>;
+	using list_callback = std::function<bool(std::uint32_t, example_t*)>;
 
 	CNetVarList(NetObject* parent, const char* name) : NetVarListBase(sizeof( example_t ), name, parent)
 	{
@@ -444,6 +444,8 @@ protected:
 
 		// Build the element.
 		auto insert_result = m_Data.insert(std::make_pair(index, example_t()));
+		printf("%s\n", __FUNCTION__);
+
 		if (!insert_result.second)
 		{
 			throw std::runtime_error("insertation failed");
@@ -484,7 +486,7 @@ protected:
 			return false;
 		}
 
-		if (!schedule_it->second(key, m_Data[key]))
+		if (!schedule_it->second(key, &m_Data[key]))
 		{
 			mutex_guard guard(m_QueuedEventsMutex);
 			m_QueuedEvents.push_back({ key, dest });
@@ -502,7 +504,7 @@ protected:
 		{
 			if (!needs_scheduling(key, callback_it->second))
 			{
-				callback_it->second(key, m_Data[key]);
+				callback_it->second(key, &m_Data[key]);
 			}
 		}
 	}
@@ -515,7 +517,7 @@ protected:
 		{
 			if (!needs_scheduling(key, callback_it->second))
 			{
-				callback_it->second(key, m_Data[key]);
+				callback_it->second(key, &m_Data[key]);
 			}
 		}
 	}
@@ -528,7 +530,7 @@ protected:
 		{
 			if (!needs_scheduling(key, callback_it->second))
 			{
-				callback_it->second(key, m_Data[key]);
+				callback_it->second(key, &m_Data[key]);
 			}
 		}
 	}
@@ -544,7 +546,7 @@ protected:
 			return;
 		}
 
-		if (!schedule_it->second(0, m_Data[0]))
+		if (!schedule_it->second(0, nullptr))
 		{
 			return;
 		}
@@ -553,8 +555,7 @@ protected:
 
 		for (auto it = m_QueuedEvents.begin(); it != m_QueuedEvents.end(); ++it)
 		{
-			printf("dispatched element\n");
-			it->dest( it->key, m_Data[ it->key ] );
+			it->dest( it->key, &m_Data[ it->key ] );
 		}
 
 		m_QueuedEvents.clear();
