@@ -78,17 +78,16 @@ namespace NETTIK
 		class CBasePacket
 		{
 		protected:
-			INetworkCodes::msg_t  m_iCode;
-			PacketStatus          m_Status;
-			uint8_t               m_iChannel = 0;
-			uint32_t              m_Flags = 0;
+			INetworkCodes::msg_t   m_iCode;
+			PacketStatus           m_Status;
+			uint8_t                m_iChannel = 0;
+			uint32_t               m_Flags = 0;
 			std::vector<ENetPeer*> m_pPeerList;
 
 		public:
-
-			DEFINE_GETSET(INetworkCodes::msg_t, m_iCode, Code);
-			DEFINE_GETSET(uint32_t, m_Flags, Flags);
-			DEFINE_GETSET(uint8_t, m_iChannel, Channel);
+			DEFINE_GETSET(INetworkCodes::msg_t, m_iCode,    Code);
+			DEFINE_GETSET(uint32_t,             m_Flags,    Flags);
+			DEFINE_GETSET(uint8_t,              m_iChannel, Channel);
 
 			//! Finds the default peer if pPeer is still
 			// a null pointer. Throws an exception if the
@@ -137,12 +136,7 @@ namespace NETTIK
 			void Dispatch()
 			{
 				AllocateDefaultPeer();
-#ifdef _DEBUG
-				if (m_pPeerList.size() == 0)
-				{
-					printf("warning: PeerList.Size == 0 from %s\n", __FUNCTION__);
-				}
-#endif
+
 				for (uint32_t i = 0; i < m_pPeerList.size(); i++)
 					DispatchPacket(this, m_iCode, m_pPeerList.at(i), m_Flags, m_iChannel);
 

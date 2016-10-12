@@ -189,6 +189,9 @@
     <ClInclude Include="Vector3.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
+    <ClInclude Include="MessageDispatcher.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IController.cpp">
@@ -243,6 +246,9 @@
       <Filter>Core\Network Data\source</Filter>
     </ClCompile>
     <ClCompile Include="Vector3.cpp">
+      <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageDispatcher.cpp">
       <Filter>Standard Libraries\source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,9 +10,6 @@ using namespace NETTIK;
 //! Global singleton for the ENET peer.
 IController* IController::s_PeerSingleton = nullptr;
 
-//! Issue message for when an unhandled packet is processed.
-const char* s_issueUnhandledPacket = "Unhandled packet, code: %u, packet length: %d\n";
-
 void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 {
 
@@ -56,7 +53,7 @@ void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 
 	if (pVar == nullptr)
 	{
-		printf("warning: tried to update null varname '%s'  with ID: %d\n", frame.get_name(), queryID);
+		GetQueue().Add(kMessageType_Warn, "Tried to update NULL variable name " + std::string(frame.get_name()) + " for ID: " + std::to_string(queryID));
 		return;
 	}
 
@@ -338,17 +335,8 @@ void IController::Send(const enet_uint8* data, size_t data_len, ENetPeer* peer, 
 
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
-/*
-	for (size_t i = 0; i < data_len; ++i)
-	{
-		printf("%1x ", (unsigned char)data[i]);
-	};  printf("\n");
-	*/
-//	printf("Sending %d\n", *(INetworkCodes::msg_t*)(data));
-	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 
 	std::unique_lock<std::mutex> _(m_ENET_RW);
-
 	enet_peer_send(peer, channel, packet);
 }
 
@@ -359,15 +347,9 @@ void IController::Broadcast(const enet_uint8* data, size_t data_len, uint32_t fl
 	
 	ENetPacket* packet;
 	packet = enet_packet_create(data, data_len, flags);
-/*
-	for (size_t i = 0; i < data_len; ++i)
-	{
-		printf("%1x ", (unsigned char)data[i]);
-	};  printf("\n");
-*/
+
 	// Packet pointer gets automatically deleted, future fyi: not a memory leak!
 	std::unique_lock<std::mutex> _(m_ENET_RW);
-
 	enet_host_broadcast(m_pHost, channel, packet);
 }
 
@@ -399,9 +381,7 @@ void IController::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPe
 		return;
 	}
 
-#ifdef _DEBUG
-	printf(s_issueUnhandledPacket, code, data_length);
-#endif
+	GetQueue().Add(kMessageType_Warn, "Unhandled packet, code: " + std::to_string(code) + ", packet length: " + std::to_string(data_length));
 }
 
 void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
@@ -422,7 +402,7 @@ void IController::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 
 void IController::Dump()
 {
-	printf("IController DUMP mode enabled.\n");
+	GetQueue().Add(kMessageType_Print, "Network controller dump mode has been enabled");
 	m_bDumpMode = true;
 }
 
@@ -475,22 +455,22 @@ void IController::ProcessNetStack()
 		{
 			if (m_bDumpMode)
 			{
-				printf("#raw: ");
-				for (size_t i = 0; i < m_CurrentEvent.packet->dataLength; i++)
-				{
-					printf("%1x ", m_CurrentEvent.packet->data[i]);
-				} printf("\n");
-
-				printf("#str: ");
-				for (size_t i = 0; i < m_CurrentEvent.packet->dataLength; i++)
-				{
-					const char ch = static_cast<const char>(m_CurrentEvent.packet->data[i]);
-
-					if (ch >= 65 && ch <= 172)
-						printf("%c ", ch);
-					else
-						printf("%1x ", ch);
-				} printf("\n");
+//				GetQueue().Add(kMessageType_Print, "#raw: ");
+//				for (size_t i = 0; i < m_CurrentEvent.packet->dataLength; i++)
+//				{
+//					printf("%1x ", m_CurrentEvent.packet->data[i]);
+//				} printf("\n");
+//
+//				printf("#str: ");
+//				for (size_t i = 0; i < m_CurrentEvent.packet->dataLength; i++)
+//				{
+//					const char ch = static_cast<const char>(m_CurrentEvent.packet->data[i]);
+//
+//					if (ch >= 65 && ch <= 172)
+//						printf("%c ", ch);
+//					else
+//						printf("%1x ", ch);
+//				} printf("\n");
 
 			}
 			// Send for processing.

@@ -137,15 +137,13 @@ void IControllerClient::HandleEntOwnership(const enet_uint8* data, size_t data_l
 
 	if (expected_size != header_size)
 	{
-		printf("warning: dropped ownership list, provided size '%d' when expected '%d'\n", header_size, expected_size);
+		GetQueue().Add(kMessageType_Warn, "Dropped ownership list, provided size " + std::to_string(header_size) + ", expected " + std::to_string(expected_size));
 		return;
 	}
 
 	for (size_t i = 0; i < header.count(); i++)
 	{
 		uint32_t netid = static_cast<uint32_t>(*partition);
-
-		printf("I now own %d\n", netid);
 		partition += sizeof(uint32_t);
 	}
 }
@@ -160,10 +158,9 @@ void IControllerClient::HandleEntSnapshot(const enet_uint8* data, size_t data_le
 
 	if (header_size != expected_size)
 	{
-		printf("warning: dropped snapshot, provided size '%d' when expected '%d'\n", header_size, expected_size);
+		GetQueue().Add(kMessageType_Warn, "Dropped snapshot, provided size " + std::to_string(header_size) + ", expected " + std::to_string(expected_size));
 		return;
 	}
-
 
 	enet_uint8* partition;
 	partition = (enet_uint8*)(data);

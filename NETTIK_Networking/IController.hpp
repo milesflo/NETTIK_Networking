@@ -6,6 +6,7 @@
 //-------------------------------------------------
 #pragma once
 #include "VirtualInstance.h"
+#include "MessageDispatcher.h"
 
 namespace NETTIK
 {
@@ -38,7 +39,6 @@ namespace NETTIK
 		std::unordered_map<std::string, VirtualInstance_ptr> m_Instances;
 
 	private:
-
 		//----------------------
 		// Global controller
 		//----------------------
@@ -84,7 +84,11 @@ namespace NETTIK
 		IController( uint32_t tickRate );
 		virtual ~IController();
 
+		CMessageDispatcher  m_MessageQueue;
+
 	public:
+
+		inline CMessageDispatcher& GetQueue() { return m_MessageQueue; }
 
 		//-----------------------------------------------
 		// DEBUG: Enables controller dumping mode.

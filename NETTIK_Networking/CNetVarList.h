@@ -179,7 +179,6 @@ public:
 		auto existing_it = m_Data.find( element_key );
 		if ( existing_it != m_Data.end() )
 		{
-			printf("key already exists in list.\n");
 			return &existing_it->second;
 		}
 
@@ -212,7 +211,6 @@ public:
 		auto data_copy = m_Data;
 		for (auto it = data_copy.begin(); it != data_copy.end(); ++it)
 		{
-			printf("remove item.\n");
 			remove(it->first);
 		}
 	}
@@ -229,7 +227,12 @@ public:
 		auto existing_it = m_Data.find(element_key);
 		if (existing_it == m_Data.end())
 		{
-			printf("warning: tried removing invalid key in networked list\n");
+			NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
+			if ( pNetworkController )
+			{
+				pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried to remove invalid key from networked list.");
+			}
+
 			return false;
 		}
 
@@ -265,7 +268,11 @@ public:
 		auto existing_it = m_Data.find( element_key );
 		if ( existing_it == m_Data.end() )
 		{
-			printf("warning: tried setting invalid key in networked list\n");
+			NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
+			if ( pNetworkController )
+			{
+				pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried to setting invalid key from networked list.");
+			}
 			return;
 		}
 
@@ -490,11 +497,16 @@ protected:
 
 		// Build the element.
 		auto insert_result = m_Data.insert(std::make_pair(index, example_t()));
-		printf("%s\n", __FUNCTION__);
+
+		NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
+		if ( pNetworkController )
+		{
+			pNetworkController->GetQueue().Add(kMessageType_Print, "build_at()");
+		}
 
 		if (!insert_result.second)
 		{
-			throw std::runtime_error("insertation failed");
+			throw std::exception("insertation failed");
 		}
 
 		example_t* pItem = &(insert_result.first->second);

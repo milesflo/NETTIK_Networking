@@ -58,10 +58,9 @@ void IControllerServer::HandleClientEntSnapshot(const enet_uint8* data, size_t d
 
 	if (header_size != expected_size)
 	{
-		printf("warning: dropped snapshot, provided size '%d' when expected '%d'\n", header_size, expected_size);
+		GetQueue().Add(kMessageType_Warn, "Dropped client snapshot, provided size " + std::to_string(header_size) + ", expected " + std::to_string(expected_size));
 		return;
 	}
-
 
 	enet_uint8* partition;
 	partition = (enet_uint8*)(data);

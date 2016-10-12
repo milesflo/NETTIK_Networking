@@ -27,7 +27,8 @@ void NetVarListBase::Flush()
 
 void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet)
 {
-	NetObject * pTargetObject;
+	NETTIK::IController * pNetworkController = NETTIK::IController::GetSingleton();
+	NetObject           * pTargetObject;
 
 	// Decode the packet target object into a NetObject pointer.
 	try {
@@ -35,13 +36,13 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 	}
 	catch (std::runtime_error& e)
 	{
-		printf("warning: dropped on_remote_update, exception: %s\n", e.what());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Dropped on_remote_update, issue: %s" + std::string(e.what()));
 		return;
 	}
 
 	if (pTargetObject == nullptr)
 	{
-		printf("error: target object not found. netcode: %d\n", packet.target_object().network_code());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Target object not found for netcode: %d" + std::to_string(packet.target_object().network_code()));
 		return;
 	}
 
@@ -50,7 +51,7 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 	NetVarListBase* pList = FetchObjectList(pTargetObject, packet.list_id());
 	if (!pList)
 	{
-		printf("warning: dropped on_remote_update, list is nullptr (%d)\n", packet.list_id());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "List is nullptr when handling on_remote_update for list id: %d" + std::to_string(packet.list_id()));
 		return;
 	}
 
@@ -67,7 +68,7 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 	}
 	catch (std::exception& e)
 	{
-		printf("error: lookup for item failed, %s", e.what());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Lookup failed: %s" + std::string(e.what()));
 		return;
 	}
 
@@ -78,8 +79,8 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 
 	if ( iItemSize != iRemoteSize )
 	{
-		printf("error: initial item length in packet does not meet template size, preventing write on update (received %d, expected %d).\n",
-			iRemoteSize, iItemSize);
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Initial item length in packet does not meet template size, preventing write on update (received " +
+			std::to_string(iRemoteSize) + ", expected " + std::to_string(iItemSize));
 		return;
 	}
 
@@ -90,14 +91,13 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 		pItemData[ i ] = pRemoteData[ i ];
 	}
 
-	printf("debug (set) = %p\n", *reinterpret_cast<const int*>( pRemoteData ) );
-
 	pList->dispatch_update(item_key);
 }
 
 void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet)
 {
-	NetObject * pTargetObject;
+	NETTIK::IController * pNetworkController = NETTIK::IController::GetSingleton();
+	NetObject           * pTargetObject;
 
 	// Decode the packet target object into a NetObject pointer.
 	try {
@@ -105,13 +105,13 @@ void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet
 	}
 	catch (std::runtime_error& e)
 	{
-		printf("warning: dropped on_remote_update, exception: %s\n", e.what());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Dropped on_remote_remove, issue: %s" + std::string(e.what()));
 		return;
 	}
 
 	if (pTargetObject == nullptr)
 	{
-		printf("error: target object not found. netcode: %d\n", packet.target_object().network_code());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Target object not found for netcode: %d" + std::to_string(packet.target_object().network_code()));
 		return;
 	}
 
@@ -120,7 +120,7 @@ void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet
 	NetVarListBase* pList = FetchObjectList(pTargetObject, packet.list_id());
 	if (!pList)
 	{
-		printf("warning: dropped on_remote_update, list is nullptr (%d)\n", packet.list_id());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "List is nullptr when handling on_remote_add for list id: %d" + std::to_string(packet.list_id()));
 		return;
 	}
 
@@ -134,15 +134,14 @@ void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet
 	}
 	catch (std::exception& e)
 	{
-		printf("error: delete lookup for item failed, %s\n", e.what());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Delete lookup of item failed, %s" + std::string(e.what()));
 	}
-
-	printf("debug (delete) = %d\n", item_key );
 }
 
 void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 {
-	NetObject * pTargetObject;
+	NETTIK::IController * pNetworkController = NETTIK::IController::GetSingleton();
+	NetObject           * pTargetObject;
 
 	// Decode the packet target object into a NetObject pointer.
 	try {
@@ -150,13 +149,13 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 	}
 	catch (std::runtime_error& e)
 	{
-		printf("warning: dropped on_remote_add, exception: %s\n", e.what());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Dropped on_remote_add, issue: %s" + std::string(e.what()));
 		return;
 	}
 
 	if (pTargetObject == nullptr)
 	{
-		printf("error: target object not found. netcode: %d\n", packet.target_object().network_code());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Target object not found for netcode: %d" + std::to_string(packet.target_object().network_code()));
 		return;
 	}
 
@@ -165,7 +164,7 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 	NetVarListBase* pList = FetchObjectList(pTargetObject, packet.list_id());
 	if (!pList)
 	{
-		printf("warning: dropped on_remote_add, list is nullptr (%d)\n", packet.list_id());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "List is nullptr when handling on_remote_add for list id: %d" + std::to_string(packet.list_id()));
 		return;
 	}
 
@@ -182,7 +181,7 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 	}
 	catch (std::exception& e)
 	{
-		printf("error: insertation of new item failed, %s", e.what());
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Insertation of new item failed, %s" + std::string(e.what()));
 		return;
 	}
 
@@ -193,7 +192,8 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 
 	if ( iItemSize != iRemoteSize )
 	{
-		printf("error: initial item length in packet does not meet template size, preventing write.\n");
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Initial item length in packet does not meet template size, preventing write on add (received " +
+			std::to_string(iRemoteSize) + ", expected " + std::to_string(iItemSize));
 		return;
 	}
 
@@ -204,7 +204,6 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 		pItemData[ i ] = pRemoteData[ i ];
 	}
 
-	printf("debug = %d\n", *reinterpret_cast<const int*>( pRemoteData ) );
 	pList->dispatch_add(item_key);
 }
 
@@ -251,7 +250,7 @@ bool NetVarListBase::HasWritePermission(ENetPeer* pCallee, NetObject* pCheckObje
 
 	if (pCallee == nullptr || pCheckObject == nullptr)
 	{
-		printf("warning: tried checking nullptr objects (%p, %p)\n", pCallee, pCheckObject);
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried checking write permission on nullptr object");
 		return false;
 	}
 
@@ -260,9 +259,11 @@ bool NetVarListBase::HasWritePermission(ENetPeer* pCallee, NetObject* pCheckObje
 
 NetVarListBase* NetVarListBase::FetchObjectList(NetObject* pNetworkObject, std::uint32_t index)
 {
+	NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
+
 	if (pNetworkObject == nullptr)
 	{
-		printf("warning: nullptr when fetching object list\n");
+		pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried fetching object list on nullptr object");
 		return nullptr;
 	}
 
@@ -276,7 +277,7 @@ NetVarListBase* NetVarListBase::FetchObjectList(NetObject* pNetworkObject, std::
 		}
 		catch (std::exception& e)
 		{
-			printf("warning: list not found with index %d (%s)\n", index, e.what());
+			pNetworkController->GetQueue().Add(kMessageType_Warn, "List not found with index " + std::to_string(index) + ", " + std::string(e.what()));
 			pResultList = nullptr;
 		}
 		pNetworkObject->m_Mutex.unlock();

@@ -204,6 +204,7 @@
     <ClInclude Include="Constraints.h" />
     <ClInclude Include="ControllerFlags.h" />
     <ClInclude Include="CPlayerRealm.h" />
+    <ClInclude Include="MessageDispatcher.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="EntityMessages.pb.h" />
     <ClInclude Include="IController.hpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="CEntities.cpp" />
     <ClCompile Include="CNetVarList.cpp" />
     <ClCompile Include="CPlayerRealm.cpp" />
+    <ClCompile Include="MessageDispatcher.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="EntityMessages.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

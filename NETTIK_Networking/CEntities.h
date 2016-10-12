@@ -80,7 +80,7 @@ public:
 
 	NetObject* AddLocal(uint32_t netid, uint32_t controller = NET_CONTROLLER_NONE)
 	{
-		printf("%s: created object of type '%s'\n", __FUNCTION__, controller == NET_CONTROLLER_LOCAL ? "local" : "remote");
+		m_pGlobalController->GetQueue().Add(kMessageType_Print, "Created object with controller '" + std::string(controller == NET_CONTROLLER_LOCAL ? "local" : "remote") + "'");
 
 		m_Objects.safe_lock();
 		m_MaintainedObjects.safe_lock();

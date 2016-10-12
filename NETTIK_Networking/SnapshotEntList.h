@@ -90,7 +90,6 @@ public:
 			data.emplace_back(stream[i]);
 		stream += sizeof(uint32_t);
 
-		//printf("writing forced = %d for %s\n", *stream, m_data.name);
 		data.push_back(*stream);
 		stream += sizeof(bool);
 
@@ -158,8 +157,6 @@ public:
 
 			m_data.name[i] = (unsigned char)*current_ptr++;
 		}
-
-		//printf("received forced = %d for %s\n", m_data.forced, m_data.name);
 
 		current_ptr++;
 

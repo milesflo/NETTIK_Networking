@@ -18,8 +18,6 @@ void NetObject::DestroyNetworkedEntity() const
 
 void NetObject::InvalidateVars()
 {
-	printf("Invalidation of variable and list data\n");
-
 	for (auto it = m_Vars.begin(); it != m_Vars.end(); ++it)
 	{
 		(*it)->InvalidateChanges();
