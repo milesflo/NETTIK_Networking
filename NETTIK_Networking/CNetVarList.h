@@ -27,6 +27,41 @@ public:
 			return;
 		}
 
+//		std::vector<ENetPeer*> 
+//		this->get_players("players", )
+
+		bind(kListEvent_Update, [=](uint32_t key, example_t* data)
+		{
+			VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+			IEntityManager   * pManager = m_pParent->m_pManager;  // "players"
+
+			if (pManager == nullptr || pInstance == nullptr)
+			{
+				NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+			}
+
+			std::vector<ENetPeer*> players;
+			get_players(pManager, players);
+
+			// Don't resend list data on client (subject to change with NPC sync.
+			if (players.size() <= 1)
+				return true;
+
+			INetworkAssociatedObject object_ref;
+			object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
+			object_ref.set_manager_name(pManager->GetName());   // "players"
+			object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+
+			// Construct 
+			auto packet = construct_protoupdate(&object_ref, key, m_Data[key], m_ListID);
+
+			// Filter the updating player from having their update being re-sent.
+			mutex_guard guard(m_Mutex);
+			m_UpdateQueue.push_back(std::make_pair(std::move(packet), m_pParent->m_pPeer));
+
+			return true;
+		});
+
 		if (m_pParent->m_Mutex.try_lock())
 		{
 			NetObject::MapList_t& lists = m_pParent->GetMaps();
@@ -34,6 +69,7 @@ public:
 			m_ListID = lists.size() - 1;
 
 			m_pParent->m_Mutex.unlock();
+
 			return;
 		}
 		NETTIK_EXCEPTION("Attempted to lock parent mutex on netlist but failed, inconsistent class tables.");
@@ -164,7 +200,7 @@ public:
 		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
 	
 		auto packet = construct_protoadd(&object_ref, element_key, data, m_ListID);
-		m_UpdateQueue.push_back( std::move(packet) );
+		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr) );
 
 		return (existing_it != m_Data.end() ? &existing_it->second : nullptr);
 	}
@@ -213,7 +249,7 @@ public:
 		object_ref.set_network_code(m_pParent->m_NetCode);  // 0
 
 		auto packet = construct_protoremove(&object_ref, element_key, m_ListID);
-		m_UpdateQueue.push_back(std::move(packet));
+		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr) );
 
 		return true;
 	}
@@ -250,7 +286,7 @@ public:
 		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
 	
 		auto packet = construct_protoupdate(&object_ref, element_key, data, m_ListID);
-		m_UpdateQueue.push_back( std::move(packet) );
+		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr) );
 	}
 
 	//-------------------------------------------
@@ -336,19 +372,29 @@ public:
 		// Add all the peers to each update queue entry. Call flush afterwards to
 		// invoke the dispatch of the packet data.
 		// mutex_guard guard(m_Mutex);
-	
+		mutex_guard guard(m_Mutex);
+
 		for (auto update_item = m_UpdateQueue.begin(); update_item != m_UpdateQueue.end(); ++update_item)
 		{
+			ENetPeer* pFilterPeer = update_item->second;
 			for (auto peer = pTargets.begin(); peer != pTargets.end(); ++peer)
 			{
-				(*update_item)->AddPeer(*peer);
+				if (*peer != pFilterPeer)
+				{
+					(*update_item).first->AddPeer(*peer);
+				}
 			}
 		}
 	}
 
 	void bind(ListEvent evt, list_callback callback)
 	{
-		m_Callbacks[evt] = callback;
+		if (m_Callbacks.find(evt) == m_Callbacks.end())
+		{
+			m_Callbacks[evt] = {};
+		}
+
+		m_Callbacks[evt].push_back( callback );
 	}
 
 	//-----------------------------------------------
@@ -486,7 +532,7 @@ protected:
 			return false;
 		}
 
-		if (!schedule_it->second(key, &m_Data[key]))
+		if (!schedule_it->second.at(0)(key, &m_Data[key]))
 		{
 			mutex_guard guard(m_QueuedEventsMutex);
 			m_QueuedEvents.push_back({ key, dest });
@@ -500,11 +546,17 @@ protected:
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Add);
+
 		if (callback_it != m_Callbacks.end())
 		{
-			if (!needs_scheduling(key, callback_it->second))
+			auto& callback_list = callback_it->second;
+
+			for (auto it = callback_list.begin(); it != callback_list.end(); ++it)
 			{
-				callback_it->second(key, &m_Data[key]);
+				if (!needs_scheduling(key, (*it)))
+				{
+					(*it)(key, &m_Data[key]);
+				}
 			}
 		}
 	}
@@ -513,11 +565,17 @@ protected:
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Update);
+
 		if (callback_it != m_Callbacks.end())
 		{
-			if (!needs_scheduling(key, callback_it->second))
+			auto& callback_list = callback_it->second;
+
+			for (auto it = callback_list.begin(); it != callback_list.end(); ++it)
 			{
-				callback_it->second(key, &m_Data[key]);
+				if (!needs_scheduling(key, (*it)))
+				{
+					(*it)(key, &m_Data[key]);
+				}
 			}
 		}
 	}
@@ -526,11 +584,17 @@ protected:
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Remove);
+
 		if (callback_it != m_Callbacks.end())
 		{
-			if (!needs_scheduling(key, callback_it->second))
+			auto& callback_list = callback_it->second;
+
+			for (auto it = callback_list.begin(); it != callback_list.end(); ++it)
 			{
-				callback_it->second(key, &m_Data[key]);
+				if (!needs_scheduling(key, (*it)))
+				{
+					(*it)(key, &m_Data[key]);
+				}
 			}
 		}
 	}
@@ -546,7 +610,7 @@ protected:
 			return;
 		}
 
-		if (!schedule_it->second(0, nullptr))
+		if (!schedule_it->second.at(0)(0, nullptr))
 		{
 			return;
 		}
@@ -563,7 +627,7 @@ protected:
 
 	// Storage for all data elements.
 	std::unordered_map<std::uint32_t, example_t> m_Data;
-	std::unordered_map<ListEvent, list_callback> m_Callbacks;
+	std::unordered_map<ListEvent, std::vector<list_callback>> m_Callbacks;
 
 	struct QueuedEvent
 	{

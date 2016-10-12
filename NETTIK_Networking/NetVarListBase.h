@@ -109,7 +109,9 @@ protected:
 
 	// Cache update queue for items that need to be dispatched
 	// to parent's peers.
-	std::vector<std::unique_ptr<NETTIK::IPacketFactory::CBasePacket>> m_UpdateQueue;
+	using packet_filter = std::pair<std::unique_ptr<NETTIK::IPacketFactory::CBasePacket>, ENetPeer*>;
+
+	std::vector<packet_filter> m_UpdateQueue;
 
 	NetVarListBase(const size_t dataSize, const char* name, NetObject* pParent);
 };

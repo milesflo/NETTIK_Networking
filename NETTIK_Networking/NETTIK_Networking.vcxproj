@@ -204,7 +204,7 @@
     <ClInclude Include="Constraints.h" />
     <ClInclude Include="ControllerFlags.h" />
     <ClInclude Include="CPlayerRealm.h" />
-    <ClInclude Include="CNetworkVector3.h" />
+    <ClInclude Include="Vector3.h" />
     <ClInclude Include="EntityMessages.pb.h" />
     <ClInclude Include="IController.hpp" />
     <ClInclude Include="IControllerClient.hpp" />
@@ -235,7 +235,7 @@
     <ClCompile Include="CEntities.cpp" />
     <ClCompile Include="CNetVarList.cpp" />
     <ClCompile Include="CPlayerRealm.cpp" />
-    <ClCompile Include="CNetworkVector3.cpp" />
+    <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="EntityMessages.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

@@ -6,7 +6,7 @@ NetVarListBase::NetVarListBase(const size_t dataSize, const char* name, NetObjec
 	m_psName(name),
 	m_pParent(parent)
 {
-
+	
 }
 
 void NetVarListBase::bind_controller(NETTIK::IController* pNetworkController)
@@ -78,7 +78,8 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 
 	if ( iItemSize != iRemoteSize )
 	{
-		printf("error: initial item length in packet does not meet template size, preventing write.");
+		printf("error: initial item length in packet does not meet template size, preventing write on update (received %d, expected %d).\n",
+			iRemoteSize, iItemSize);
 		return;
 	}
 
@@ -89,7 +90,7 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 		pItemData[ i ] = pRemoteData[ i ];
 	}
 
-	printf("debug (set) = %d\n", *reinterpret_cast<const int*>( pRemoteData ) );
+	printf("debug (set) = %p\n", *reinterpret_cast<const int*>( pRemoteData ) );
 
 	pList->dispatch_update(item_key);
 }
@@ -192,7 +193,7 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 
 	if ( iItemSize != iRemoteSize )
 	{
-		printf("error: initial item length in packet does not meet template size, preventing write.");
+		printf("error: initial item length in packet does not meet template size, preventing write.\n");
 		return;
 	}
 

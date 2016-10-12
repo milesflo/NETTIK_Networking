@@ -6,7 +6,7 @@
 //-------------------------------------------------
 #pragma once
 #include "CNetVarBase.h"
-#include "CNetworkVector3.h"
+#include "Vector3.h"
 //#define DEFINE_NetVector(name, reliable) \
 //	CNetVarVector   name = CNetVarVector(this, #name, reliable)
 
@@ -17,7 +17,7 @@
 #define NetworkVector(name, reliable) \
 	CNetVarVector   name = CNetVarVector( this, #name, reliable )
 
-class CNetVarVector : public CNetVarBase< NETTIK::CNetworkVector3 >
+class CNetVarVector : public CNetVarBase< NETTIK::CVector3 >
 {
 public:
 	
@@ -28,7 +28,7 @@ public:
 
 	void Set(float x, float y, float z)
 	{
-		NETTIK::CNetworkVector3 compose(x, y, z);
+		NETTIK::CVector3 compose(x, y, z);
 		if (!SetGuard(compose))
 			return;
 

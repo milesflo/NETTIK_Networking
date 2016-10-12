@@ -153,9 +153,6 @@
     <ClInclude Include="IThread.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
-    <ClInclude Include="CNetworkVector3.h">
-      <Filter>Standard Libraries\headers</Filter>
-    </ClInclude>
     <ClInclude Include="NetBit.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -188,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="NetVarListBase.h">
       <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -227,9 +227,6 @@
     <ClCompile Include="CEntities.cpp">
       <Filter>Entities\Entity Manager\source</Filter>
     </ClCompile>
-    <ClCompile Include="CNetworkVector3.cpp">
-      <Filter>Standard Libraries\source</Filter>
-    </ClCompile>
     <ClCompile Include="SynchronousTimer.cpp">
       <Filter>Core\Controllers\source</Filter>
     </ClCompile>
@@ -244,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="NetVarListBase.cpp">
       <Filter>Core\Network Data\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>Standard Libraries\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
