@@ -7,7 +7,19 @@ NETTIK::CNETTIK_Issue::CNETTIK_Issue(const std::string& error, const std::string
 	stream << file << std::endl << "Line: " << line << ": " << error;
 
 	m_sErrorMessage = stream.str();
-	std::cout << m_sErrorMessage << std::endl;
+
+	// Try to dispatch exception into the global IController singleton. If this
+	// can't be done, pump to cerr stream.
+	IController* pNetworkController = IController::GetSingleton();
+
+	if (pNetworkController)
+	{
+		pNetworkController->GetQueue().Add(kMessageType_Error, m_sErrorMessage);
+	}
+	else
+	{
+		std::cerr << m_sErrorMessage << std::endl;
+	}
 
 	ToMessage();
 }
