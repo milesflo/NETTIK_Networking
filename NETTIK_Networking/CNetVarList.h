@@ -215,20 +215,23 @@ public:
 		}
 	}
 
-	//-------------------------------------------
-	// Removes an element using the specified
-	// key. Returns false if the object failed 
-	// to remove.
-	//-------------------------------------------
-	bool remove(std::uint32_t element_key)
+	void clear()
 	{
 		mutex_guard guard( m_Mutex );
 
+		while (!m_Data.empty())
+		{
+			remove(m_Data.begin());
+		}
+	}
+
+	bool remove(std::uint32_t element_key)
+	{
 		auto existing_it = m_Data.find(element_key);
 		if (existing_it == m_Data.end())
 		{
 			NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
-			if ( pNetworkController )
+			if (pNetworkController)
 			{
 				pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried to remove invalid key from networked list.");
 			}
@@ -236,6 +239,19 @@ public:
 			return false;
 		}
 
+		return remove(existing_it);
+	}
+
+	//-------------------------------------------
+	// Removes an element using the specified
+	// key. Returns false if the object failed 
+	// to remove.
+	//-------------------------------------------
+	bool remove(typename std::unordered_map<std::uint32_t, example_t>::iterator existing_it)
+	{
+		mutex_guard guard( m_Mutex );
+
+		std::uint32_t element_key = existing_it->first;
 		m_Data.erase(existing_it);
 
 		VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
