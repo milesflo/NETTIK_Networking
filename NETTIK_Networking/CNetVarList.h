@@ -27,8 +27,69 @@ public:
 			return;
 		}
 
-//		std::vector<ENetPeer*> 
-//		this->get_players("players", )
+		bind(kListEvent_Remove, [=](uint32_t key, example_t* data)
+		{
+			VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+			IEntityManager   * pManager = m_pParent->m_pManager;  // "players"
+
+			if (pManager == nullptr || pInstance == nullptr)
+			{
+				NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+			}
+
+			std::vector<ENetPeer*> players;
+			get_players(pManager, players);
+
+			// Don't resend list data on client (subject to change with NPC sync.
+			if (players.size() <= 1)
+				return true;
+
+			INetworkAssociatedObject object_ref;
+			object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
+			object_ref.set_manager_name(pManager->GetName());   // "players"
+			object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+
+			// Construct 
+			auto packet = construct_protoremove(&object_ref, key, m_ListID);
+
+			// Filter the updating player from having their update being re-sent.
+			mutex_guard guard(m_Mutex);
+			m_UpdateQueue.push_back(std::make_pair(std::move(packet), m_pParent->m_pPeer));
+
+			return true;
+		});
+		
+		bind(kListEvent_Add, [=](uint32_t key, example_t* data)
+		{
+			VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
+			IEntityManager   * pManager = m_pParent->m_pManager;  // "players"
+
+			if (pManager == nullptr || pInstance == nullptr)
+			{
+				NETTIK_EXCEPTION("Tried sending contents of invalid object manager.");
+			}
+
+			std::vector<ENetPeer*> players;
+			get_players(pManager, players);
+
+			// Don't resend list data on client (subject to change with NPC sync.
+			if (players.size() <= 1)
+				return true;
+
+			INetworkAssociatedObject object_ref;
+			object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
+			object_ref.set_manager_name(pManager->GetName());   // "players"
+			object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+
+			// Construct 
+			auto packet = construct_protoadd(&object_ref, key, m_Data[key], m_ListID);
+
+			// Filter the updating player from having their update being re-sent.
+			mutex_guard guard(m_Mutex);
+			m_UpdateQueue.push_back(std::make_pair(std::move(packet), m_pParent->m_pPeer));
+
+			return true;
+		});
 
 		bind(kListEvent_Update, [=](uint32_t key, example_t* data)
 		{

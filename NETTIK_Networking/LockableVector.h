@@ -48,7 +48,7 @@ public:
 	// Pushes the item onto the back of 
 	// the list, safely.
 	//-----------------------------------
-	void push_back(T v);
+	void push_back(T& v);
 
 	//-----------------------------------
 	// Gets the back element of the list,
@@ -111,7 +111,7 @@ inline typename LockableVector<T>::my_vec* LockableVector<T>::get()
 }
 
 template <typename T>
-inline void LockableVector<T>::push_back(T v)
+inline void LockableVector<T>::push_back(T& v)
 {
 	lock guard(m_mutex);
 	m_contents.push_back(v);
