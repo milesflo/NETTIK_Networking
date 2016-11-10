@@ -28,7 +28,7 @@ namespace NETTIK
 		bool InitializeHost();
 		bool InitializeAddress(const char* hostname, uint16_t port);
 
-		bool Listen(uint16_t port, size_t peerLimit);
+		bool Listen(size_t peerLimit, uint16_t port, const char* hostname);
 
 	};
 }

@@ -33,7 +33,7 @@ IControllerClient::IControllerClient() : IController(60)
 
 bool IControllerClient::InitializeHost()
 {
-	m_pHost = enet_host_create(NULL, 1, 0, 0, 0);
+	m_pHost = enet_host_create(NULL, 1, 2, 0, 0);
 
 	if (m_pHost == NULL)
 		return false;
@@ -196,7 +196,7 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 	if (!InitializeAddress(hostname, port))
 		return false;
 
-	ENetPeer* peer = enet_host_connect(m_pHost, &m_Address, 0, 0);
+	ENetPeer* peer = enet_host_connect(m_pHost, &m_Address, 2, 0);
 
 	if (peer == nullptr)
 		NETTIK_EXCEPTION("Client peer failed.");
@@ -205,12 +205,12 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 		this->Stop();
 	});
 
-	on(NETID_Reserved::RTTI_Object::OBJECT_FRAME,   std::bind(&IControllerClient::HandleEntSnapshot, this, _1, _2, _3));
+	on(NETID_Reserved::RTTI_Object::OBJECT_FRAME,     std::bind(&IControllerClient::HandleEntSnapshot,  this, _1, _2, _3));
 	on(NETID_Reserved::RTTI_Object::CLIENT_OWNERSHIP, std::bind(&IControllerClient::HandleEntOwnership, this, _1, _2, _3));
 //	on(NETID_Reserved::RTTI_Object::OBJECT_NEW, std::bind(&IControllerClient::HandleEntNew, this, _1, _2, _3));
 //	on(NETID_Reserved::RTTI_Object::OBJECT_DEL, std::bind(&IControllerClient::HandleEntDel, this, _1, _2, _3));
 
-	if (enet_host_service(m_pHost, &m_CurrentEvent, 5000) > 0 &&
+	if (enet_host_service(m_pHost, &m_CurrentEvent, 10000) > 0 &&
 		m_CurrentEvent.type == ENET_EVENT_TYPE_CONNECT)
 	{
 		m_PeerList.push_back(peer);
@@ -223,6 +223,9 @@ bool IControllerClient::Connect(const char* hostname, uint16_t port)
 	}
 	else
 	{
+		m_MessageQueue.Add(kMessageType_Error, "Connection failure.");
+		PrintHostStatistics();
+
 		enet_peer_reset(peer);
 		return false;
 	}

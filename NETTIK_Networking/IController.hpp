@@ -86,6 +86,8 @@ namespace NETTIK
 
 		CMessageDispatcher  m_MessageQueue;
 
+		void PrintHostStatistics();
+
 	public:
 
 		inline CMessageDispatcher& GetQueue() { return m_MessageQueue; }

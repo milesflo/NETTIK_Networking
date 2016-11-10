@@ -10,6 +10,19 @@ using namespace NETTIK;
 //! Global singleton for the ENET peer.
 IController* IController::s_PeerSingleton = nullptr;
 
+
+void IController::PrintHostStatistics()
+{
+	if (!m_pHost)
+	{
+		return;
+	}
+
+	m_MessageQueue.Add(kMessageType_Warn, "MTU: " + std::to_string(m_pHost->mtu));
+	m_MessageQueue.Add(kMessageType_Warn, "TSP: " + std::to_string(m_pHost->totalSentPackets));
+	m_MessageQueue.Add(kMessageType_Warn, "TRP: " + std::to_string(m_pHost->totalReceivedPackets));
+}
+
 void IController::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 {
 

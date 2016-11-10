@@ -10,7 +10,7 @@ using namespace NETTIK;
 
 bool IControllerServer::InitializeHost()
 {
-	m_pHost = enet_host_create(&m_Address, m_iPeerLimit, 0, 0, 0);
+	m_pHost = enet_host_create(&m_Address, m_iPeerLimit, 2, 0, 0);
 
 	if (m_pHost == NULL)
 		return false;
@@ -21,7 +21,15 @@ bool IControllerServer::InitializeHost()
 
 bool IControllerServer::InitializeAddress(const char* hostname, uint16_t port)
 {
-	m_Address.host = ENET_HOST_ANY;
+	if (!hostname)
+	{
+		m_Address.host = ENET_HOST_ANY;
+	}
+	else
+	{
+		enet_address_set_host(&m_Address, hostname);
+	}
+
 	m_Address.port = port;
 	return true;
 }
@@ -36,11 +44,11 @@ IControllerServer::IControllerServer(uint32_t rate) : IController(rate)
 
 }
 
-bool IControllerServer::Listen(uint16_t port, size_t peerLimit)
+bool IControllerServer::Listen(size_t peerLimit, uint16_t port, const char* hostname)
 {
 	m_iPeerLimit = peerLimit;
 
-	if (!InitializeAddress(0, port) || !InitializeHost())
+	if (!InitializeAddress(hostname, port) || !InitializeHost())
 		return false;
 
 	m_bConnected = true;

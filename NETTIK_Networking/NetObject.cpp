@@ -63,10 +63,20 @@ NetObject::~NetObject()
 	if (m_pManager != nullptr)
 	{
 		DestroyNetworkedEntity();
+		return;
+	}
+
+	NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
+
+	// Sometimes the network controller has been destroyed and the object 
+	// is still scheduled for deletion from a concurrent thread.
+	if (pNetworkController)
+	{
+		pNetworkController->GetQueue().Add(kMessageType_Error, "Failed releasing object from network controller, m_pManager is NULL.");
 	}
 	else
 	{
-		std::cerr << "error: failed destroying nettik error, pManager is nullptr. possible memory leak." << std::endl, 0;
+		std::cerr << "error: Failed releasing object from network controller, m_pManager is NULL." << std::endl, 0;
 	}
 }
 
