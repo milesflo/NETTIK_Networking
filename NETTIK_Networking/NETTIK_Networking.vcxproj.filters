@@ -256,5 +256,6 @@
     <None Include="EntityMessages.proto">
       <Filter>Protocol Buffers\protos</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>

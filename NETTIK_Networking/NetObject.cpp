@@ -53,9 +53,9 @@ std::string NetObject::GetPeerHost()
 		return "nullptr:0";
 
 	char buffer[32] = { 0 };
-	enet_address_get_host_ip(&m_pPeer->address, buffer, 32);
+	enet_address_get_host_ip(&m_pPeer->address, buffer, 31);
 
-	return std::string(buffer) + std::to_string(m_pPeer->address.port);
+	return std::string(buffer) + ":" + std::to_string(m_pPeer->address.port);
 }
 
 NetObject::~NetObject()
