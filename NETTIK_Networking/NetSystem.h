@@ -332,12 +332,12 @@ protected:
 // Accessors for the amount of channels
 // the system will use.
 //---------------------------------------
-void NetSystem::SetChannelCount(size_t iChannels)
+inline void NetSystem::SetChannelCount(size_t iChannels)
 {
 	m_iChannelCount = iChannels;
 }
 
-size_t NetSystem::GetChannelCount() const
+inline size_t NetSystem::GetChannelCount() const
 {
 	return m_iChannelCount;
 }
@@ -345,7 +345,7 @@ size_t NetSystem::GetChannelCount() const
 //------------------------------------
 // Returns the active message queue.
 //------------------------------------
-CMessageDispatcher& NetSystem::GetQueue()
+inline CMessageDispatcher& NetSystem::GetQueue()
 {
 	return m_Dispatcher;
 }
