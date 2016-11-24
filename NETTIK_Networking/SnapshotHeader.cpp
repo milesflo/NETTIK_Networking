@@ -8,22 +8,6 @@
 
 void SnapshotHeader::write()
 {
-	//// | netmsg code |
-	//for (size_t i = 0; i < sizeof(NETTIK::INetworkCodes::msg_t); i++)
-	//	header.push_back(((unsigned char*)(&m_code))[i]);
-
-	//// | seq id |
-	//for (size_t i = 0; i < sizeof(uint32_t); i++)
-	//	header.push_back(((unsigned char*)(&m_sequence))[i]);
-
-	//// | count |
-	//for (size_t i = 0; i < sizeof(uint16_t); i++)
-	//	header.push_back(((unsigned char*)(&m_count))[i]);
-
-	//// | buffer max |
-	//for (size_t i = 0; i < sizeof(size_t); i++)
-	//	header.push_back(((unsigned char*)(&m_max))[i]);
-
 	for (size_t i = 0; i < sizeof(SnapshotHeaderData); i++)
 	{
 		header.push_back(((unsigned char*)(&m_data))[i]);
@@ -45,22 +29,6 @@ void SnapshotHeader::read(const enet_uint8* stream, size_t stream_len)
 {
 	if (stream_len < sizeof(SnapshotHeaderData))
 		NETTIK_EXCEPTION("Header read doesn't meet header size, INTERNAL.");
-
-	//// | netmsg code |
-	//NETTIK::INetworkCodes::msg_t* code_ptr;
-	//code_ptr = (NETTIK::INetworkCodes::msg_t*)(stream);
-
-	//// | seq id |
-	//uint32_t* seq_ptr;
-	//seq_ptr = (uint32_t*)add_ptr(code_ptr, sizeof(NETTIK::INetworkCodes::msg_t));
-
-	//// | count |
-	//uint16_t* count_ptr;
-	//count_ptr = (uint16_t*)add_ptr(seq_ptr, sizeof(uint32_t));
-
-	//// | buffer max |
-	//size_t* max_ptr;
-	//max_ptr = (size_t*)add_ptr(count_ptr, sizeof(uint16_t));
 
 	SnapshotHeaderData* data_ptr;
 	data_ptr = (SnapshotHeaderData*)(stream);
@@ -107,7 +75,7 @@ void SnapshotHeader::display()
 	std::cout << " ------------------" << std::endl;
 }
 
-void SnapshotHeader::set_code(NETTIK::INetworkCodes::msg_t& code)
+void SnapshotHeader::set_code(INetworkCodes::msg_t& code)
 {
 	m_data.message_code = code;
 }

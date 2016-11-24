@@ -19,22 +19,16 @@ class NetVarListBase;
 class VirtualInstance;
 class IEntityManager;
 
+//---------------------------------------------------
+// NetObject: Base object for transmitting networked
+// states to NetSystem. 
+//---------------------------------------------------
 class NetObject
 {
-#ifdef _DEBUG
-private:
-	unsigned char m_pDebugBuffer[ 1024 * 1024 ];
-	// If compiled in debug mode, every network object is padded by 
-	// 1MB to simulate alloc/free at a larger scale. 
-#endif
-
 public:
 	using VariableList_t = std::vector<NetVar*>;
 	using MapList_t      = std::vector<NetVarListBase*>;
-	
-	uint32_t          m_NetCode;
-	uint32_t          m_RealmID;
-	uint32_t          m_Controller = NET_CONTROLLER_NONE;
+	using NetID          = std::uint32_t;
 
 	//---------------------------------------------------
 	// Takes a variable snapshot and creates a new entry
@@ -124,30 +118,104 @@ public:
 
 	virtual ~NetObject();
 
-private:
-	bool m_bIsServer  = true;
-	bool m_bActive    = true;
+	//--------------------------------------
+	// Network ID manipulation
+	//--------------------------------------
+	NetID GetNetID() const;
+	void SetNetID(NetObject::NetID code);
+
+	//--------------------------------------
+	// Realm ID manipulation
+	//--------------------------------------
+	NetID GetRealmID() const;
+	void SetRealmID(NetObject::NetID code);
+
+	//--------------------------------------
+	// Controller manipulation
+	//--------------------------------------
+	std::uint32_t GetController() const;
+	void SetController(std::uint32_t controller);
 
 protected:
 	VariableList_t m_Vars;
 	MapList_t      m_MapList;
+
+private:
+	bool m_bIsServer  = true;
+	bool m_bActive    = true;
+
+	NetID          m_NetCode;
+	std::uint32_t  m_RealmID;
+	std::uint32_t  m_Controller = NET_CONTROLLER_NONE;
 };
 
+//--------------------------------------
+// Controller manipulation
+//--------------------------------------
+inline std::uint32_t NetObject::GetController() const
+{
+	return m_Controller;
+}
+inline void NetObject::SetController(std::uint32_t controller)
+{
+	m_Controller = controller;
+}
+
+//--------------------------------------
+// Network ID manipulation
+//--------------------------------------
+inline NetObject::NetID NetObject::GetNetID() const
+{
+	return m_NetCode;
+}
+
+inline void NetObject::SetNetID(NetObject::NetID code)
+{
+	m_NetCode = code;
+}
+
+//--------------------------------------
+// Realm ID manipulation
+//--------------------------------------
+inline NetObject::NetID NetObject::GetRealmID() const
+{
+	return m_RealmID;
+}
+
+inline void NetObject::SetRealmID(NetObject::NetID code)
+{
+	m_RealmID = code;
+}
+
+//--------------------------------------
+// Returns the list of map objects.
+//--------------------------------------
 inline NetObject::MapList_t& NetObject::GetMaps()
 {
 	return m_MapList;
 }
 
+//--------------------------------------
+// Returns the list of variable objects.
+//--------------------------------------
 inline NetObject::VariableList_t& NetObject::GetVariables()
 {
 	return m_Vars;
 }
 
+//--------------------------------------
+// Is the object controlled by this 
+// controller.
+//--------------------------------------
 inline bool NetObject::IsNetworkLocal() const
 {
 	return m_Controller == NET_CONTROLLER_LOCAL;
 }
 
+//--------------------------------------
+// Is the object controlled by a remote
+// peer.
+//--------------------------------------
 inline bool NetObject::IsNetworkRemote() const
 {
 	return m_Controller != NET_CONTROLLER_LOCAL;

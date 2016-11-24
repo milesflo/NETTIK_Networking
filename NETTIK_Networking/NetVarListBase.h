@@ -1,4 +1,6 @@
 #pragma once
+#include "EntityMessages.pb.h"
+#include "NetObject.h"
 
 class NetVarListBase
 {
@@ -74,9 +76,9 @@ public:
 		kListEvent_ScheduleCheck
 	};
 
-	using proto_add    = NETTIK::IPacketFactory::CProtoPacket<INetworkMapAdd>;
-	using proto_update = NETTIK::IPacketFactory::CProtoPacket<INetworkMapUpdate>;
-	using proto_remove = NETTIK::IPacketFactory::CProtoPacket<INetworkMapRemove>;
+	using proto_add    = IPacketFactory::CProtoPacket<INetworkMapAdd>;
+	using proto_update = IPacketFactory::CProtoPacket<INetworkMapUpdate>;
+	using proto_remove = IPacketFactory::CProtoPacket<INetworkMapRemove>;
 
 	virtual void SendContents(IEntityManager* pManager) = 0;
 
@@ -94,7 +96,7 @@ public:
 	// to route packets to their associated allocations/
 	// deallocs/writes.
 	//-------------------------------------------
-	static void bind_controller(NETTIK::IController* pNetworkController);
+	static void bind_controller(NetSystem* pNetworkController);
 
 protected:
 	const size_t m_iDataSize;
@@ -109,7 +111,7 @@ protected:
 
 	// Cache update queue for items that need to be dispatched
 	// to parent's peers.
-	using packet_filter = std::pair<std::unique_ptr<NETTIK::IPacketFactory::CBasePacket>, ENetPeer*>;
+	using packet_filter = std::pair<std::unique_ptr<IPacketFactory::CBasePacket>, ENetPeer*>;
 
 	std::vector<packet_filter> m_UpdateQueue;
 

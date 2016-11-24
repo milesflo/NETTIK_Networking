@@ -125,7 +125,7 @@ size_t CNetVarBase<VarType>::TakeVariableSnapshot(SnapshotStream& buffers, bool 
 	SnapshotEntList generator;
 	generator.set_frametype(FrameType::kFRAME_Data);
 	generator.set_name(m_Name);
-	generator.set_netid(m_pParent->m_NetCode);
+	generator.set_netid(m_pParent->GetNetID());
 	generator.set_data(reinterpret_cast<unsigned char*>(&m_Data), sizeof(VarType));
 
 	if (m_bChangeForced || bForced)

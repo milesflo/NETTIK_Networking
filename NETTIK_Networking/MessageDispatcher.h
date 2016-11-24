@@ -12,17 +12,27 @@ enum EDispatcherMessageType
 class CMessageDispatcher
 {
 public:
-
 	struct Message
 	{
 		EDispatcherMessageType type;
 		std::string  data;
 	};
 
-	void Add(EDispatcherMessageType type, std::string msg);
 
+	//--------------------------------------------------------
+	// Adds a new message to the message queue.
+	//--------------------------------------------------------
+	void Add(EDispatcherMessageType type, std::string msg);
+	static void Add(EDispatcherMessageType type, const char* psFormat, ...);
+
+	//--------------------------------------------------------
+	// Gets the longest waiting message in the queue.
+	//--------------------------------------------------------
 	Message* GetMessage();
 
+	//--------------------------------------------------------
+	// Pops the front of the queue.
+	//--------------------------------------------------------
 	void PopMessageQueue();
 
 protected:

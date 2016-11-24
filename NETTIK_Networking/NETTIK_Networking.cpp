@@ -4,4 +4,4 @@
 //
 // See attached license inside "LICENSE".
 //-------------------------------------------------
-#include "NETTIK_Networking.hpp"
+#include "NETTIK_Networking.h"

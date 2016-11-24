@@ -6,16 +6,28 @@
 //-------------------------------------------------
 #include "CEntities.h"
 
+//--------------------------------------
+// Called after the structure has been
+// fully prepared for network use.
+//--------------------------------------
 void NetObject::Initialize()
 {
 
 }
 
+//--------------------------------------
+// Informs the parent manager to erase
+// this object from its list.
+//--------------------------------------
 void NetObject::DestroyNetworkedEntity() const
 {
-	m_pManager->Remove( m_NetCode );
+	m_pManager->Remove( GetNetID() );
 }
 
+//--------------------------------------
+// Flags all variables to be transmitted
+// over all associated peers.
+//--------------------------------------
 void NetObject::InvalidateVars()
 {
 	for (auto it = m_Vars.begin(); it != m_Vars.end(); ++it)
@@ -47,15 +59,19 @@ void NetObject::SendLists(ENetPeer* pRemotePeer)
 	}
 }
 
+//--------------------------------------
+// Calculates the peer's host in a 
+// printable format.
+//--------------------------------------
 std::string NetObject::GetPeerHost()
 {
 	if (m_pPeer == nullptr)
 		return "nullptr:0";
 
 	char buffer[32] = { 0 };
-	enet_address_get_host_ip(&m_pPeer->address, buffer, 31);
+	enet_address_get_host_ip(&m_pPeer->address, buffer, 32);
 
-	return std::string(buffer) + ":" + std::to_string(m_pPeer->address.port);
+	return std::string( buffer ) + ":" + std::to_string( m_pPeer->address.port );
 }
 
 NetObject::~NetObject()
@@ -66,18 +82,7 @@ NetObject::~NetObject()
 		return;
 	}
 
-	NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
-
-	// Sometimes the network controller has been destroyed and the object 
-	// is still scheduled for deletion from a concurrent thread.
-	if (pNetworkController)
-	{
-		pNetworkController->GetQueue().Add(kMessageType_Error, "Failed releasing object from network controller, m_pManager is NULL.");
-	}
-	else
-	{
-		std::cerr << "error: Failed releasing object from network controller, m_pManager is NULL." << std::endl, 0;
-	}
+	CMessageDispatcher::Add(kMessageType_Error, "Failed releasing object from network controlled, m_pManager is NULL.");
 }
 
 // profile: high cpu usage (reporting 60%)

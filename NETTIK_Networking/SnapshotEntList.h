@@ -9,6 +9,7 @@
 #include "INetworkCodes.hpp"
 #include "SnapshotHeader.h"
 #include "Constraints.h"
+#include "ControllerFlags.h"
 #include <enet\types.h>
 #include <cstddef>
 

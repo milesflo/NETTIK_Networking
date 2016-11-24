@@ -6,7 +6,6 @@
 //-------------------------------------------------
 #include "IThread.h"
 #include <cstdio>
-using namespace NETTIK;
 
 IThread::IThread(ThreadProcedure proc, void* pData)
 {

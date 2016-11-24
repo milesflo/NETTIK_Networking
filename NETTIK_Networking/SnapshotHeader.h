@@ -13,10 +13,10 @@
 
 struct SnapshotHeaderData
 {
-	NETTIK::INetworkCodes::msg_t    message_code = 0; // 0
+	INetworkCodes::msg_t    message_code = 0; // 0
 
-	uint16_t count = 0;									// 2
-	uint32_t sequence = 0;								// 4
+	std::uint16_t count = 0;									// 2
+	std::uint32_t sequence = 0;								// 4
 
 	// 4
 	size_t   max_message_length = 0;                  // 8 (x86)
@@ -35,7 +35,7 @@ public:
 	static void Generate(SnapshotStream& stream, uint32_t sequence, uint16_t updates, size_t max)
 	{
 
-		static NETTIK::INetworkCodes::msg_t code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
+		static INetworkCodes::msg_t code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
 
 		SnapshotStream::Stream& header = stream.header();
 
@@ -65,7 +65,7 @@ public:
 
 	void copy_from(SnapshotStream& stream, size_t padding);
 
-	inline NETTIK::INetworkCodes::msg_t& code()
+	inline INetworkCodes::msg_t& code()
 	{
 		return m_data.message_code;
 	}
@@ -83,7 +83,7 @@ public:
 		return m_data.max_message_length;
 	}
 
-	void set_code(NETTIK::INetworkCodes::msg_t& code);
+	void set_code(INetworkCodes::msg_t& code);
 	void set_sequence(uint32_t& seq);
 	void set_count(uint16_t& count);
 	void set_max(size_t& max);

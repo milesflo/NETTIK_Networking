@@ -6,18 +6,18 @@
 //-------------------------------------------------
 #pragma once
 #include "CEntities.h"
+#include "SnapshotStream.h"
 
-namespace NETTIK
-{
-	class IController;
-};
+class NetSystem;
+class IEntityManager;
+class NetObject;
 
 class VirtualInstance
 {
 private:
 	std::unordered_map<std::string, IEntityManager*> m_EntManagers;
 
-	NETTIK::IController* m_ParentController;
+	NetSystem* m_ParentController;
 	std::string          m_sName;
 	
 	uint32_t             m_iSequenceID = 0;
@@ -37,7 +37,7 @@ public:
 	void DestroyEntityManager(std::string name);
 	void DestroyEntityManager(IEntityManager* mgr);
 
-	VirtualInstance(std::string name, NETTIK::IController* controller);
+	VirtualInstance(std::string name, NetSystem* controller);
 	virtual ~VirtualInstance();
 
 	template <class T>
@@ -72,9 +72,6 @@ public:
 	}
 
 };
-
-using VirtualInstance_ptr = std::unique_ptr<VirtualInstance>;
-
 
 //! Gets instance's name.
 inline std::string& VirtualInstance::GetName()

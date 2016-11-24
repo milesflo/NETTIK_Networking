@@ -1,17 +1,30 @@
 #include "MessageDispatcher.h"
-
+#include "NetSystem.h"
+#include "FormatInline.h"
 
 void CMessageDispatcher::Add(EDispatcherMessageType type, std::string msg)
 {
-	std::lock_guard<std::recursive_mutex> guard( m_MessagesMutex );
+	std::lock_guard<std::recursive_mutex> guard(m_MessagesMutex);
 	m_Messages.push_back({ type, msg });
+}
+
+void CMessageDispatcher::Add(EDispatcherMessageType type, const char* psFormat, ...)
+{
+	std::string msg;
+	FormatAString(msg, psFormat, psFormat);
+
+	NetSystem* pSystem = NetSystem::GetSingleton();
+	if (pSystem)
+	{
+		pSystem->GetQueue().Add(type, msg);
+	}
 }
 
 CMessageDispatcher::Message* CMessageDispatcher::GetMessage()
 {
-	std::lock_guard<std::recursive_mutex> guard( m_MessagesMutex );
-	
-	if ( m_Messages.empty() )
+	std::lock_guard<std::recursive_mutex> guard(m_MessagesMutex);
+
+	if (m_Messages.empty())
 		return nullptr;
 
 	return &(m_Messages.front());
@@ -19,6 +32,6 @@ CMessageDispatcher::Message* CMessageDispatcher::GetMessage()
 
 void CMessageDispatcher::PopMessageQueue()
 {
-	std::lock_guard<std::recursive_mutex> guard( m_MessagesMutex );
+	std::lock_guard<std::recursive_mutex> guard(m_MessagesMutex);
 	m_Messages.pop_front();
 }

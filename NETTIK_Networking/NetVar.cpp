@@ -4,7 +4,6 @@
 //
 // See attached license inside "LICENSE".
 //-------------------------------------------------
-using namespace NETTIK;
 
 NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name), m_pParent(parent), m_Reliable(reliable)
 {

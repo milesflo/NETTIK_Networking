@@ -87,15 +87,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IController.hpp">
-      <Filter>Core\Controllers\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="IControllerClient.hpp">
-      <Filter>Core\Controllers\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="IControllerServer.hpp">
-      <Filter>Core\Controllers\headers</Filter>
-    </ClInclude>
     <ClInclude Include="SnapshotEntList.h">
       <Filter>Core\Serialization\headers</Filter>
     </ClInclude>
@@ -174,9 +165,6 @@
     <ClInclude Include="pch.h">
       <Filter>Core\Precompiled Header</Filter>
     </ClInclude>
-    <ClInclude Include="NETTIK_Networking.hpp">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="CNetVarList.h">
       <Filter>Core\Network Data\headers</Filter>
     </ClInclude>
@@ -186,23 +174,29 @@
     <ClInclude Include="NetVarListBase.h">
       <Filter>Core\Network Data\headers</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.h">
+    <ClInclude Include="NETTIK_Networking.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="NetSystem.h">
+      <Filter>Core\Controllers\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetSystemClient.h">
+      <Filter>Core\Controllers\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetSystemServer.h">
+      <Filter>Core\Controllers\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector3.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
     <ClInclude Include="MessageDispatcher.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
+    <ClInclude Include="FormatInline.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IController.cpp">
-      <Filter>Core\Controllers\source</Filter>
-    </ClCompile>
-    <ClCompile Include="IControllerClient.cpp">
-      <Filter>Core\Controllers\source</Filter>
-    </ClCompile>
-    <ClCompile Include="IControllerServer.cpp">
-      <Filter>Core\Controllers\source</Filter>
-    </ClCompile>
     <ClCompile Include="SnapshotHeader.cpp">
       <Filter>Core\Serialization\source</Filter>
     </ClCompile>
@@ -245,7 +239,19 @@
     <ClCompile Include="NetVarListBase.cpp">
       <Filter>Core\Network Data\source</Filter>
     </ClCompile>
-    <ClCompile Include="Vector3.cpp">
+    <ClCompile Include="NetSystem.cpp">
+      <Filter>Core\Controllers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NetSystemClient.cpp">
+      <Filter>Core\Controllers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NetSystemServer.cpp">
+      <Filter>Core\Controllers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="IEntityManager.cpp">
+      <Filter>Entities\Entity Manager\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector3.cpp">
       <Filter>Standard Libraries\source</Filter>
     </ClCompile>
     <ClCompile Include="MessageDispatcher.cpp">
@@ -256,6 +262,5 @@
     <None Include="EntityMessages.proto">
       <Filter>Protocol Buffers\protos</Filter>
     </None>
-    <None Include="..\README.md" />
   </ItemGroup>
 </Project>

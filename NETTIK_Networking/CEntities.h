@@ -5,83 +5,42 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #pragma once
-#include <vector>
-#include <string>
-#include <memory>
-#include <mutex>
-#include <algorithm>
-#include <inttypes.h>
-#include <unordered_map>
-#include "LockableVector.h"
-
-// TODO: Make CVector3 fully established class for work on Professional Skills assignment (take from TL-Source?)
 #include "IEntityManager.h"
-#include "INetworkPacketFactory.hpp"
-#include "EntityMessages.pb.h"
+#include <unordered_map>
+#define GEN_TEMPLATE_FN(Parent, RType) template <class TypeObject> RType Parent<TypeObject>
 
-// Network entity specific objects
-#include "NetObject.h"
-#include "NetVar.h"
-#include "CNetVarBase.h"
-#include "SnapshotStream.h"
-
-#include "Constraints.h"
-#include "NETIDReserved.h"
-#include "ReplicationInfo.h"
-#include "ControllerFlags.h"
-extern uint32_t m_TotalEntities;
-
-// Forward delcare some stuff.
-namespace NETTIK
-{
-	class IController;
-	class IControllerServer;
-	class IControllerClient;
-}
+// Forward delcare the controller interfaces
+class NetSystem;
 
 template <class TypeObject>
 class CEntities : public IEntityManager
 {
-private:
-	LockableVector<TypeObject*>  m_MaintainedObjects;
-
-	std::unordered_map<uint32_t, NetObject*> m_ObjectRefs;
-
-	std::string      m_name;
-	VirtualInstance* m_pBaseInstance;
-
-	std::function<void(TypeObject*)> m_fCallbackCreate = nullptr;
-	std::function<void(TypeObject*)> m_fCallbackDelete = nullptr;
-
-	NETTIK::IController*   m_pGlobalController;
-
 public:
-
-	size_t Count();
+	//-------------------------------------------------
+	// Counts the internal entity lists.
+	//-------------------------------------------------
 	size_t CountMaintained();
 
-	// Returns a controlled object specified in the index.
+	//-------------------------------------------------
+	// Returns a controlled object specified in the
+	// index.
+	//-------------------------------------------------
 	TypeObject* GetControlled(uint32_t index = 0);
 
+	//-------------------------------------------------
+	// Assignments for callbacks
+	//-------------------------------------------------
 	void SetCallbackCreate(std::function<void(TypeObject*)> func)
 	{
 		m_fCallbackCreate = func;
 	}
-
 	void SetCallbackDelete(std::function<void(TypeObject*)> func)
 	{
 		m_fCallbackDelete = func;
 	}
 
-	inline std::string GetName() const
-	{
-		return m_name;
-	}
-
 	NetObject* AddLocal(uint32_t netid, uint32_t controller = NET_CONTROLLER_NONE)
 	{
-		m_pGlobalController->GetQueue().Add(kMessageType_Print, "Created object with controller '" + std::string(controller == NET_CONTROLLER_LOCAL ? "local" : "remote") + "'");
-
 		m_Objects.safe_lock();
 		m_MaintainedObjects.safe_lock();
 
@@ -94,14 +53,14 @@ public:
 		if (!object)
 			NETTIK_EXCEPTION("Cast of object to NetObject failed.");
 
-		object->m_NetCode = netid;
+		object->SetNetID( netid );
 		object->m_pInstance = m_pBaseInstance;
 		object->m_pManager = this;
-		object->m_Controller = controller;
+		object->SetController( controller );
 		object->SetIsServer(false);
 
 		// For fast lookup.
-		m_ObjectRefs[object->m_NetCode] = object;
+		m_ObjectRefs[object->GetNetID()] = object;
 
 		m_Objects.get()->push_back(object);
 		m_MaintainedObjects.get()->push_back(instance);
@@ -126,9 +85,9 @@ public:
 		m_Objects.safe_lock();
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 		{
-			if ((*it)->m_NetCode == code)
+			if ((*it)->GetNetID() == code)
 			{
-				auto map_it = m_ObjectRefs.find((*it)->m_NetCode);
+				auto map_it = m_ObjectRefs.find((*it)->GetNetID());
 				if (map_it != m_ObjectRefs.end())
 					m_ObjectRefs.erase(map_it);
 
@@ -144,7 +103,7 @@ public:
 		m_MaintainedObjects.safe_lock();
 		for (auto it = m_MaintainedObjects.get()->begin(); it != m_MaintainedObjects.get()->end();)
 		{
-			if ((*it)->m_NetCode == code)
+			if ((*it)->GetNetID() == code)
 			{
 				if (m_fCallbackDelete != nullptr)
 				{
@@ -201,7 +160,7 @@ public:
 
 		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
 		{
-			ReplicationInfo replicationInfo(m_pGlobalController->IsServer(), (*it)->m_pPeer, (*it)->m_Controller, elapsedTime);
+			ReplicationInfo replicationInfo(m_pGlobalController->IsServer(), (*it)->m_pPeer, (*it)->GetController(), elapsedTime);
 
 			(*it)->NetworkUpdate(replicationInfo);
 		}
@@ -228,7 +187,11 @@ public:
 		m_Objects.safe_unlock();
 	}
 
-	void SetName(std::string name);
+	//-----------------------------------------------------------
+	// NETTIK 2: Builds a dynamic shared_ptr of the container
+	// object.
+	//-----------------------------------------------------------
+	std::shared_ptr<TypeObject> Build();
 
 	uint32_t Add(NetObject* object);
 
@@ -237,7 +200,54 @@ public:
 	CEntities(VirtualInstance* baseInstance);
 
 	virtual ~CEntities();
+
+private:
+	//------------------------------------
+	// Internal object lists.
+	//------------------------------------
+	LockableVector<TypeObject*> m_MaintainedObjects;               // List of locally owned and maintained objects.
+	std::unordered_map<NetObject::NetID, NetObject*> m_ObjectRefs; // List of object references to map NetObjects directly to.
+
+	//------------------------------------
+	// Callbacks
+	//------------------------------------
+	std::function<void(TypeObject*)> m_fCallbackCreate = nullptr;
+	std::function<void(TypeObject*)> m_fCallbackDelete = nullptr;
+
+
+	//------------------------------------
+	// Parent references
+	//------------------------------------
+	VirtualInstance * m_pBaseInstance;
+	NetSystem       * m_pGlobalController;
+
 };
+
+//-----------------------------------------------------------
+// NETTIK 2: Builds a dynamic shared_ptr of the container
+// object.
+//-----------------------------------------------------------
+//std::shared_ptr<TypeObject> Build();
+
+GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::Build()
+{
+	auto built_ent = std::make_shared<TypeObject>();
+	built_ent->SetNetID( GetNextID() );
+	built_ent->m_pInstance = m_pBaseInstance;
+	built_ent->m_pManager = this;
+	built_ent->SetController( NET_CONTROLLER_LOCAL );
+	
+	NetSystemServer* pServer = dynamic_cast<NetSystemServer*>(m_pGlobalController);
+	if (!pServer)
+	{
+		pServer->Queue
+		return nullptr;
+	}
+
+	m_ObjectRefs[ built_ent->GetNetID() ] = built_ent.get();
+
+	return data;
+}
 
 template <class TypeObject>
 TypeObject* CEntities<TypeObject>::GetControlled(uint32_t index)
@@ -245,7 +255,7 @@ TypeObject* CEntities<TypeObject>::GetControlled(uint32_t index)
 	uint32_t current_index = 0;
 	for (auto it = m_ObjectRefs.begin(); it != m_ObjectRefs.end(); ++it)
 	{
-		if ((*it).second->m_Controller == NET_CONTROLLER_LOCAL && current_index == index)
+		if ((*it).second->GetController() == NET_CONTROLLER_LOCAL && current_index == index)
 			return dynamic_cast<TypeObject*>((*it).second);
 	}
 
@@ -253,29 +263,19 @@ TypeObject* CEntities<TypeObject>::GetControlled(uint32_t index)
 }
 
 template <class TypeObject>
-void CEntities<TypeObject>::SetName(std::string name)
-{
-	if (name.size() > max_entmgr_name)
-		NETTIK_EXCEPTION("Entity manager name length exceeds MAX_ENTMGR_NAME.");
-
-	m_name = name;
-}
-
-template <class TypeObject>
 uint32_t CEntities<TypeObject>::Add(NetObject* object)
 {
 	// Sets object attributes.
-	object->m_NetCode = (m_TotalEntities++);
+	object->SetNetID( GetNextID() );
 	object->m_pInstance = m_pBaseInstance;
 	object->m_pManager = this;
-	object->m_Controller = NET_CONTROLLER_LOCAL;
+	object->SetController( NET_CONTROLLER_LOCAL );
 
 	// For fast lookup.
-	m_ObjectRefs[object->m_NetCode] = object;
+	m_ObjectRefs[object->GetNetID()] = object;
 
 	// Get the server controller.
-	NETTIK::IControllerServer* server;
-	server = dynamic_cast<NETTIK::IControllerServer*>(m_pGlobalController);
+	NetSystemServer* server = dynamic_cast<NetSystemServer*>(m_pGlobalController);
 
 	if (!server)
 		NETTIK_EXCEPTION("Cannot stream objects if controller isn't a server service.");
@@ -286,8 +286,8 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 	// Creation object for new entity. 
 	SnapshotEntList creationUpdate;
 	creationUpdate.set_frametype(FrameType::kFRAME_Alloc);
-	creationUpdate.set_name(m_name);
-	creationUpdate.set_netid(object->m_NetCode);
+	creationUpdate.set_name(m_ManagerName);
+	creationUpdate.set_netid(object->GetNetID());
 	creationUpdate.set_controller(NET_CONTROLLER_NONE);
 
 	char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
@@ -309,7 +309,7 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 		// Update the creation update list to the current object
 		uint32_t controllerStatus;
 		controllerStatus = (*object_it)->m_pPeer == object->m_pPeer ? NET_CONTROLLER_LOCAL : NET_CONTROLLER_NONE;
-		creationUpdate.set_netid((*object_it)->m_NetCode);
+		creationUpdate.set_netid((*object_it)->GetNetID());
 		creationUpdate.set_controller(controllerStatus);
 
 		// Create a new stream to synch the current instance state to the new
@@ -374,7 +374,7 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 
 	object->Initialize();
 
-	return object->m_NetCode;
+	return object->GetNetID();
 }
 
 
@@ -383,15 +383,14 @@ bool CEntities<TypeObject>::Remove(uint32_t code)
 {
 	bool result = false;
 
-	NETTIK::IControllerServer* server;
-	server = dynamic_cast<NETTIK::IControllerServer*>(m_pGlobalController);
+	NetSystemServer* server = dynamic_cast<NetSystemServer*>(m_pGlobalController);
 
 	if (!server)
 		NETTIK_EXCEPTION("Cannot stream objects if controller isn't a server service.");
 
 	SnapshotEntList deletionUpdate;
 	deletionUpdate.set_frametype(FrameType::kFRAME_Dealloc);
-	deletionUpdate.set_name(m_name);
+	deletionUpdate.set_name(m_ManagerName);
 	deletionUpdate.set_netid(code);
 
 	char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
@@ -402,10 +401,10 @@ bool CEntities<TypeObject>::Remove(uint32_t code)
 
 	for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
 	{
-		if ((*it)->m_NetCode == code)
+		if ((*it)->GetNetID() == code)
 		{
 
-			auto map_it = m_ObjectRefs.find((*it)->m_NetCode);
+			auto map_it = m_ObjectRefs.find((*it)->GetNetID());
 			if (map_it != m_ObjectRefs.end())
 				m_ObjectRefs.erase(map_it);
 
@@ -444,10 +443,10 @@ CEntities<TypeObject>::CEntities(VirtualInstance* baseInstance)
 {
 	m_pBaseInstance = baseInstance;
 
-	NETTIK::IController* controller = NETTIK::IController::GetSingleton( );
+	NetSystem* controller = NetSystem::GetSingleton( );
 
 	if (!controller)
-		throw std::runtime_error("IController not found.");
+		throw std::runtime_error("NetSystem not found.");
 
 	m_pGlobalController = controller;
 }
@@ -470,18 +469,6 @@ CEntities<TypeObject>::~CEntities()
 }
 
 template <class TypeObject>
-inline size_t CEntities<TypeObject>::Count()
-{
-	size_t result;
-
-//	m_Objects.safe_lock();
-	result = m_Objects.get()->size();
-//	m_Objects.safe_unlock();
-	return result;
-
-}
-
-template <class TypeObject>
 inline size_t CEntities<TypeObject>::CountMaintained()
 {
 	size_t result;
@@ -491,3 +478,5 @@ inline size_t CEntities<TypeObject>::CountMaintained()
 	m_MaintainedObjects.safe_unlock();
 	return result;
 }
+
+#undef GEN_TEMPLATE_FN

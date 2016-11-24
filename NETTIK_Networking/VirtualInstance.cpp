@@ -5,7 +5,6 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "VirtualInstance.h"
-using namespace NETTIK;
 
 NetObject* VirtualInstance::FindObject(uint32_t netid)
 {
@@ -80,7 +79,7 @@ void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, boo
 	if (num_updates == 0)
 		return;
 
-	NETTIK::INetworkCodes::msg_t code;
+	INetworkCodes::msg_t code;
 	code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
 
 	SnapshotHeader::Generate(stream, m_iSequenceID, num_updates, max_value);
@@ -107,7 +106,7 @@ VirtualInstance::~VirtualInstance()
 	}
 };
 
-VirtualInstance::VirtualInstance(std::string name, IController* controller)
+VirtualInstance::VirtualInstance(std::string name, NetSystem* controller)
 {
 	m_ParentController = controller;
 	m_sName = name;

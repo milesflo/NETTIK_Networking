@@ -32,12 +32,10 @@ uint32_t CPlayerRealm::GetFreeID()
 
 void CPlayerRealm::Add(NetObject* object, ENetPeer* peer)
 {
-	object->m_RealmID = GetFreeID();
+	object->SetRealmID( GetFreeID() );
 	object->m_pPeer = peer;
 
-	uint32_t new_ID;
-	new_ID = object->m_RealmID;
-
+	uint32_t new_ID = object->GetRealmID();
 	m_PlayerList[new_ID] = std::move(std::unique_ptr<NetObject>(object));
 }
 
@@ -59,7 +57,7 @@ bool CPlayerRealm::Remove(uint32_t id)
 	if (it == m_PlayerList.end())
 		return false;
 
-	m_FreeList.push_back(it->second->m_RealmID);
+	m_FreeList.push_back(it->second->GetRealmID());
 	m_PlayerList.erase(it);
 
 	return true;
@@ -69,9 +67,9 @@ bool CPlayerRealm::RemoveByNetID(uint32_t netid)
 {
 	for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 	{
-		if (it->second->m_NetCode == netid)
+		if (it->second->GetNetID() == netid)
 		{
-			m_FreeList.push_back(it->second->m_RealmID);
+			m_FreeList.push_back(it->second->GetRealmID());
 			it->second.reset();
 			m_PlayerList.erase(it);
 			return true;
@@ -94,7 +92,7 @@ NetObject* CPlayerRealm::GetPlayerByNetID(uint32_t netid)
 {
 	for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 	{
-		if (it->second->m_NetCode == netid)
+		if (it->second->GetNetID() == netid)
 		{
 			return it->second.get();
 		}

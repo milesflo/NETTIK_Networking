@@ -26,7 +26,7 @@ public:
 		{
 			return;
 		}
-
+		
 		bind(kListEvent_Remove, [=](uint32_t key, example_t* data)
 		{
 			VirtualInstance  * pInstance = m_pParent->m_pInstance; // "wasteland"
@@ -130,7 +130,6 @@ public:
 			m_ListID = lists.size() - 1;
 
 			m_pParent->m_Mutex.unlock();
-
 			return;
 		}
 		NETTIK_EXCEPTION("Attempted to lock parent mutex on netlist but failed, inconsistent class tables.");
@@ -167,7 +166,7 @@ protected:
 		const size_t   element_size   = sizeof( T );
 
 		std::unique_ptr<proto_add> result;
-		result.reset( new proto_add( NETTIK::INetworkCodes::internal_evt_list_add ) );
+		result.reset( new proto_add( INetworkCodes::internal_evt_list_add ) );
 
 		if (object != nullptr)
 		{
@@ -190,7 +189,7 @@ protected:
 		const size_t   element_size   = sizeof( T );
 
 		std::unique_ptr<proto_update> result;
-		result.reset( new proto_update( NETTIK::INetworkCodes::internal_evt_list_data ) );
+		result.reset( new proto_update( INetworkCodes::internal_evt_list_data ) );
 
 		if (object != nullptr)
 		{
@@ -209,7 +208,7 @@ protected:
 	inline std::unique_ptr<proto_remove> construct_protoremove(INetworkAssociatedObject* object, std::uint32_t key, std::uint32_t list_id)
 	{
 		std::unique_ptr<proto_remove> result;
-		result.reset( new proto_remove( NETTIK::INetworkCodes::internal_evt_list_remove ) );
+		result.reset( new proto_remove( INetworkCodes::internal_evt_list_remove ) );
 
 		if (object != nullptr)
 		{
@@ -240,6 +239,7 @@ public:
 		auto existing_it = m_Data.find( element_key );
 		if ( existing_it != m_Data.end() )
 		{
+			CMessageDispatcher::Add(kMessageType_Warn, "Key %d already exists in list %d", element_key, m_ListID);
 			return &existing_it->second;
 		}
 
@@ -257,10 +257,10 @@ public:
 		INetworkAssociatedObject object_ref;
 		object_ref.set_instance_name( pInstance->GetName() ); // "wasteland"
 		object_ref.set_manager_name( pManager->GetName() );   // "players"
-		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
+		object_ref.set_network_code( m_pParent->GetNetID() );  // 0
 	
 		auto packet = construct_protoadd(&object_ref, element_key, data, m_ListID);
-		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr) );
+		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr ) );
 
 		return (existing_it != m_Data.end() ? &existing_it->second : nullptr);
 	}
@@ -279,24 +279,26 @@ public:
 	void clear()
 	{
 		mutex_guard guard( m_Mutex );
-
+		
 		while (!m_Data.empty())
 		{
 			remove(m_Data.begin());
 		}
 	}
 
+	//-------------------------------------------
+	// Removes an element using the specified
+	// key. Returns false if the object failed 
+	// to remove.
+	//-------------------------------------------
 	bool remove(std::uint32_t element_key)
 	{
+		mutex_guard guard( m_Mutex );
+
 		auto existing_it = m_Data.find(element_key);
 		if (existing_it == m_Data.end())
 		{
-			NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
-			if (pNetworkController)
-			{
-				pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried to remove invalid key from networked list.");
-			}
-
+			CMessageDispatcher::Add(kMessageType_Warn, "Tried removing invalid key %d in list %d", element_key, m_ListID);
 			return false;
 		}
 
@@ -345,11 +347,7 @@ public:
 		auto existing_it = m_Data.find( element_key );
 		if ( existing_it == m_Data.end() )
 		{
-			NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
-			if ( pNetworkController )
-			{
-				pNetworkController->GetQueue().Add(kMessageType_Warn, "Tried to setting invalid key from networked list.");
-			}
+			CMessageDispatcher::Add(kMessageType_Warn, "Tried setting invalid key %d in list %d", element_key, m_ListID);
 			return;
 		}
 
@@ -367,7 +365,7 @@ public:
 		INetworkAssociatedObject object_ref;
 		object_ref.set_instance_name( pInstance->GetName() ); // "wasteland"
 		object_ref.set_manager_name( pManager->GetName() );   // "players"
-		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
+		object_ref.set_network_code( m_pParent->GetNetID() );  // 0
 	
 		auto packet = construct_protoupdate(&object_ref, element_key, data, m_ListID);
 		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr) );
@@ -423,7 +421,7 @@ public:
 		INetworkAssociatedObject object_ref;
 		object_ref.set_instance_name( pInstance->GetName() ); // "wasteland"
 		object_ref.set_manager_name( pManager->GetName() );   // "players"
-		object_ref.set_network_code( m_pParent->m_NetCode );  // 0
+		object_ref.set_network_code( m_pParent->GetNetID() );  // 0
 	
 		for (auto map_item = m_Data.begin(); map_item != m_Data.end(); ++map_item)
 		{
@@ -455,9 +453,8 @@ public:
 
 		// Add all the peers to each update queue entry. Call flush afterwards to
 		// invoke the dispatch of the packet data.
-		// mutex_guard guard(m_Mutex);
 		mutex_guard guard(m_Mutex);
-
+	
 		for (auto update_item = m_UpdateQueue.begin(); update_item != m_UpdateQueue.end(); ++update_item)
 		{
 			ENetPeer* pFilterPeer = update_item->second;
@@ -478,7 +475,7 @@ public:
 			m_Callbacks[evt] = {};
 		}
 
-		m_Callbacks[evt].push_back( callback );
+		m_Callbacks[evt] = callback;
 	}
 
 	//-----------------------------------------------
@@ -574,16 +571,11 @@ protected:
 
 		// Build the element.
 		auto insert_result = m_Data.insert(std::make_pair(index, example_t()));
-
-		NETTIK::IController* pNetworkController = NETTIK::IController::GetSingleton();
-		if ( pNetworkController )
-		{
-			pNetworkController->GetQueue().Add(kMessageType_Print, "build_at()");
-		}
+		CMessageDispatcher::Add(kMessageType_Warn, "%s", __FUNCTION__);
 
 		if (!insert_result.second)
 		{
-			throw std::exception("insertation failed");
+			throw std::runtime_error("insertation failed");
 		}
 
 		example_t* pItem = &(insert_result.first->second);
@@ -635,7 +627,6 @@ protected:
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Add);
-
 		if (callback_it != m_Callbacks.end())
 		{
 			auto& callback_list = callback_it->second;
@@ -654,7 +645,6 @@ protected:
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Update);
-
 		if (callback_it != m_Callbacks.end())
 		{
 			auto& callback_list = callback_it->second;
@@ -673,7 +663,6 @@ protected:
 	{
 		// Dispatch callback.
 		auto callback_it = m_Callbacks.find(kListEvent_Remove);
-
 		if (callback_it != m_Callbacks.end())
 		{
 			auto& callback_list = callback_it->second;

@@ -6,7 +6,6 @@
 //-------------------------------------------------
 #include "INetworkPacketFactory.hpp"
 #include <sstream>
-using namespace NETTIK;
 
 void IPacketFactory::CBasePacket::AllocateDefaultPeer()
 {
@@ -56,7 +55,7 @@ INetworkCodes::msg_t IPacketFactory::GetCode(std::string& data)
 
 void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags, uint8_t channel)
 {
-	IController* controller = IController::GetSingleton();
+	NetSystem* controller = NetSystem::GetSingleton();
 
 	// Drop the packet.
 	if (controller == nullptr)
@@ -72,7 +71,7 @@ void IPacketFactory::DispatchPacket(google::protobuf::Message* msg, INetworkCode
 
 void IPacketFactory::DispatchRaw(const enet_uint8* buffer, const size_t buffer_len, INetworkCodes::msg_t code, ENetPeer* enetPeer, uint32_t flags, uint8_t channel)
 {
-	IController* controller = IController::GetSingleton();
+	NetSystem* controller = NetSystem::GetSingleton();
 
 	// Drop the packet.
 	if (controller == nullptr)
@@ -87,7 +86,7 @@ void IPacketFactory::DispatchRaw(const enet_uint8* buffer, const size_t buffer_l
 
 ENetPeer* IPacketFactory::GetFirstPeer()
 {
-	IController* controller = IController::GetSingleton();
+	NetSystem* controller = NetSystem::GetSingleton();
 
 	if (controller == nullptr)
 		NETTIK_EXCEPTION("Failed to get global controller object, nullptr.");

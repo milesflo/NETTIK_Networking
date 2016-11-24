@@ -22,7 +22,7 @@ template <typename T>
 class LockableVector
 {
 public:
-	using lock   = std::lock_guard<std::recursive_mutex>;
+	using lock = std::lock_guard<std::recursive_mutex>;
 	using my_vec = std::vector<T>;
 
 	typedef typename std::vector<T>::size_type size_type;
