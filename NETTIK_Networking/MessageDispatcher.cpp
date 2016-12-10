@@ -18,9 +18,13 @@ void CMessageDispatcher::Add(EDispatcherMessageType type, const char* psFormat, 
 	{
 		pSystem->GetQueue().Add(type, msg);
 	}
+	else
+	{
+		std::cout << "[NETF] " << msg << std::endl;
+	}
 }
 
-CMessageDispatcher::Message* CMessageDispatcher::GetMessage()
+CMessageDispatcher::Message* CMessageDispatcher::GetNextMessage()
 {
 	std::lock_guard<std::recursive_mutex> guard(m_MessagesMutex);
 

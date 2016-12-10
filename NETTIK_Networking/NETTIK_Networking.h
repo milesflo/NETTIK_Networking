@@ -36,6 +36,7 @@
 
 #include "CNetVarBase.h"
 #include "CNetVarVector.h"
+#include "CNetVarBufferedVector.h"
 #include "CNetVarString.h"
 
 #include "NetVarListBase.h"

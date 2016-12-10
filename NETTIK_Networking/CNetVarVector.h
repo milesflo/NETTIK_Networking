@@ -7,8 +7,6 @@
 #pragma once
 #include "CNetVarBase.h"
 #include "CVector3.h"
-//#define DEFINE_NetVector(name, reliable) \
-//	CNetVarVector   name = CNetVarVector(this, #name, reliable)
 
 //-----------------------------------------------
 // Constructs a three dimension array to process
@@ -21,7 +19,8 @@ class CNetVarVector : public CNetVarBase< CVector3 >
 {
 public:
 	
-	CNetVarVector(NetObject* parent, const char* name, bool reliable) : CNetVarBase(parent, name, reliable)
+	CNetVarVector(NetObject* parent, const char* name, bool reliable)
+		: CNetVarBase(parent, name, reliable)
 	{
 
 	}
@@ -33,10 +32,5 @@ public:
 			return;
 
 		m_Data = compose;
-	}
-	
-	virtual ~CNetVarVector()
-	{
-	
 	}
 };

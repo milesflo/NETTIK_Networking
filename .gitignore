@@ -282,3 +282,4 @@ protobuf/*
 # NETTIK_Networking.lib
 DynamicDebug*
 DynamicRelease*
+*.lib

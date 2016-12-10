@@ -200,6 +200,8 @@ public:
 
 	//------------------------------------
 	// Binds a callback to an ENET event
+	// This call might come from a remote
+	// thread.
 	//------------------------------------
 	void on_enet(ENetEventType evt, EventFunction_f callback);
 
@@ -309,6 +311,7 @@ protected:
 	//------------------------------------
 	// Callbacks
 	//------------------------------------
+	std::recursive_mutex m_CallbackMutex; // Guard access to callbacks from remote threads.
 	std::unordered_map < INetworkCodes::msg_t, std::vector<CallbackFunction_f> > m_Callbacks;
 	std::unordered_map < ENetEventType, std::vector<EventFunction_f > >          m_EventCallbacks;
 
@@ -379,14 +382,18 @@ inline ENetHost* NetSystem::GetHost() const
 //------------------------------------
 inline void NetSystem::on(INetworkCodes::msg_t code, CallbackFunction_f callback)
 {
+	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	m_Callbacks[code].push_back(callback);
 }
 
 //------------------------------------
-// Binds a callback to an ENET event
+// Binds a callback to an ENET event.
+// This call might come from a remote
+// thread.
 //------------------------------------
 inline void NetSystem::on_enet(ENetEventType evt, EventFunction_f callback)
 {
+	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	m_EventCallbacks[evt].push_back(callback);
 }
 

@@ -48,9 +48,11 @@ public:
 	);
 
 	inline bool IsActive() const { return m_bActive; }
-	inline bool IsServer() const { return m_bIsServer; }
+	inline bool IsReplicated() const { return m_bIsReplicated; }
 
-	void SetIsServer(bool value) { m_bIsServer = value; }
+	// Replicated objects have been sent by the server and should
+	// clean up when the server tells them to.
+	void SetIsReplicated(bool value) { m_bIsReplicated = value; }
 
 	// Accessors for ENET peer if this has one assigned.
 	ENetPeer*        m_pPeer      = nullptr;
@@ -141,8 +143,8 @@ protected:
 	MapList_t      m_MapList;
 
 private:
-	bool m_bIsServer  = true;
-	bool m_bActive    = true;
+	bool m_bIsReplicated = false;
+	bool m_bActive       = true;
 
 	NetID          m_NetCode;
 	std::uint32_t  m_RealmID;

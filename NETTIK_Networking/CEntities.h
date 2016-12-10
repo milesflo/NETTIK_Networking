@@ -16,6 +16,8 @@ template <class TypeObject>
 class CEntities : public IEntityManager
 {
 public:
+	using EventCallback_t = EventCallback<TypeObject>;
+
 	//-------------------------------------------------
 	// Counts the internal entity lists.
 	//-------------------------------------------------
@@ -25,20 +27,21 @@ public:
 	// Returns a controlled object specified in the
 	// index.
 	//-------------------------------------------------
-	TypeObject* GetControlled(uint32_t index = 0);
+	std::shared_ptr<TypeObject> GetControlled(uint32_t index = 0);
 
 	//-------------------------------------------------
 	// Assignments for callbacks
 	//-------------------------------------------------
-	void SetCallbackCreate(std::function<void(TypeObject*)> func)
+	void SetCallbackCreate(EventCallback_t func)
 	{
 		m_fCallbackCreate = func;
 	}
-	void SetCallbackDelete(std::function<void(TypeObject*)> func)
+	void SetCallbackDelete(EventCallback_t func)
 	{
 		m_fCallbackDelete = func;
 	}
 
+	/*
 	NetObject* AddLocal(uint32_t netid, uint32_t controller = NET_CONTROLLER_NONE)
 	{
 		m_Objects.safe_lock();
@@ -126,28 +129,34 @@ public:
 
 		return result;
 	}
+	*/
 
-	NetObject* GetByPeerID(ENetPeer* id)
+	std::shared_ptr<NetObject> GetByPeerID(ENetPeer* peer)
 	{
-		for (auto it = m_ObjectRefs.begin(); it != m_ObjectRefs.end(); ++it)
-		{
-			NetObject* object;
-			object = (*it).second;
+		auto net_list = m_NetworkObjects.get();
+		std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
 
-			if (object->m_pPeer == id)
-				return object;
+		for (auto it = net_list->begin(); it != net_list->end(); ++it)
+		{
+			if ((*it)->m_pPeer == peer)
+				return (*it);
 		}
 
 		return nullptr;
 	}
 
-	NetObject* GetByNetID(uint32_t id)
+	std::shared_ptr<NetObject> GetByNetID(NetObject::NetID id)
 	{
-		auto it = m_ObjectRefs.find(id);
-		if (it == m_ObjectRefs.end())
-			return nullptr;
+		auto net_list = m_NetworkObjects.get();
+		std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
 
-		return (it->second);
+		for (auto it = net_list->begin(); it != net_list->end(); ++it)
+		{
+			if ((*it)->GetNetID() == id)
+				return (*it);
+		}
+
+		return nullptr;
 	}
 
 	void PostUpdate(float elapsedTime)
@@ -155,17 +164,28 @@ public:
 		if (!m_pGlobalController->IsRunning())
 			return;
 
-		m_Objects.safe_lock();
+		m_NetworkObjects.safe_lock();
 
+		auto object_list = m_NetworkObjects.get();
 
-		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
+		for (auto it = object_list->begin(); it != object_list->end();)
 		{
 			ReplicationInfo replicationInfo(m_pGlobalController->IsServer(), (*it)->m_pPeer, (*it)->GetController(), elapsedTime);
 
+			// If there's only one reference left of the object, collect the garbage and 
+			// release the entity.
+			if (it->use_count() == 1 && m_pGlobalController->IsServer())
+			{
+				CMessageDispatcher::Add(kMessageType_Warn, "(SERVER) Freeing object with loose references");
+				it = object_list->erase(it);
+				continue;
+			}
+
 			(*it)->NetworkUpdate(replicationInfo);
+			++ it;
 		}
 
-		m_Objects.safe_unlock();
+		m_NetworkObjects.safe_unlock();
 	}
 
 	void GetSnapshot(size_t& max_value, uint16_t& num_updates, SnapshotStream& stream, bool bReliableFlag, bool bForced = false)
@@ -173,46 +193,55 @@ public:
 		if (!m_pGlobalController->IsRunning())
 			return;
 
-		m_Objects.safe_lock();
+		m_NetworkObjects.safe_lock();
 
-		for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end(); ++it)
+		auto object_list = m_NetworkObjects.get();
+
+		for (auto obj = object_list->begin(); obj != object_list->end(); ++obj)
 		{
+			std::shared_ptr<NetObject>& net_obj = (*obj);
 			// Only snapshot locally owned object.
-			if ((*it)->IsNetworkLocal())
+			if (net_obj->IsNetworkLocal())
 			{
-				(*it)->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
+				net_obj->TakeObjectSnapshot(max_value, num_updates, stream, bReliableFlag, bForced);
 			}
 		}
 
-		m_Objects.safe_unlock();
+		m_NetworkObjects.safe_unlock();
 	}
 
 	//-----------------------------------------------------------
 	// NETTIK 2: Builds a dynamic shared_ptr of the container
 	// object.
 	//-----------------------------------------------------------
-	std::shared_ptr<TypeObject> Build();
+	std::shared_ptr<TypeObject> Build(ENetPeer* pOwner);
 
-	uint32_t Add(NetObject* object);
+	std::shared_ptr<NetObject> BuildLocal(NetObject::NetID netID, std::uint32_t controller = NET_CONTROLLER_NONE);
 
-	bool Remove(uint32_t code);
+	void FreeLocal(NetObject::NetID netid);
+
+
+	bool FreeEntity(NetObject* pTarget);
+
 
 	CEntities(VirtualInstance* baseInstance);
 
 	virtual ~CEntities();
 
+	void SendObjectLists(ENetPeer* pOwner);
+
 private:
 	//------------------------------------
 	// Internal object lists.
 	//------------------------------------
-	LockableVector<TypeObject*> m_MaintainedObjects;               // List of locally owned and maintained objects.
-	std::unordered_map<NetObject::NetID, NetObject*> m_ObjectRefs; // List of object references to map NetObjects directly to.
+	LockableVector<std::shared_ptr<NetObject>> m_MaintainedObjects;               // List of locally owned and maintained objects.
+	//std::unordered_map<NetObject::NetID, NetObject*> m_ObjectRefs; // List of object references to map NetObjects directly to.
 
 	//------------------------------------
 	// Callbacks
 	//------------------------------------
-	std::function<void(TypeObject*)> m_fCallbackCreate = nullptr;
-	std::function<void(TypeObject*)> m_fCallbackDelete = nullptr;
+	EventCallback_t m_fCallbackCreate = nullptr;
+	EventCallback_t m_fCallbackDelete = nullptr;
 
 
 	//------------------------------------
@@ -223,13 +252,47 @@ private:
 
 };
 
+GEN_TEMPLATE_FN(CEntities, bool)::FreeEntity(NetObject* pTarget)
+{
+	NetSystemServer* pServer = dynamic_cast<NetSystemServer*>(m_pGlobalController);
+
+	// Don't free the entity if the netsystem is not a client, or hasn't been initialised.
+	if (!pServer)
+	{
+		return false;
+	}
+	
+	SnapshotEntList deletionUpdate;
+	deletionUpdate.set_frametype(FrameType::kFRAME_Dealloc);
+	deletionUpdate.set_name(m_ManagerName);
+	deletionUpdate.set_netid(pTarget->GetNetID());
+
+	char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
+	deletionUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
+
+	if (m_fCallbackDelete)
+	{
+		m_fCallbackDelete( dynamic_cast<TypeObject*>(pTarget) );
+	}
+
+	SnapshotStream::Stream deletionStream;
+	deletionUpdate.write(deletionStream);
+
+	SnapshotStream reliableStream;
+	reliableStream.get()->push_back(deletionStream);
+
+	// Generate this packet's header.
+	SnapshotHeader::Generate(reliableStream, 0, 1, deletionStream.size());
+	pServer->BroadcastStream(reliableStream, true);
+
+	return true;
+}
+
 //-----------------------------------------------------------
 // NETTIK 2: Builds a dynamic shared_ptr of the container
 // object.
 //-----------------------------------------------------------
-//std::shared_ptr<TypeObject> Build();
-
-GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::Build()
+GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::Build(ENetPeer* pOwner)
 {
 	auto built_ent = std::make_shared<TypeObject>();
 	built_ent->SetNetID( GetNextID() );
@@ -240,28 +303,204 @@ GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::Build()
 	NetSystemServer* pServer = dynamic_cast<NetSystemServer*>(m_pGlobalController);
 	if (!pServer)
 	{
-		pServer->Queue
 		return nullptr;
 	}
 
-	m_ObjectRefs[ built_ent->GetNetID() ] = built_ent.get();
+	SnapshotStream reliableStream;
+	SnapshotStream unreliableStream;
 
-	return data;
-}
+	// Broadcast creation of new object.
+	SnapshotEntList creationUpdate;
+	creationUpdate.set_frametype(kFRAME_Alloc);
+	creationUpdate.set_name(m_ManagerName);
+	creationUpdate.set_netid(built_ent->GetNetID());
+	creationUpdate.set_controller(NET_CONTROLLER_NONE); // Controller shouldn't be set as remote objects are synched as "remote".
 
-template <class TypeObject>
-TypeObject* CEntities<TypeObject>::GetControlled(uint32_t index)
-{
-	uint32_t current_index = 0;
-	for (auto it = m_ObjectRefs.begin(); it != m_ObjectRefs.end(); ++it)
+	// Trust the packet wont change the instance name, and copy
+	// it directly to the creation update stream.
+	unsigned char* psStream = const_cast<unsigned char*>( reinterpret_cast<const unsigned char*>( m_pBaseInstance->GetName().c_str() ) );
+	creationUpdate.set_data(psStream, m_pBaseInstance->GetName().size() + 1);
+	
+	// Copy the creation update into a stream component which will
+	// be appended to the reliable stream.
+	SnapshotStream::Stream creationStreamNewObject;
+	creationUpdate.write(creationStreamNewObject);
+	reliableStream.get()->push_back(creationStreamNewObject);
+
+
+	m_pBaseInstance->DoSnapshot(reliableStream, true, false);
+	m_pBaseInstance->DoSnapshot(unreliableStream, false, false);
+
+	auto object_list = m_NetworkObjects.get();
+
+	// With the creation update, broadcast any delta changes made
+	// after the object creation is made (incase the new object has 
+	// changes to its netvars).
+	m_NetworkObjects.safe_lock();
+	object_list->push_back(built_ent);
+
+	// Find all current object states and send them to the new peer.
+
+	if (pOwner != nullptr)
 	{
-		if ((*it).second->GetController() == NET_CONTROLLER_LOCAL && current_index == index)
-			return dynamic_cast<TypeObject*>((*it).second);
+		SendObjectLists( pOwner );
 	}
 
-	return nullptr;
+	// Broadcast the creation update.
+	if (reliableStream.modified())
+		pServer->BroadcastStream(reliableStream, true);
+
+	if (unreliableStream.modified())
+		pServer->BroadcastStream(unreliableStream, false);
+
+	// Clear streams to make way for full snapshot stream.
+	reliableStream.clear();
+	unreliableStream.clear();
+
+	// Inform this object to player.
+	if (built_ent->m_pPeer)
+	{
+		// Get a full snapshot of the current object list to send to the new player.
+		m_pBaseInstance->DoSnapshot(reliableStream, true, true);
+		m_pBaseInstance->DoSnapshot(unreliableStream, false, true);
+
+		if (reliableStream.modified())
+			pServer->SendStream(reliableStream, true, built_ent->m_pPeer);
+
+		// Reliable objects should be reliably sent as this is the first
+		// initial floatation of the new entitiy.
+		if (unreliableStream.modified())
+			pServer->SendStream(unreliableStream, true, built_ent->m_pPeer);
+	}
+
+	m_NetworkObjects.safe_unlock();
+
+	// Emit callback event.
+	if (m_fCallbackCreate != nullptr)
+		m_fCallbackCreate(built_ent.get());
+
+	// Emit initialisation virtual func.
+	built_ent->Initialize();
+	return built_ent;
 }
 
+GEN_TEMPLATE_FN(CEntities, void)::SendObjectLists(ENetPeer* pOwner)
+{
+	auto object_list = m_NetworkObjects.get();
+	
+	SnapshotEntList creationUpdate;
+	creationUpdate.set_frametype(FrameType::kFRAME_Alloc);
+	creationUpdate.set_name(m_ManagerName);
+
+	// Set the instance name by casting in the name's ponter and copying
+	// its contents to the buffer.
+	char* instance_name = const_cast<char*>(m_pBaseInstance->GetName().c_str());
+	creationUpdate.set_data(reinterpret_cast<unsigned char*>(instance_name), m_pBaseInstance->GetName().size() + 1);
+
+	for (auto active_object = object_list->begin(); active_object != object_list->end(); ++active_object)
+	{
+		std::shared_ptr<NetObject>& netObj = (*active_object);
+		ENetPeer* pObjectPeer = netObj->m_pPeer;
+
+		std::uint32_t controllerStatus;
+
+		if (pObjectPeer == nullptr)
+			controllerStatus = NET_CONTROLLER_NONE;
+		else if (pObjectPeer == pOwner)
+			controllerStatus = NET_CONTROLLER_LOCAL;
+
+		creationUpdate.set_netid(netObj->GetNetID());
+		creationUpdate.set_controller(controllerStatus);
+
+		// Creates a new stream to sync the current instance state to
+		// the new pOwner peer.
+		SnapshotStream::Stream creationStreamExistingObject;
+		creationUpdate.write(creationStreamExistingObject);
+
+		// Set up a reliable stream for allocating new net IDs.
+		SnapshotStream creationStreamReliable;
+		creationStreamReliable.get()->push_back(creationStreamExistingObject);
+
+		// Generate this packet's header.
+		SnapshotHeader::Generate(creationStreamReliable, 0, 1, creationStreamExistingObject.size());
+
+		// Send it to the new peer.
+		m_pGlobalController->SendStream(creationStreamReliable, true, pOwner);
+		netObj->SendLists(pOwner);
+	}
+}
+
+GEN_TEMPLATE_FN(CEntities, std::shared_ptr<NetObject>)::BuildLocal(NetObject::NetID netID, std::uint32_t controller)
+{
+	auto built_ent = std::make_shared<TypeObject>();
+	built_ent->SetNetID( netID );
+	built_ent->m_pInstance = m_pBaseInstance;
+	built_ent->m_pManager = this;
+	built_ent->SetController( controller );
+	built_ent->SetIsReplicated( true );
+
+	// Move the new object into the manager lists.
+	std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
+	m_NetworkObjects.get()->push_back(built_ent);
+	guard.unlock();
+
+	//m_MaintainedObjects.push_back(built_ent);
+
+	// Dispatch callback.
+	if (m_fCallbackCreate)
+	{
+		m_fCallbackCreate(built_ent.get());
+	}
+
+	built_ent->Initialize();
+	return built_ent;
+}
+
+GEN_TEMPLATE_FN(CEntities, void)::FreeLocal(NetObject::NetID netID)
+{
+	std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
+	auto net_list = m_NetworkObjects.get();
+
+	for (auto obj_it = net_list->begin(); obj_it != net_list->end();)
+	{
+		std::shared_ptr<NetObject>& net_obj = (*obj_it);
+		
+		if (net_obj->GetNetID() == netID)
+		{
+			obj_it = net_list->erase(obj_it);
+			return;
+		}
+		else
+		{
+			++ obj_it;
+		}
+	}
+
+	CMessageDispatcher::Add(kMessageType_Warn, "Tried to free local entity without it existing in local list (desync?)");
+}
+
+
+GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::GetControlled(std::uint32_t index)
+{
+	auto net_list = m_NetworkObjects.get();
+	std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
+
+	std::uint32_t current_index = 0;
+
+	for (auto obj = net_list->begin(); obj != net_list->end(); ++obj)
+	{
+		std::shared_ptr<NetObject>& net_obj = (*obj);
+
+		if (net_obj->IsNetworkLocal() && current_index == index)
+		{
+			return std::dynamic_pointer_cast<TypeObject>(net_obj);
+		}
+		
+		++ current_index;
+	}
+}
+
+/*
 template <class TypeObject>
 uint32_t CEntities<TypeObject>::Add(NetObject* object)
 {
@@ -376,8 +615,8 @@ uint32_t CEntities<TypeObject>::Add(NetObject* object)
 
 	return object->GetNetID();
 }
-
-
+*/
+/*
 template <class TypeObject>
 bool CEntities<TypeObject>::Remove(uint32_t code)
 {
@@ -437,6 +676,7 @@ bool CEntities<TypeObject>::Remove(uint32_t code)
 	m_Objects.safe_unlock();
 	return result;
 }
+*/
 
 template <class TypeObject>
 CEntities<TypeObject>::CEntities(VirtualInstance* baseInstance)
@@ -454,18 +694,17 @@ CEntities<TypeObject>::CEntities(VirtualInstance* baseInstance)
 template <class TypeObject>
 CEntities<TypeObject>::~CEntities()
 {
-	m_Objects.safe_lock();
+	m_NetworkObjects.safe_lock();
 	m_MaintainedObjects.safe_lock();
 
-	for (auto it = m_Objects.get()->begin(); it != m_Objects.get()->end();)
-		it = m_Objects.get()->erase(it);
+	for (auto it = m_NetworkObjects.get()->begin(); it != m_NetworkObjects.get()->end();)
+		it = m_NetworkObjects.get()->erase(it);
 
-	// memory leak but needs investigating because of heap corruption.
 	for (auto it = m_MaintainedObjects.get()->begin(); it != m_MaintainedObjects.get()->end();)
 		it = m_MaintainedObjects.get()->erase(it);
 
 	m_MaintainedObjects.safe_unlock();
-	m_Objects.safe_unlock();
+	m_NetworkObjects.safe_unlock();
 }
 
 template <class TypeObject>

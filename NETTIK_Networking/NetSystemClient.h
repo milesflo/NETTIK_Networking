@@ -50,5 +50,5 @@ public:
 	bool Connect(const char* hostname, uint16_t port);
 
 private:
-	std::unordered_map<NetObject::NetID, NetObject*> m_ControlledObjects;
+	std::unordered_map<NetObject::NetID, std::shared_ptr<NetObject>> m_ControlledObjects;
 };

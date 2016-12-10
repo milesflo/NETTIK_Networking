@@ -6,17 +6,14 @@
 //-------------------------------------------------
 #include "VirtualInstance.h"
 
-NetObject* VirtualInstance::FindObject(uint32_t netid)
+std::shared_ptr<NetObject> VirtualInstance::FindObject(NetObject::NetID netid)
 {
-
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{
-		NetObject* entry;
-		entry = it->second->GetByNetID(netid);
+		std::shared_ptr<NetObject> entry = it->second->GetByNetID(netid);
 
 		if (entry != nullptr)
 			return entry;
-
 	}
 
 	return nullptr;
@@ -42,7 +39,7 @@ void VirtualInstance::DoPostUpdate(float elapsedTime)
 
 void VirtualInstance::DoListUpdate()
 {
-	std::vector<NetObject*>* pObjects;
+	std::vector<std::shared_ptr<NetObject>>* pObjects;
 
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{
@@ -58,6 +55,18 @@ void VirtualInstance::DoListUpdate()
 		object_manager.safe_unlock();
 	}
 }
+
+void VirtualInstance::SendAllObjectLists(ENetPeer* pOwner)
+{
+	for (std::pair<const std::string, IEntityManager*>& pManager : m_EntManagers)
+	{
+		IEntityManager* pInstance = pManager.second;
+		printf(" %p ", pInstance);
+		pInstance->SendObjectLists( pOwner );
+		printf(" fin ");
+	}
+}
+
 
 void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, bool bForced)
 {

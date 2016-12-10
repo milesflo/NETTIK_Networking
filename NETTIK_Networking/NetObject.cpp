@@ -12,7 +12,7 @@
 //--------------------------------------
 void NetObject::Initialize()
 {
-
+	CMessageDispatcher::Add(kMessageType_Print, "NetObject::Initialize()");
 }
 
 //--------------------------------------
@@ -21,7 +21,7 @@ void NetObject::Initialize()
 //--------------------------------------
 void NetObject::DestroyNetworkedEntity() const
 {
-	m_pManager->Remove( GetNetID() );
+	m_pManager->FreeEntity( const_cast<NetObject*>(this) );
 }
 
 //--------------------------------------
@@ -81,6 +81,7 @@ NetObject::~NetObject()
 		DestroyNetworkedEntity();
 		return;
 	}
+	CMessageDispatcher::Add(kMessageType_Warn, "Deleted object");
 
 	CMessageDispatcher::Add(kMessageType_Error, "Failed releasing object from network controlled, m_pManager is NULL.");
 }

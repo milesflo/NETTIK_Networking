@@ -9,12 +9,13 @@
 #include "SnapshotStream.h"
 
 class NetSystem;
+class NetSystemServer;
 class IEntityManager;
 class NetObject;
 
 class VirtualInstance
 {
-private:
+protected:
 	std::unordered_map<std::string, IEntityManager*> m_EntManagers;
 
 	NetSystem* m_ParentController;
@@ -25,7 +26,14 @@ private:
 	std::vector<mgrvec_it> m_PendingDeletes;
 public:
 
-	NetObject* FindObject(uint32_t netid);
+	//------------------------------------------------------
+	// Sends a creation stream list to the target peer. 
+	// Can only be called on server as server always has
+	// creation authoristaion and clients dont.
+	//------------------------------------------------------
+	void SendAllObjectLists(ENetPeer* pOwner);
+
+	std::shared_ptr<NetObject> FindObject(NetObject::NetID netid);
 
 	//! Gets instance's name.
 	std::string& GetName();
@@ -41,7 +49,7 @@ public:
 	virtual ~VirtualInstance();
 
 	template <class T>
-	IEntityManager* CreateManager(std::string name, std::function<void(T*)> callbackCreate = nullptr, std::function<void(T*)> callbackDelete = nullptr)
+	IEntityManager* CreateManager(std::string name, IEntityManager::EventCallback<T> callbackCreate = nullptr, IEntityManager::EventCallback<T> callbackDelete = nullptr)
 	{
 		CEntities<T>* mgr = new CEntities<T>(this);
 		mgr->SetName(name);

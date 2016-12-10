@@ -11,7 +11,7 @@ Copyright 2006, University of Central Lancashire and Laurent Noel
 
 Change history:
 V1.0    Created 12/06/06 - LN
-V1.1    Modified and heavily stripped for NETTIK library at 05/10/16 - LN
+V1.1    Modified and heavily stripped for NETTIK library at 05/10/16 - JB
 **************************************************************************************************/
 #pragma once
 

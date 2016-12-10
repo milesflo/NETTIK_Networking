@@ -96,11 +96,19 @@ public:
 		void SetReliable()
 		{
 			m_Flags |= ENET_PACKET_FLAG_RELIABLE;
+			if (m_iChannel == 0)
+			{
+				m_iChannel = 1;
+			}
 		}
 
 		void SetUnsequenced()
 		{
 			m_Flags |= ENET_PACKET_FLAG_UNSEQUENCED;
+			if (m_iChannel == 1)
+			{
+				m_iChannel = 0;
+			}
 		}
 
 		void AddPeer(ENetPeer* peer)

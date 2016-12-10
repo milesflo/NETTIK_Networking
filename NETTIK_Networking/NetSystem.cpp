@@ -33,7 +33,7 @@ void NetSystem::PrintHostStatistics()
 void NetSystem::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 {
 
-	NetObject*  target = nullptr;
+	std::shared_ptr<NetObject> target = nullptr;
 	uint32_t    queryID = frame.get_netid();
 
 	for (auto it = m_Instances.begin(); it != m_Instances.end(); ++it)
@@ -145,6 +145,10 @@ NetSystem::~NetSystem()
 	// (doesn't actually delete the singleton,
 	// just dereferences it)
 	DeletePeerSingleton();
+
+	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
+	m_Callbacks.clear();
+	m_EventCallbacks.clear();
 }
 
 NetSystem::NetSystem(uint32_t tickRate) : m_iNetworkRate(tickRate)
@@ -172,7 +176,7 @@ NetSystem::NetSystem(uint32_t tickRate) : m_iNetworkRate(tickRate)
 		{
 			SynchronousTimer timer( self->GetNetworkRate() );
 
-			self->Update(1000.0f / static_cast<float>(self->GetNetworkRate()));
+			self->Update(1 / static_cast<float>(self->GetNetworkRate()));
 		}
 
 	}, this);
@@ -391,7 +395,7 @@ void NetSystem::SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer
 
 	// This is a specific snapshot to resync a plsyer, don't do any tick logic.
 	// Controller -> Send ( peer, header, buffer )
-	Send(&stream.result()[0], stream.result().size(), peer, flags, 0);
+	Send(&stream.result()[0], stream.result().size(), peer, flags, reliable ? 1 : 0);
 }
 
 //-----------------------------------------
@@ -447,15 +451,16 @@ void NetSystem::Send(const enet_uint8* data, size_t data_len, uint32_t flags, ui
 //-----------------------------------------
 void NetSystem::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPeer* peer)
 {
-
 	if (!m_bRunning)
 		return;
+
 	// If data is too small for the message ID type, then
 	// don't process the data. This could cause a memory violation by
 	// reading too far over the `stream` pointer.
 	if (data_length < sizeof(INetworkCodes::msg_t))
 		NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
 
+	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	INetworkCodes::msg_t code = *(INetworkCodes::msg_t*)(data);
 
 	auto callbacks = m_Callbacks.find(code);
@@ -478,9 +483,10 @@ void NetSystem::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPeer
 //------------------------------------
 void NetSystem::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 {
-
 	if (!m_bRunning)
 		return;
+
+	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	auto evts = m_EventCallbacks.find(evt);
 
 	if (evts != m_EventCallbacks.end())
@@ -536,8 +542,19 @@ void NetSystem::ProcessNetStack()
 		{
 
 		case ENET_EVENT_TYPE_CONNECT:
+		{
 			m_PeerList.push_back(m_CurrentEvent.peer);
+
+			// Send current instance states to new player.
+			for (std::pair<const std::string, std::unique_ptr<VirtualInstance>>& pInstancePair : m_Instances)
+			{
+				std::unique_ptr<VirtualInstance>& pInstance = pInstancePair.second;
+
+				
+			}
+
 			m_bConnected = true;
+		}
 			break;
 
 		case ENET_EVENT_TYPE_DISCONNECT:

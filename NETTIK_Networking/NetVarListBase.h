@@ -25,7 +25,7 @@ protected:
 	// Finds a list object on an entity using
 	// the index. Returns nullptr if no avail.
 	//-------------------------------------------
-	static NetVarListBase* FetchObjectList(NetObject* pNetworkObject, std::uint32_t index);
+	static NetVarListBase* FetchObjectList(std::shared_ptr<NetObject>& pNetworkObject, std::uint32_t index);
 
 	//-------------------------------------------
 	// Checks to see if the current network 
@@ -41,7 +41,7 @@ protected:
 	// exceptions on lookup errors, returns
 	// nullptr if object cannot be found.
 	//-------------------------------------------
-	static NetObject* DecodeObject(const INetworkAssociatedObject& associated_object);
+	static std::shared_ptr<NetObject> DecodeObject(const INetworkAssociatedObject& associated_object);
 
 	virtual data_point get_at(std::uint32_t index)    = 0;
 	

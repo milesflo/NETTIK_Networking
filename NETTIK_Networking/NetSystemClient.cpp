@@ -32,7 +32,7 @@ NetSystemClient::NetSystemClient() : NetSystem(60)
 
 bool NetSystemClient::InitializeHost()
 {
-	m_pHost = enet_host_create(NULL, 1, m_iChannelCount, 0, 0);
+	m_pHost = enet_host_create(NULL, 1, ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT, 0, 0);
 
 	if (m_pHost == NULL)
 		return false;
@@ -76,11 +76,12 @@ void NetSystemClient::EntAllocate(SnapshotEntList& frame)
 
 	if (manager->GetByNetID(netID) == nullptr)
 	{
-		NetObject* instance = manager->AddLocal(netID, controller);
+		std::shared_ptr<NetObject> instance = manager->BuildLocal(netID, controller);
 
 		if (controller == NET_CONTROLLER_LOCAL)
 			m_ControlledObjects[netID] = instance;
 
+		CMessageDispatcher::Add(kMessageType_Print, "New remote object");
 	}
 
 }
@@ -104,8 +105,7 @@ void NetSystemClient::EntDeallocate(SnapshotEntList& frame)
 	if (manager == nullptr)
 		NETTIK_EXCEPTION("Invalid manager field passed from server.");
 
-	NetObject* object;
-	object = manager->GetByNetID(netID);
+	std::shared_ptr<NetObject> object = manager->GetByNetID(netID);
 	if (object == nullptr)
 		return;
 
@@ -115,11 +115,11 @@ void NetSystemClient::EntDeallocate(SnapshotEntList& frame)
 
 		if (object != m_ControlledObjects.end())
 			m_ControlledObjects.erase(object);
+
+		CMessageDispatcher::Add(kMessageType_Print, "Deletion of remove object");
 	}
 
-	manager->RemoveLocal(netID);
-
-
+	manager->FreeLocal(netID);
 }
 
 void NetSystemClient::HandleEntOwnership(const enet_uint8* data, size_t data_len, ENetPeer* peer)

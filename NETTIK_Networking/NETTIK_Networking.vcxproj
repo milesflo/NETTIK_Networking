@@ -198,6 +198,7 @@
   <ItemGroup>
     <ClInclude Include="CEntities.h" />
     <ClInclude Include="CNetVarBase.h" />
+    <ClInclude Include="CNetVarBufferedVector.h" />
     <ClInclude Include="CNetVarList.h" />
     <ClInclude Include="CNetVarString.h" />
     <ClInclude Include="CNetVarVector.h" />
@@ -235,6 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CEntities.cpp" />
+    <ClCompile Include="CNetVarBufferedVector.cpp" />
     <ClCompile Include="CNetVarList.cpp" />
     <ClCompile Include="CPlayerRealm.cpp" />
     <ClCompile Include="CVector3.cpp" />

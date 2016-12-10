@@ -6,9 +6,9 @@ uint32_t s_TotalEntities = 0;
 // Returns a mutex locked vector of the internal
 // objects.
 //-------------------------------------------------
-LockableVector<NetObject*>& IEntityManager::GetObjects()
+LockableVector<std::shared_ptr<NetObject>>& IEntityManager::GetObjects()
 {
-	return m_Objects;
+	return m_NetworkObjects;
 }
 
 void IEntityManager::SetName(std::string name)
@@ -38,7 +38,7 @@ std::uint32_t IEntityManager::GetNextID()
 size_t IEntityManager::Count()
 {
 	size_t result;
-	result = m_Objects.get()->size();
+	result = m_NetworkObjects.get()->size();
 
 	return result;
 }

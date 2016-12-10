@@ -20,13 +20,11 @@ class CNetVarBase : public NetVar
 {
 	static_assert(sizeof(VarType) < max_entvar_data, "Sizeof type templated to CNetVarBase is too large.");
 
-private:
+protected:
 	bool        m_bChanged	= true;		// Set to true when the variable has differed.
 	bool        m_bLocked	= false;	// Set to true when the variable cannot be changed (remotely).
 	bool		m_bChangeForced = false;
 
-
-protected:
 	VarType     m_Data;
 
 	bool SetGuard(VarType& data);
@@ -52,7 +50,7 @@ public:
 
 
 	//! Sets raw data and invalidates packet. Natural process is the function is called remotely.
-	void Set(unsigned char* ptr, size_t size, ENetPeer* pWho);
+	virtual void Set(unsigned char* ptr, size_t size, ENetPeer* pWho);
 
 	//! Sets the data with type safeness and invalidates the packet.
 	void Set(VarType data);
@@ -165,6 +163,7 @@ void CNetVarBase<VarType>::Set(unsigned char* ptr, size_t size, ENetPeer* pWho)
 	m_iChanges++;
 
 	m_bChanged = true;
+	CMessageDispatcher::Add(kMessageType_Print, "Set_RawPtr()");
 }
 
 template< class VarType >
@@ -174,8 +173,9 @@ void CNetVarBase<VarType>::Set(VarType data)
 		return;
 
 	m_Data = data;
-	m_iChanges++;
+	m_iChanges++; 
 	m_bChangeForced = true;
+	CMessageDispatcher::Add(kMessageType_Print, "Set<T>()");
 }
 
 template< class VarType >

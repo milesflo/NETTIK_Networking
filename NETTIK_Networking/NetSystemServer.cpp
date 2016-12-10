@@ -9,7 +9,7 @@ using namespace std::placeholders;
 
 bool NetSystemServer::InitializeHost()
 {
-	m_pHost = enet_host_create(&m_Address, m_iPeerLimit, m_iChannelCount, 0, 0);
+	m_pHost = enet_host_create(&m_Address, m_iPeerLimit, ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT, 0, 0);
 
 	if (m_pHost == NULL)
 		return false;
@@ -25,7 +25,7 @@ bool NetSystemServer::InitializeAddress(const char* hostname, uint16_t port)
 	}
 	else
 	{
-		m_Address.host = ENET_HOST_ANY;
+		enet_address_set_host(&m_Address, hostname);
 	}
 
 	m_Address.port = port;
@@ -50,6 +50,41 @@ bool NetSystemServer::Listen(std::uint16_t port, size_t peerLimit, const char* p
 		return false;
 
 	m_bConnected = true;
+
+	// Send all object states to newly connected peers.
+	on_enet(ENET_EVENT_TYPE_CONNECT, [this](ENetEvent& evtFrame)
+	{
+		SnapshotStream reliableStream;
+		SnapshotStream unreliableStream;
+
+		CMessageDispatcher::Add(kMessageType_Print, "Sending current world context...");
+
+		// Send current instance states to new player.
+		for (std::pair<const std::string, std::unique_ptr<VirtualInstance>>& pInstancePair : m_Instances)
+		{
+			std::unique_ptr<VirtualInstance>& pInstance = pInstancePair.second;
+			pInstance->SendAllObjectLists(evtFrame.peer);
+
+			// Get a full snapshot of the current object list to send to the new player.
+			pInstance->DoSnapshot(reliableStream, true, true);
+			pInstance->DoSnapshot(unreliableStream, false, true);
+
+			if (reliableStream.modified())
+			{
+				CMessageDispatcher::Add(kMessageType_Print, "Sending reliable buffer...");
+				SendStream(reliableStream, true, evtFrame.peer);
+			}
+
+			// Reliable objects should be reliably sent as this is the first
+			// initial floatation of the new entitiy.
+			if (unreliableStream.modified())
+			{
+				CMessageDispatcher::Add(kMessageType_Print, "Sending un-reliable buffer...");
+				SendStream(unreliableStream, true, evtFrame.peer);
+			}
+		}
+
+	});
 	return true;
 }
 

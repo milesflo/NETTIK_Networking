@@ -27,7 +27,7 @@ void NetVarListBase::Flush()
 
 void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet)
 {
-	NetObject * pTargetObject;
+	std::shared_ptr<NetObject> pTargetObject;
 
 	// Decode the packet target object into a NetObject pointer.
 	try {
@@ -94,7 +94,7 @@ void NetVarListBase::on_remote_update(ENetPeer* pPeer, INetworkMapUpdate& packet
 
 void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet)
 {
-	NetObject * pTargetObject;
+	std::shared_ptr<NetObject> pTargetObject;
 
 	// Decode the packet target object into a NetObject pointer.
 	try {
@@ -137,7 +137,7 @@ void NetVarListBase::on_remote_remove(ENetPeer* pPeer, INetworkMapRemove& packet
 
 void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 {
-	NetObject * pTargetObject;
+	std::shared_ptr<NetObject> pTargetObject;
 
 	// Decode the packet target object into a NetObject pointer.
 	try {
@@ -202,7 +202,7 @@ void NetVarListBase::on_remote_add(ENetPeer* pPeer, INetworkMapAdd& packet)
 	pList->dispatch_add(item_key);
 }
 
-NetObject* NetVarListBase::DecodeObject(const INetworkAssociatedObject& associated_object)
+std::shared_ptr<NetObject> NetVarListBase::DecodeObject(const INetworkAssociatedObject& associated_object)
 {
 	IEntityManager   * pManager;
 	VirtualInstance  * pInstance;
@@ -252,7 +252,7 @@ bool NetVarListBase::HasWritePermission(ENetPeer* pCallee, NetObject* pCheckObje
 	return (pCallee == pCheckObject->m_pPeer);
 }
 
-NetVarListBase* NetVarListBase::FetchObjectList(NetObject* pNetworkObject, std::uint32_t index)
+NetVarListBase* NetVarListBase::FetchObjectList(std::shared_ptr<NetObject>& pNetworkObject, std::uint32_t index)
 {
 	if (pNetworkObject == nullptr)
 	{

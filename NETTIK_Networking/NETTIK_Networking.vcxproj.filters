@@ -195,6 +195,9 @@
     <ClInclude Include="FormatInline.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
+    <ClInclude Include="CNetVarBufferedVector.h">
+      <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SnapshotHeader.cpp">
@@ -256,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="MessageDispatcher.cpp">
       <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetVarBufferedVector.cpp">
+      <Filter>Core\Network Data\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

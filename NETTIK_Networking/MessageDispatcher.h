@@ -28,7 +28,7 @@ public:
 	//--------------------------------------------------------
 	// Gets the longest waiting message in the queue.
 	//--------------------------------------------------------
-	Message* GetMessage();
+	Message* GetNextMessage();
 
 	//--------------------------------------------------------
 	// Pops the front of the queue.
