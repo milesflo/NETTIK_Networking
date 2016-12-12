@@ -196,8 +196,14 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseMath.h" />
     <ClInclude Include="CEntities.h" />
+    <ClInclude Include="CFatalException.h" />
+    <ClInclude Include="CMatrix2x2.h" />
+    <ClInclude Include="CMatrix3x3.h" />
+    <ClInclude Include="CMatrix4x4.h" />
     <ClInclude Include="CNetVarBase.h" />
+    <ClInclude Include="CNetVarBufferedQuat.h" />
     <ClInclude Include="CNetVarBufferedVector.h" />
     <ClInclude Include="CNetVarList.h" />
     <ClInclude Include="CNetVarString.h" />
@@ -205,10 +211,17 @@
     <ClInclude Include="Constraints.h" />
     <ClInclude Include="ControllerFlags.h" />
     <ClInclude Include="CPlayerRealm.h" />
+    <ClInclude Include="CQuaternion.h" />
+    <ClInclude Include="CVector2.h" />
     <ClInclude Include="CVector3.h" />
+    <ClInclude Include="CVector4.h" />
+    <ClInclude Include="Defines.h" />
     <ClInclude Include="EntityMessages.pb.h" />
+    <ClInclude Include="Errors.h" />
     <ClInclude Include="FormatInline.h" />
+    <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="MessageDispatcher.h" />
+    <ClInclude Include="MSDefines.h" />
     <ClInclude Include="NetSystem.h" />
     <ClInclude Include="NetSystemClient.h" />
     <ClInclude Include="NetSystemServer.h" />
@@ -224,6 +237,7 @@
     <ClInclude Include="NETRPC.h" />
     <ClInclude Include="NETTIK_Networking.h" />
     <ClInclude Include="NetVar.h" />
+    <ClInclude Include="NetVarBufferBase.h" />
     <ClInclude Include="NetVarListBase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ReplicationInfo.h" />
@@ -232,14 +246,25 @@
     <ClInclude Include="SnapshotOwnership.h" />
     <ClInclude Include="SnapshotStream.h" />
     <ClInclude Include="SynchronousTimer.h" />
+    <ClInclude Include="Utility.h" />
     <ClInclude Include="VirtualInstance.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseMath.cpp" />
     <ClCompile Include="CEntities.cpp" />
+    <ClCompile Include="CFatalException.cpp" />
+    <ClCompile Include="CMatrix2x2.cpp" />
+    <ClCompile Include="CMatrix3x3.cpp" />
+    <ClCompile Include="CMatrix4x4.cpp" />
+    <ClCompile Include="CNetVarBufferedQuat.cpp" />
     <ClCompile Include="CNetVarBufferedVector.cpp" />
     <ClCompile Include="CNetVarList.cpp" />
+    <ClCompile Include="CNetVarVector.cpp" />
     <ClCompile Include="CPlayerRealm.cpp" />
+    <ClCompile Include="CQuaternion.cpp" />
+    <ClCompile Include="CVector2.cpp" />
     <ClCompile Include="CVector3.cpp" />
+    <ClCompile Include="CVector4.cpp" />
     <ClCompile Include="EntityMessages.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -254,8 +279,10 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='DynamicDebug|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="IEntityManager.cpp" />
     <ClCompile Include="MessageDispatcher.cpp" />
+    <ClCompile Include="MSDefines.cpp" />
     <ClCompile Include="NetSystem.cpp" />
     <ClCompile Include="NetSystemClient.cpp" />
     <ClCompile Include="NetSystemServer.cpp" />
@@ -270,9 +297,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DynamicDebug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NetVar.cpp" />
+    <ClCompile Include="NetVarBufferBase.cpp" />
     <ClCompile Include="NetVarListBase.cpp" />
     <ClCompile Include="SnapshotHeader.cpp" />
     <ClCompile Include="SynchronousTimer.cpp" />
+    <ClCompile Include="Utility.cpp" />
     <ClCompile Include="VirtualInstance.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,19 +1,16 @@
-#include "CNetVarBufferedVector.h"
+#include "CNetVarBufferedQuat.h"
 
-// Minimum amount of interpolation distance, anything less
-// will be directly applied.
-const float  CNetVarBufferedVector::kMaxInterpolationDistance = 10.0f;
-
-CNetVarBufferedVector::CNetVarBufferedVector(NetObject* parent, const char* name, bool reliable)
-	: NetVarBufferBase<gen_net::CVector3>(parent, name, reliable)
+CNetVarBufferedQuat::CNetVarBufferedQuat(NetObject* parent, const char* name, bool reliable)
+	: NetVarBufferBase<gen_net::CQuaternion>(parent, name, reliable)
 {
+
 }
 
 //--------------------------------------------------
-// Calculates the interpolated value of the vectors
+// Calculates the interpolated value of the angles
 // contents 
 //--------------------------------------------------
-gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::milliseconds dtms)
+gen_net::CQuaternion CNetVarBufferedQuat::GetInterpolated(std::chrono::milliseconds dtms)
 {
 	// If the vector hasn't received enough updates to 
 	// interpolate, return the last vector to be stored.
@@ -21,15 +18,10 @@ gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::millisecon
 	{
 		return GetLive();
 	}
-
+	
 	// Calculate where the vector came from, and where the vector is heading.
-	gen_net::CVector3& from = m_DataBuffers[ mod_wrap(m_ActivePositionIndex - 1, static_cast<unsigned int>(4)) ];
-	gen_net::CVector3& to = m_DataBuffers[ m_ActivePositionIndex ];
-	gen_net::CVector3 heading = (to - from);
-
-	// Don't interpolate small values.
-	if (heading.Length() > kMaxInterpolationDistance)
-		return to;
+	gen_net::CQuaternion& from = m_DataBuffers[ mod_wrap(m_ActivePositionIndex - 1, static_cast<unsigned int>(4)) ];
+	gen_net::CQuaternion& to = m_DataBuffers[ m_ActivePositionIndex ];
 
 	// Don't interpolate if the average time frame hasn't been adjusted.
 	if (!m_bCalculatedFrameTime || m_fTimeFrame.count() == 0)
@@ -51,7 +43,9 @@ gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::millisecon
 	// calculate the lerp value.
 	if (fDT <= 1.0f)
 	{
-		return from + (heading * fDT);
+		gen_net::CQuaternion result;
+		gen_net::Slerp(from, to, fDT, result);
+		return result;
 	}
 
 	// If the server is out of sync, and hasn't sent any more data
@@ -59,12 +53,13 @@ gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::millisecon
 	// destination.
 	return to;
 }
+
 //--------------------------------------------------
-// Standard vector manipulator.
+// Standard angle manipulator.
 //--------------------------------------------------
-void CNetVarBufferedVector::Set(float x, float y, float z)
+void CNetVarBufferedQuat::Set(float w, float x, float y, float z)
 {
-	gen_net::CVector3 compose(x, y, z);
+	gen_net::CQuaternion compose(w, x, y, z);
 
 	if (!SetGuard(compose))
 	{
@@ -72,4 +67,19 @@ void CNetVarBufferedVector::Set(float x, float y, float z)
 	}
 
 	m_Data = compose;
+	CMessageDispatcher::Add(kMessageType_Print, "%f %f %f %f", w, x, y, z);
+}
+
+void CNetVarBufferedQuat::Rotate(float w, float x, float y, float z)
+{
+	gen_net::CQuaternion rotquat(w, x, y, z);
+	gen_net::CQuaternion pivot = (m_Data * rotquat);
+	pivot.Normalise();
+
+	if (!SetGuard(pivot))
+	{
+		return;
+	}
+
+	m_Data = pivot;
 }

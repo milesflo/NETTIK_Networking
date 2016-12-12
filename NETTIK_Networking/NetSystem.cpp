@@ -5,6 +5,7 @@
 // See attached license inside "LICENSE".
 //-------------------------------------------------
 #include "CNetVarList.h"
+#include "FrameTimer.h"
 
 //! Global singleton for the ENET peer.
 NetSystem* NetSystem::s_PeerSingleton = nullptr;
@@ -149,6 +150,7 @@ NetSystem::~NetSystem()
 	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	m_Callbacks.clear();
 	m_EventCallbacks.clear();
+	m_Instances.clear();
 }
 
 NetSystem::NetSystem(uint32_t tickRate) : m_iNetworkRate(tickRate)
@@ -172,11 +174,17 @@ NetSystem::NetSystem(uint32_t tickRate) : m_iNetworkRate(tickRate)
 	{
 		NetSystem* self = static_cast<NetSystem*>(pData);
 
+		// Track lap time for precise time stepping.
+		CFrameTimer timer;
+		timer.Start();
+
 		while (self->IsRunning() && bThreadStatus)
 		{
-			SynchronousTimer timer( self->GetNetworkRate() );
+			// Sync the thread to the current network rate.
+			SynchronousTimer syncTimer(self->GetNetworkRate());
 
-			self->Update(1 / static_cast<float>(self->GetNetworkRate()));
+			// Get the current lap time the thread executed on.
+			self->Update(timer.GetLapTime());
 		}
 
 	}, this);

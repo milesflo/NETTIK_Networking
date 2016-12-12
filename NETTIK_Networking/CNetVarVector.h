@@ -15,22 +15,11 @@
 #define NetworkVector(name, reliable) \
 	CNetVarVector   name = CNetVarVector( this, #name, reliable )
 
-class CNetVarVector : public CNetVarBase< CVector3 >
+class CNetVarVector : public CNetVarBase< gen_net::CVector3 >
 {
 public:
 	
-	CNetVarVector(NetObject* parent, const char* name, bool reliable)
-		: CNetVarBase(parent, name, reliable)
-	{
+	CNetVarVector(NetObject* parent, const char* name, bool reliable);
 
-	}
-
-	void Set(float x, float y, float z)
-	{
-		CVector3 compose(x, y, z);
-		if (!SetGuard(compose))
-			return;
-
-		m_Data = compose;
-	}
+	void Set(float x, float y, float z);
 };

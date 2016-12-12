@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------------------*/
 
 // Reduce vector to unit length - member function
-void CVector3::Normalise()
+void gen_net::CVector3::Normalise()
 {
 	float lengthSq = x*x + y*y + z*z;
 
@@ -31,19 +31,19 @@ void CVector3::Normalise()
 
 
 // Return unit length vector in the same direction as given one
-CVector3 Normalise( const CVector3& v )
+gen_net::CVector3 Normalise( const gen_net::CVector3& v )
 {
 	float lengthSq = v.x*v.x + v.y*v.y + v.z*v.z;
 
 	// Ensure vector is not zero length (use BaseMath.h float approx. fn with default epsilon)
 	if ( lengthSq == 0.0f )
 	{
-		return CVector3(0.0f, 0.0f, 0.0f);
+		return gen_net::CVector3(0.0f, 0.0f, 0.0f);
 	}
 	else
 	{
 		float invLength = 1.0f / sqrtf( lengthSq );
-		return CVector3(v.x * invLength, v.y * invLength, v.z * invLength);
+		return gen_net::CVector3(v.x * invLength, v.y * invLength, v.z * invLength);
 	}
 }
 
@@ -53,7 +53,7 @@ CVector3 Normalise( const CVector3& v )
 -----------------------------------------------------------------------------------------*/
 
 // Return distance from this point to another - member function
-float CVector3::DistanceTo( const CVector3& p )
+float gen_net::CVector3::DistanceTo( const gen_net::CVector3& p )
 {
 	float distX = p.x - x;
 	float distY = p.y - y;
@@ -65,7 +65,7 @@ float CVector3::DistanceTo( const CVector3& p )
 // Return squared distance from this point to another - member function
 // More efficient than Distance when exact length is not required (e.g. for comparisons)
 // Use InvSqrt( DistanceToSquared(...) ) to calculate 1 / distance more efficiently
-float CVector3::DistanceToSquared( const CVector3& p )
+float gen_net::CVector3::DistanceToSquared( const gen_net::CVector3& p )
 {
 	float distX = p.x - x;
 	float distY = p.y - y;
@@ -77,8 +77,8 @@ float CVector3::DistanceToSquared( const CVector3& p )
 // Return distance from one point to another - non-member version
 float Distance
 (
-	const CVector3& p1,
-	const CVector3& p2
+	const gen_net::CVector3& p1,
+	const gen_net::CVector3& p2
 )
 {
 	float distX = p1.x - p2.x;
@@ -92,8 +92,8 @@ float Distance
 // Use InvSqrt( DistanceSquared(...) ) to calculate 1 / distance more efficiently
 float DistanceSquared
 (
-	const CVector3& p1,
-	const CVector3& p2
+	const gen_net::CVector3& p1,
+	const gen_net::CVector3& p2
 )
 {
 	float distX = p1.x - p2.x;

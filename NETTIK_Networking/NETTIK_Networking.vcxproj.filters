@@ -85,6 +85,27 @@
     <Filter Include="Core\Precompiled Header">
       <UniqueIdentifier>{8c069c12-5240-4bbb-89ec-300595543d60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Network Data\headers\Vectors">
+      <UniqueIdentifier>{dc8d4175-cbb9-49e8-9fd4-785043866e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Data\source\Vectors">
+      <UniqueIdentifier>{e21fdb71-41f9-493f-9b83-862c04394dc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Data\headers\Quaternions">
+      <UniqueIdentifier>{36701a7b-5728-41ed-84cd-ac2cc5431d90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Network Data\source\Quaternions">
+      <UniqueIdentifier>{b15837f1-04ae-4687-a3d4-848060c4334b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Libraries\Common">
+      <UniqueIdentifier>{8e8f7bfd-00b4-43be-8aa6-b42a82efffd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Libraries\Common\headers">
+      <UniqueIdentifier>{6f80052d-a203-4d61-9264-6801b3edfd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Libraries\Common\source">
+      <UniqueIdentifier>{a9d60d81-a9c7-4591-9d3c-4629618719bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SnapshotEntList.h">
@@ -156,9 +177,6 @@
     <ClInclude Include="CNetVarString.h">
       <Filter>Core\Network Data\headers</Filter>
     </ClInclude>
-    <ClInclude Include="CNetVarVector.h">
-      <Filter>Core\Network Data\headers</Filter>
-    </ClInclude>
     <ClInclude Include="LoggingUtil.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
@@ -186,17 +204,65 @@
     <ClInclude Include="NetSystemServer.h">
       <Filter>Core\Controllers\headers</Filter>
     </ClInclude>
-    <ClInclude Include="CVector3.h">
-      <Filter>Standard Libraries\headers</Filter>
-    </ClInclude>
     <ClInclude Include="MessageDispatcher.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
     <ClInclude Include="FormatInline.h">
       <Filter>Standard Libraries\headers</Filter>
     </ClInclude>
-    <ClInclude Include="CNetVarBufferedVector.h">
+    <ClInclude Include="FrameTimer.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetVarBufferBase.h">
       <Filter>Core\Network Data\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarVector.h">
+      <Filter>Core\Network Data\headers\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarBufferedVector.h">
+      <Filter>Core\Network Data\headers\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetVarBufferedQuat.h">
+      <Filter>Core\Network Data\headers\Quaternions</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector3.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CQuaternion.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseMath.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MSDefines.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Errors.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CFatalException.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CMatrix4x4.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector2.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector4.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CMatrix3x3.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CMatrix2x2.h">
+      <Filter>Standard Libraries\Common\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,14 +320,56 @@
     <ClCompile Include="IEntityManager.cpp">
       <Filter>Entities\Entity Manager\source</Filter>
     </ClCompile>
-    <ClCompile Include="CVector3.cpp">
-      <Filter>Standard Libraries\source</Filter>
-    </ClCompile>
     <ClCompile Include="MessageDispatcher.cpp">
       <Filter>Standard Libraries\source</Filter>
     </ClCompile>
-    <ClCompile Include="CNetVarBufferedVector.cpp">
+    <ClCompile Include="FrameTimer.cpp">
+      <Filter>Standard Libraries\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NetVarBufferBase.cpp">
       <Filter>Core\Network Data\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetVarBufferedVector.cpp">
+      <Filter>Core\Network Data\source\Vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetVarVector.cpp">
+      <Filter>Core\Network Data\source\Vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector3.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CFatalException.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseMath.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector2.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CMatrix4x4.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CVector4.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CMatrix3x3.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CMatrix2x2.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetVarBufferedQuat.cpp">
+      <Filter>Core\Network Data\source\Quaternions</Filter>
+    </ClCompile>
+    <ClCompile Include="CQuaternion.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="MSDefines.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Standard Libraries\Common\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,165 +1,180 @@
-#pragma once
 /**************************************************************************************************
-Module:       CVector3.h
-Author:       Laurent Noel
-Date created: 12/06/06
+	Module:       CVector2.h
+	Author:       Laurent Noel
+	Date created: 12/06/06
 
-Definition of the concrete class CVector3, three 32-bit floats representing a vector/point
-with x, y & z components - or a column/row of a 3x3 matrix
+	Definition of the concrete class CVector2, two 32-bit floats representing a vector/point
+	with x & y components - or a column/row of a 2x2 matrix
 
-Copyright 2006, University of Central Lancashire and Laurent Noel
+	Copyright 2006, University of Central Lancashire and Laurent Noel
 
-Change history:
-V1.0    Created 12/06/06 - LN
-V1.1    Modified and heavily stripped for NETTIK library at 05/10/16 - JB
+	Change history:
+		V1.0    Created 12/06/06 - LN
 **************************************************************************************************/
 #pragma once
+#include "Defines.h"
+#include "Errors.h"
 #include "BaseMath.h"
 
 namespace gen_net
 {
 
-class CVector3
+// Forward declaration of classes, where includes are only possible/necessary in the .cpp file
+class CVector3;
+class CVector4;
+
+
+class CVector2
 {
+	GEN_CLASS( CVector2 );
+
+// Concrete class - public access
 public:
 
 	/*-----------------------------------------------------------------------------------------
-	Constructors/Destructors
+		Constructors/Destructors
 	-----------------------------------------------------------------------------------------*/
 
 	// Default constructor - leaves values uninitialised (for performance)
-	CVector3() {}
+	CVector2() {}
 
 	// Construct by value
-	CVector3
+	CVector2
 	(
-		const float xIn,
-		const float yIn,
-		const float zIn
-	) : x(xIn), y(yIn), z(zIn)
+		const TFloat32 xIn,
+		const TFloat32 yIn
+	) : x( xIn ), y( yIn )
 	{}
 
-	// Construct through pointer to three floats
-	explicit CVector3(const float* pfElts)
+	// Construct through pointer to two floats
+	explicit CVector2( const TFloat32* pfElts )
 	{
+		GEN_GUARD_OPT;
+		GEN_ASSERT_OPT( pfElts, "Invalid parameter" );
+
 		x = pfElts[0];
 		y = pfElts[1];
-		z = pfElts[2];
+
+		GEN_ENDGUARD_OPT;
 	}
-	// 'explicit' disallows implicit conversion:  TFloat32* pf; CVector3 v = pf;
-	// Need to use this constructor explicitly:   TFloat32* pf; CVector3 v = CVector3(pf);
+	// 'explicit' disallows implicit conversion:  TFloat32* pf; CVector2 v = pf;
+	// Need to use this constructor explicitly:   TFloat32* pf; CVector2 v = CVector2(pf);
 	// Only applies to constructors that can take one parameter, used to avoid confusing code
 
 
 	// Construct as vector between two points (p1 to p2)
-	CVector3
+	CVector2
 	(
-		const CVector3& p1,
-		const CVector3& p2
-	) : x(p2.x - p1.x), y(p2.y - p1.y), z(p2.z - p1.z)
+		const CVector2& p1,
+		const CVector2& p2
+	) : x( p2.x - p1.x ), y( p2.y - p1.y )
 	{}
 
-	// Copy constructor, construct from CVector3
-	CVector3(const CVector3& v) : x(v.x), y(v.y), z(v.z)
+
+	// Construct from a CVector3, discarding z value
+	explicit CVector2( const CVector3& v );
+	// Require explicit conversion from CVector3 (see above)
+
+	// Construct from a CVector4, discarding z & w values
+	explicit CVector2( const CVector4& v );
+	// Require explicit conversion from CVector4 (see above)
+
+
+	// Copy constructor
+    CVector2( const CVector2& v ) : x( v.x ), y( v.y )
 	{}
 
 	// Assignment operator
-	CVector3& operator=(const CVector3& v)
+    CVector2& operator=( const CVector2& v )
 	{
-		if (this != &v)
+		if ( this != &v )
 		{
 			x = v.x;
 			y = v.y;
-			z = v.z;
 		}
 		return *this;
 	}
 
 
 	/*-----------------------------------------------------------------------------------------
-	Setters
+		Setters
 	-----------------------------------------------------------------------------------------*/
 
-	// Set all three vector components
-	void Set
+	// Set both vector components
+    void Set
 	(
-		const float xIn,
-		const float yIn,
-		const float zIn
+		const TFloat32 xIn,
+		const TFloat32 yIn
 	)
 	{
 		x = xIn;
 		y = yIn;
-		z = zIn;
 	}
 
-	// Set the vector through a pointer to three floats
-	void Set(const float* pfElts)
+	// Set the vector through a pointer to two floats
+    void Set( const TFloat32* pfElts )
 	{
 		x = pfElts[0];
 		y = pfElts[1];
-		z = pfElts[2];
 	}
 
 	// Set as vector between two points (p1 to p2)
-	void Set
+    void Set
 	(
-		const CVector3& p1,
-		const CVector3& p2
+		const CVector2& p1,
+		const CVector2& p2
 	)
 	{
 		x = p2.x - p1.x;
 		y = p2.y - p1.y;
-		z = p2.z - p1.z;
 	}
 
-	// Set the vector to (0,0,0)
-	void SetZero()
+	// Set the vector to (0,0)
+    void SetZero()
 	{
-		x = y = z = 0.0f;
+		x = y = 0.0f;
 	}
 
 
 	/*-----------------------------------------------------------------------------------------
-	Array access
+		Array access
 	-----------------------------------------------------------------------------------------*/
 
-	// Access the x, y & z components in array style (i.e. v[0], v[1], v[2] same as v.x, v.y, v.z)
-	// No validation on index
-	float& operator[](const size_t index)
+	// Access the x & y components in array style (i.e. v[0], v[1] same as v.x, v.y)
+    TFloat32& operator[]( const TUInt32 index )
 	{
 		return (&x)[index];
 	}
 
-	// Access the x, y & z elements in array style - const result
-	// No validation on index
-	const float& operator[](const size_t index) const
+	// Access the x & y elements in array style - const result
+	const TFloat32& operator[]( const TUInt32 index ) const
 	{
 		return (&x)[index];
 	}
+
 
 	/*-----------------------------------------------------------------------------------------
-	Comparisons
+		Comparisons
 	-----------------------------------------------------------------------------------------*/
 	// Equality operators defined as non-member operations after the class definition
 
-	// Test if the vector is zero length (i.e. = (0,0,0))
+	// Test if the vector is zero length (i.e. = (0,0))
 	// Uses BaseMath.h float approximation function 'IsZero' with default epsilon (margin of error)
 	bool IsZero() const
 	{
-		return gen_net::IsZero(x*x + y*y + z*z);
+		return gen_net::IsZero( x*x + y*y );
 	}
 
 	// Test if the vector is unit length (normalised)
 	// Uses BaseMath.h float approximation function 'IsZero' with default epsilon (margin of error)
 	bool IsUnit() const
 	{
-		return gen_net::IsZero(x*x + y*y + z*z - 1.0f);
+		return gen_net::IsZero( x*x + y*y - 1.0f );
 	}
 
 
 	/*-----------------------------------------------------------------------------------------
-	Member Operators
+		Member Operators
 	-----------------------------------------------------------------------------------------*/
 	// Non-member versions defined after the class definition
 
@@ -167,20 +182,18 @@ public:
 	// Addition / subtraction
 
 	// Add another vector to this vector
-	CVector3& operator+=(const CVector3& v)
+    CVector2& operator+=( const CVector2& v )
 	{
 		x += v.x;
 		y += v.y;
-		z += v.z;
 		return *this;
 	}
 
 	// Subtract another vector from this vector
-	CVector3& operator-=(const CVector3& v)
+    CVector2& operator-=( const CVector2& v )
 	{
 		x -= v.x;
 		y -= v.y;
-		z -= v.z;
 		return *this;
 	}
 
@@ -189,99 +202,116 @@ public:
 	// Scalar multiplication & division
 
 	// Multiply this vector by a scalar
-	CVector3& operator*=(const float s)
+	CVector2& operator*=( const TFloat32 s )
 	{
 		x *= s;
 		y *= s;
-		z *= s;
 		return *this;
 	}
 
 	// Divide this vector by a scalar
-	CVector3& operator/=(const float s)
+    CVector2& operator/=( const TFloat32 s )
 	{
+		GEN_GUARD_OPT;
+		GEN_ASSERT_OPT( !gen_net::IsZero(s), "Invalid parameter" );
+
 		x /= s;
 		y /= s;
-		z /= s;
 		return *this;
+
+		GEN_ENDGUARD_OPT;
 	}
 
 
 	////////////////////////////////////
 	// Other operations
 
-	// Dot product of this with another vector
-	float Dot(const CVector3& v) const
+	// Set this vector to its perpendicular, in a counter-clockwise direction
+	void SetPerpendicular()
 	{
-		return x*v.x + y*v.y + z*v.z;
+		TFloat32 t = x;
+		x = -y;
+		y = t;
+	}
+
+	// Return a vector perpendicular to this one, in a counter-clockwise direction
+	CVector2 Perpendicular()
+	{
+		return CVector2(-y, x);
 	}
 
 
-	// Cross product of this with another vector
-	CVector3 Cross(const CVector3& v) const
+	// Dot product of this with another vector
+    TFloat32 Dot( const CVector2& v ) const
 	{
-		return CVector3(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
+	    return x*v.x + y*v.y;
+	}
+	
+	
+	// Cross product of this with another vector, both promoted to 3D with a z component of 0
+	// Result is positive if the other vector is counter-clockwise from this vector
+    CVector2 Cross3D( const CVector2& v ) const
+	{
+		return CVector2(y*v.x - x*v.y, x*v.y - y*v.x);
 	}
 
 
 	/*-----------------------------------------------------------------------------------------
-	Length operations
+		Length operations
 	-----------------------------------------------------------------------------------------*/
 	// Non-member versions defined after the class definition
 
 	// Return length of this vector
-	float Length() const
+	TFloat32 Length() const
 	{
-		return std::sqrtf(x*x + y*y + z*z);
+		return Sqrt( x*x + y*y );
 	}
 
 	// Return squared length of this vector
 	// More efficient than Length when exact value is not required (e.g. for comparisons)
 	// Use InvSqrt( LengthSquared(...) ) to calculate 1 / length more efficiently
-	float LengthSquared() const
+	TFloat32 LengthSquared() const
 	{
-		return x*x + y*y + z*z;
+		return x*x + y*y;
 	}
 
 	// Reduce vector to unit length
-	void Normalise();
+    void Normalise();
 
 
 	/*-----------------------------------------------------------------------------------------
-	Point related functions
+		Point related functions
 	-----------------------------------------------------------------------------------------*/
 	// Non-member versions defined after the class definition
 
 	// Return distance from this point to another
-	float DistanceTo(const CVector3& p);
+    TFloat32 DistanceTo( const CVector2& p );
 
 	// Return squared distance from this point to another
 	// More efficient than Distance when exact length is not required (e.g. for comparisons)
 	// Use InvSqrt( DistanceToSquared(...) ) to calculate 1 / distance more efficiently
-	float DistanceToSquared(const CVector3& p);
+	TFloat32 DistanceToSquared( const CVector2& p );
 
 
 	/*---------------------------------------------------------------------------------------------
-	Data
+		Data
 	---------------------------------------------------------------------------------------------*/
-
-	// Vector components
-	float x;
-	float y;
-	float z;
+    
+    // Vector components
+    TFloat32 x;
+	TFloat32 y;
 
 	// Standard vectors
-	static const CVector3 kZero;
-	static const CVector3 kOne;
-	static const CVector3 kOrigin;
-	static const CVector3 kXAxis;
-	static const CVector3 kYAxis;
-	static const CVector3 kZAxis;
+	static const CVector2 kZero;
+	static const CVector2 kOne;
+	static const CVector2 kOrigin;
+	static const CVector2 kXAxis;
+	static const CVector2 kYAxis;
 };
 
 
 /*-----------------------------------------------------------------------------------------
-Non-member Operators
+	Non-member Operators
 -----------------------------------------------------------------------------------------*/
 
 ///////////////////////////////
@@ -291,22 +321,22 @@ Non-member Operators
 // Uses BaseMath.h float approximation function 'AreEqual' with default margin of error
 inline bool operator==
 (
-	const CVector3& v1,
-	const CVector3& v2
+	const CVector2& v1,
+	const CVector2& v2
 )
 {
-	return (v1.x == v2.x) && (v1.y == v2.y) && (v1.z == v2.z);
+	return AreEqual( v1.x, v2.x ) && AreEqual( v1.y, v2.y );
 }
 
 // Vector inequality
 // Uses BaseMath.h float approximation function 'AreEqual' with default margin of error
 inline bool operator!=
 (
-	const CVector3& v1,
-	const CVector3& v2
+	const CVector2& v1,
+	const CVector2& v2
 )
 {
-	return !(v1.x == v2.x) || !(v1.y == v2.y) || !(v1.z == v2.z);
+	return !AreEqual( v1.x, v2.x ) || !AreEqual( v1.y, v2.y );
 }
 
 
@@ -314,35 +344,35 @@ inline bool operator!=
 // Addition / subtraction
 
 // Vector addition
-inline CVector3 operator+
+inline CVector2 operator+
 (
-	const CVector3& v1,
-	const CVector3& v2
+	const CVector2& v1,
+	const CVector2& v2
 )
 {
-	return CVector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+	return CVector2(v1.x + v2.x, v1.y + v2.y);
 }
 
 // Vector subtraction
-inline CVector3 operator-
-	(
-		const CVector3& v1,
-		const CVector3& v2
-		)
+inline CVector2 operator-
+(
+	const CVector2& v1,
+	const CVector2& v2
+)
 {
-	return CVector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+	return CVector2(v1.x - v2.x, v1.y - v2.y);
 }
 
 // Unary positive (i.e. a = +v, included for completeness)
-inline CVector3 operator+(const CVector3& v)
+inline CVector2 operator+( const CVector2& v )
 {
 	return v;
 }
 
 // Unary negation (i.e. a = -v)
-inline CVector3 operator-(const CVector3& v)
+inline CVector2 operator-( const CVector2& v )
 {
-	return CVector3(-v.x, -v.y, -v.z);
+	return CVector2(-v.x, -v.y);
 }
 
 
@@ -350,99 +380,114 @@ inline CVector3 operator-(const CVector3& v)
 // Scalar multiplication & division
 
 // Vector multiplied by scalar
-inline CVector3 operator*
+inline CVector2 operator*
 (
-	const CVector3& v,
-	const float  s
+	const CVector2& v,
+	const TFloat32  s
 )
 {
-	return CVector3(v.x*s, v.y*s, v.z*s);
+	return CVector2(v.x*s, v.y*s);
 }
 
 // Scalar multiplied by vector
-inline CVector3 operator*
+inline CVector2 operator*
 (
-	const float  s,
-	const CVector3& v
+	const TFloat32  s,
+	const CVector2& v
 )
 {
-	return CVector3(v.x*s, v.y*s, v.z*s);
+	return CVector2(v.x*s, v.y*s);
 }
 
 // Vector divided by scalar
-inline CVector3 operator/
+inline CVector2 operator/
 (
-	const CVector3& v,
-	const float  s
+	const CVector2& v,
+	const TFloat32  s
 )
 {
-	return CVector3(v.x / s, v.y / s, v.z / s);
+	GEN_GUARD_OPT;
+	GEN_ASSERT_OPT( !IsZero(s), "Invalid parameter" );
+
+	return CVector2(v.x/s, v.y/s);
+
+	GEN_ENDGUARD_OPT;
 }
 
 
 ////////////////////////////////////
 // Other operations
 
+// Return a vector perpendicular to the given one, in a counter-clockwise direction
+inline CVector2 Perpendicular( const CVector2& v )
+{
+	return CVector2(-v.y, v.x);
+}
+
+
 // Dot product of two given vectors (order not important) - non-member version
-inline float Dot
+inline TFloat32 Dot
 (
-	const CVector3& v1,
-	const CVector3& v2
+	const CVector2& v1,
+	const CVector2& v2
 )
 {
-	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+    return v1.x*v2.x + v1.y*v2.y;
 }
 
-// Cross product of two given vectors (order is important) - non-member version
-inline CVector3 Cross
+// Cross product of two given vectors (order is important), both promoted to 3D with a
+// z component of 0 - non-member version
+// Result is positive if the second vector is counter-clockwise from the first
+inline CVector2 Cross3D
 (
-	const CVector3& v1,
-	const CVector3& v2
+	const CVector2& v1,
+	const CVector2& v2
 )
 {
-	return CVector3(v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v1.x*v2.z, v1.x*v2.y - v1.y*v2.x);
+	return CVector2(v1.y*v2.x - v1.x*v2.y, v1.x*v2.y - v1.y*v2.x);
 }
-
 
 /*-----------------------------------------------------------------------------------------
-Non-Member Length operations
+	Non-Member Length operations
 -----------------------------------------------------------------------------------------*/
 
 // Return length of given vector
-inline float Length(const CVector3& v)
+inline TFloat32 Length( const CVector2& v )
 {
-	return std::sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+	return Sqrt( v.x*v.x + v.y*v.y );
 }
 
 // Return squared length of given vector
 // More efficient than Length when exact value is not required (e.g. for comparisons)
 // Use InvSqrt( LengthSquared(...) ) to calculate 1 / length more efficiently
-inline float LengthSquared(const CVector3& v)
+inline TFloat32 LengthSquared( const CVector2& v )
 {
-	return v.x*v.x + v.y*v.y + v.z*v.z;
+	return v.x*v.x + v.y*v.y;
 }
 
 // Return unit length vector in the same direction as given one
-CVector3 Normalise(const CVector3& v);
+CVector2 Normalise( const CVector2& v );
 
 
 /*-----------------------------------------------------------------------------------------
-Non-member point related functions
+	Non-member point related functions
 -----------------------------------------------------------------------------------------*/
 
 // Return distance from one point to another - non-member version
-float Distance
+TFloat32 Distance
 (
-	const CVector3& p1,
-	const CVector3& p2
+	const CVector2& p1,
+	const CVector2& p2
 );
 
 // Return squared distance from one point to another - non-member version
 // More efficient than Distance when exact length is not required (e.g. for comparisons)
 // Use InvSqrt( DistanceSquared(...) ) to calculate 1 / distance more efficiently
-float DistanceSquared
+TFloat32 DistanceSquared
 (
-	const CVector3& p1,
-	const CVector3& p2
+	const CVector2& p1,
+	const CVector2& p2
 );
-}
+
+
+} // namespace gen_net
