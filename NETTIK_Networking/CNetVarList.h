@@ -47,7 +47,7 @@ public:
 			INetworkAssociatedObject object_ref;
 			object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
 			object_ref.set_manager_name(pManager->GetName());   // "players"
-			object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+			object_ref.set_network_code(m_pParent->GetNetID());  // 0
 
 			// Construct 
 			auto packet = construct_protoremove(&object_ref, key, m_ListID);
@@ -79,7 +79,7 @@ public:
 			INetworkAssociatedObject object_ref;
 			object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
 			object_ref.set_manager_name(pManager->GetName());   // "players"
-			object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+			object_ref.set_network_code(m_pParent->GetNetID());  // 0
 
 			// Construct 
 			auto packet = construct_protoadd(&object_ref, key, m_Data[key], m_ListID);
@@ -111,7 +111,7 @@ public:
 			INetworkAssociatedObject object_ref;
 			object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
 			object_ref.set_manager_name(pManager->GetName());   // "players"
-			object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+			object_ref.set_network_code(m_pParent->GetNetID());  // 0
 
 			// Construct 
 			auto packet = construct_protoupdate(&object_ref, key, m_Data[key], m_ListID);
@@ -328,7 +328,7 @@ public:
 		INetworkAssociatedObject object_ref;
 		object_ref.set_instance_name(pInstance->GetName()); // "wasteland"
 		object_ref.set_manager_name(pManager->GetName());   // "players"
-		object_ref.set_network_code(m_pParent->m_NetCode);  // 0
+		object_ref.set_network_code(m_pParent->GetNetID());  // 0
 
 		auto packet = construct_protoremove(&object_ref, element_key, m_ListID);
 		m_UpdateQueue.push_back( std::make_pair(std::move(packet), nullptr) );
@@ -475,7 +475,7 @@ public:
 			m_Callbacks[evt] = {};
 		}
 
-		m_Callbacks[evt] = callback;
+		m_Callbacks[evt].push_back(callback);
 	}
 
 	//-----------------------------------------------
@@ -506,7 +506,7 @@ protected:
 		// Get all of the parent instance's peers and push them 
 		// into a target list. 
 		{
-			LockableVector<NetObject*>& object_list = pManager->GetObjects();
+			LockableVector<std::shared_ptr<NetObject>>& object_list = pManager->GetObjects();
 			object_list.safe_lock();
 
 			auto object_list_raw = object_list.get();

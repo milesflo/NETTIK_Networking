@@ -7,50 +7,32 @@
 #pragma once
 #include <list>
 #include <map>
+#include <memory>
+#include "NETTIK_Networking.h"
 
 class CPlayerRealm
 {
 private:
-	std::map<uint32_t,
-		std::unique_ptr<NetObject>
-	> m_PlayerList;
+	using ContainedObject = std::shared_ptr<NetObject>;
 
-	std::list<uint32_t> m_FreeList;
-	std::vector<uint32_t> m_DeletionQueue;
+	std::map<NetObject::NetID, ContainedObject> m_PlayerList;
+	std::list<NetObject::NetID> m_FreeList;
+	std::vector<NetObject::NetID> m_DeletionQueue;
 
 	//! Finds a free ID to allocate to entity.
-	uint32_t GetFreeID();
+	NetObject::NetID GetFreeID();
 
 public:
 
-	//! Creates a new instance of an object and makes the realm own it.
-	template <class TypeName>
-	TypeName* Create(ENetPeer* peer)
-	{
-		std::unique_ptr<TypeName> player(new TypeName());
-		player->m_pPeer = peer;
-		player->m_RealmID = GetFreeID();
-
-		uint32_t new_ID;
-		new_ID = player->m_RealmID;
-
-		TypeName* result;
-		result = player.get();
-
-		m_PlayerList[new_ID] = std::move(player);
-
-		return result;
-	}
-
-	void Add(NetObject* object, ENetPeer* peer);
+	void Add(ContainedObject object, ENetPeer* peer);
 
 	void ProcessRealmDeletes();
-	bool Remove(uint32_t id);
-	bool RemoveByNetID(uint32_t netid);
-	NetObject* GetPlayer(uint32_t id);
-	NetObject* GetPlayerByNetID(uint32_t netid);
+	bool Remove(NetObject::NetID id);
+	bool RemoveByNetID(NetObject::NetID netid);
 
-	NetObject* GetPlayer(ENetPeer* peer);
+	ContainedObject GetPlayer(NetObject::NetID id);
+	ContainedObject GetPlayerByNetID(NetObject::NetID netid);
+	ContainedObject GetPlayer(ENetPeer* peer);
 
 	CPlayerRealm();
 	virtual ~CPlayerRealm();

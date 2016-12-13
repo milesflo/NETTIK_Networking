@@ -16,7 +16,7 @@ CPlayerRealm::~CPlayerRealm()
 
 }
 
-uint32_t CPlayerRealm::GetFreeID()
+NetObject::NetID CPlayerRealm::GetFreeID()
 {
 	uint32_t i;
 
@@ -30,13 +30,13 @@ uint32_t CPlayerRealm::GetFreeID()
 	return i;
 }
 
-void CPlayerRealm::Add(NetObject* object, ENetPeer* peer)
+void CPlayerRealm::Add(CPlayerRealm::ContainedObject object, ENetPeer* peer)
 {
 	object->SetRealmID( GetFreeID() );
 	object->m_pPeer = peer;
 
 	uint32_t new_ID = object->GetRealmID();
-	m_PlayerList[new_ID] = std::move(std::unique_ptr<NetObject>(object));
+	m_PlayerList[new_ID] = object;
 }
 
 void CPlayerRealm::ProcessRealmDeletes()
@@ -51,7 +51,7 @@ void CPlayerRealm::ProcessRealmDeletes()
 	}
 }
 
-bool CPlayerRealm::Remove(uint32_t id)
+bool CPlayerRealm::Remove(NetObject::NetID id)
 {
 	auto it = m_PlayerList.find(id);
 	if (it == m_PlayerList.end())
@@ -63,7 +63,7 @@ bool CPlayerRealm::Remove(uint32_t id)
 	return true;
 }
 
-bool CPlayerRealm::RemoveByNetID(uint32_t netid)
+bool CPlayerRealm::RemoveByNetID(NetObject::NetID netid)
 {
 	for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 	{
@@ -79,34 +79,34 @@ bool CPlayerRealm::RemoveByNetID(uint32_t netid)
 	return false;
 }
 
-NetObject* CPlayerRealm::GetPlayer(uint32_t id)
+CPlayerRealm::ContainedObject CPlayerRealm::GetPlayer(NetObject::NetID id)
 {
 	auto it = m_PlayerList.find(id);
 	if (it == m_PlayerList.end())
 		return nullptr;
 
-	return (*it).second.get();
+	return (*it).second;
 }
 
-NetObject* CPlayerRealm::GetPlayerByNetID(uint32_t netid)
+CPlayerRealm::ContainedObject CPlayerRealm::GetPlayerByNetID(NetObject::NetID netid)
 {
 	for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 	{
 		if (it->second->GetNetID() == netid)
 		{
-			return it->second.get();
+			return it->second;
 		}
 	}
 
 	return nullptr;
 }
 
-NetObject* CPlayerRealm::GetPlayer(ENetPeer* peer)
+CPlayerRealm::ContainedObject CPlayerRealm::GetPlayer(ENetPeer* peer)
 {
 	for (auto it = m_PlayerList.begin(); it != m_PlayerList.end(); ++it)
 	{
 		if (it->second->m_pPeer == peer)
-			return it->second.get();
+			return it->second;
 	}
 
 	return nullptr;
