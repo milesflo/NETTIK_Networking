@@ -39,20 +39,28 @@ void VirtualInstance::DoPostUpdate(float elapsedTime)
 
 void VirtualInstance::DoListUpdate()
 {
-	std::vector<std::shared_ptr<NetObject>>* pObjects;
+	std::vector<std::shared_ptr<NetObject>> updateList;
 
+	// Get active objects to update.
 	for (auto it = m_EntManagers.begin(); it != m_EntManagers.end(); ++it)
 	{
-		auto& object_manager = (*it).second->GetObjects();
 
+		LockableVector<std::shared_ptr<NetObject>>& object_manager = (*it).second->GetObjects();
 		object_manager.safe_lock();
-		pObjects = (*it).second->GetObjects().get();
 
+		auto pObjects = object_manager.get();
 		for (auto object_it = pObjects->begin(); object_it != pObjects->end(); ++object_it)
 		{
-			(*object_it)->UpdateListDelta();
+			updateList.push_back(*object_it);
 		}
+
 		object_manager.safe_unlock();
+	}
+
+	// 
+	for (std::shared_ptr<NetObject>& pObject : updateList)
+	{
+		pObject->UpdateListDelta();
 	}
 }
 

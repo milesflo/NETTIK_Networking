@@ -105,10 +105,12 @@ public:
 	virtual void SendObjectLists(ENetPeer* pOwner) = 0;
 
 protected:
+	using EntityList = LockableVector<std::shared_ptr<NetObject>>;
 	//-------------------------------------------------
 	// Object list
 	//-------------------------------------------------
 	// LockableVector<NetObject*>  m_Objects;
-	LockableVector<std::shared_ptr<NetObject>> m_NetworkObjects; // NET2
+	EntityList m_NetworkObjects;      // NET2
+	EntityList m_NetworkObjectsLocal; // NET2
 	std::string m_ManagerName;
 };

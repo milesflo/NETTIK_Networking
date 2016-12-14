@@ -4,16 +4,16 @@
 //
 // See attached license inside "LICENSE".
 //-------------------------------------------------
-#include "IThread.h"
+#include "INetworkThread.h"
 #include <cstdio>
 
-IThread::IThread(ThreadProcedure proc, void* pData)
+INetworkThread::INetworkThread(ThreadProcedure proc, void* pData)
 {
 	m_fProcedure = proc;
 	m_pPassedData = pData;
 }
 
-IThread::~IThread()
+INetworkThread::~INetworkThread()
 {
 	if (m_hThread)
 	{
@@ -25,7 +25,7 @@ IThread::~IThread()
 	}
 }
 
-void IThread::Start()
+void INetworkThread::Start()
 {
 	if (m_hThread || m_bRunning)
 		return;
@@ -33,13 +33,12 @@ void IThread::Start()
 	m_bRunning = true;
 
 	m_hThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)_staticProc,
-		static_cast<IThread*>(this), 0, 0);
+		static_cast<INetworkThread*>(this), 0, 0);
 }
 
-uint32_t IThread::_staticProc(void* pData)
+uint32_t INetworkThread::_staticProc(void* pData)
 {
-	IThread* self;
-	self = static_cast<IThread*>(pData);
+	INetworkThread* self = static_cast<INetworkThread*>(pData);
 
 	if (self->m_fProcedure)
 		self->m_fProcedure(

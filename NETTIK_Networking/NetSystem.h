@@ -6,7 +6,7 @@
 //-------------------------------------------------
 #pragma once
 #include "SnapshotEntList.h"
-#include "IThread.h"
+#include "INetworkThread.h"
 #include "NetObject.h"
 #include "MessageDispatcher.h"
 #include <functional>
@@ -268,8 +268,8 @@ protected:
 	//--------------------------------
 	// Internal process threads.
 	//--------------------------------
-	IThread*    m_pThread        = nullptr;
-	IThread*    m_pSyncThread    = nullptr;
+	INetworkThread*    m_pThread        = nullptr;
+	INetworkThread*    m_pSyncThread    = nullptr;
 
 	//--------------------------------
 	// Status flags
@@ -382,7 +382,6 @@ inline ENetHost* NetSystem::GetHost() const
 //------------------------------------
 inline void NetSystem::on(INetworkCodes::msg_t code, CallbackFunction_f callback)
 {
-	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	m_Callbacks[code].push_back(callback);
 }
 
@@ -393,7 +392,6 @@ inline void NetSystem::on(INetworkCodes::msg_t code, CallbackFunction_f callback
 //------------------------------------
 inline void NetSystem::on_enet(ENetEventType evt, EventFunction_f callback)
 {
-	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	m_EventCallbacks[evt].push_back(callback);
 }
 

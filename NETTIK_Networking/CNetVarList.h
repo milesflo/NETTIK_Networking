@@ -505,23 +505,16 @@ protected:
 	{
 		// Get all of the parent instance's peers and push them 
 		// into a target list. 
+		auto object_list_raw = pManager->GetObjects().get_copy();
+
+		for (auto object = object_list_raw.begin(); object != object_list_raw.end(); ++object)
 		{
-			LockableVector<std::shared_ptr<NetObject>>& object_list = pManager->GetObjects();
-			object_list.safe_lock();
-
-			auto object_list_raw = object_list.get();
-
-			for (auto object = object_list_raw->begin(); object != object_list_raw->end(); ++object)
+			// Bots don't have peers, make sure we're not pushing nullptr
+			// bot objects into the firing line.
+			if ((*object)->m_pPeer != nullptr)
 			{
-				// Bots don't have peers, make sure we're not pushing nullptr
-				// bot objects into the firing line.
-				if ((*object)->m_pPeer != nullptr)
-				{
-					target_list.push_back((*object)->m_pPeer);
-				}
+				target_list.push_back((*object)->m_pPeer);
 			}
-
-			object_list.safe_unlock();
 		}
 	}
 
@@ -571,7 +564,6 @@ protected:
 
 		// Build the element.
 		auto insert_result = m_Data.insert(std::make_pair(index, example_t()));
-		CMessageDispatcher::Add(kMessageType_Warn, "%s", __FUNCTION__);
 
 		if (!insert_result.second)
 		{
@@ -693,14 +685,15 @@ protected:
 			return;
 		}
 
-		mutex_guard guard(m_QueuedEventsMutex);
+		std::unique_lock<std::recursive_mutex> guard(m_QueuedEventsMutex);
+		auto events = m_QueuedEvents;
+		m_QueuedEvents.clear();
+		guard.unlock();
 
-		for (auto it = m_QueuedEvents.begin(); it != m_QueuedEvents.end(); ++it)
+		for (auto it = events.begin(); it != events.end(); ++it)
 		{
 			it->dest( it->key, &m_Data[ it->key ] );
 		}
-
-		m_QueuedEvents.clear();
 	}
 
 	// Storage for all data elements.

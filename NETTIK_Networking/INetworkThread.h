@@ -7,7 +7,7 @@
 #pragma once
 #include <wtypes.h>
 
-class IThread
+class INetworkThread
 {
 public:
 	typedef void(*ThreadProcedure)(void* pData, bool& bThreadStatus);
@@ -25,9 +25,9 @@ protected:
 
 public:
 
-	IThread(ThreadProcedure proc, void* pData);
+	INetworkThread(ThreadProcedure proc, void* pData);
 
 	void Start();
 
-	~IThread();
+	~INetworkThread();
 };

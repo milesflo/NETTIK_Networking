@@ -48,7 +48,7 @@ public:
 	// Pushes the item onto the back of 
 	// the list, safely.
 	//-----------------------------------
-	void push_back(T& v);
+	void push_back(T v);
 
 	//-----------------------------------
 	// Gets the back element of the list,
@@ -72,6 +72,12 @@ public:
 	// Clears the vector, safely.
 	//-----------------------------------
 	void clear();
+
+	//-----------------------------------
+	// Copies vector contents by locking
+	// underlying data structure.
+	//-----------------------------------
+	my_vec get_copy();
 
 private:
 	my_vec                m_contents;
@@ -111,7 +117,7 @@ inline typename LockableVector<T>::my_vec* LockableVector<T>::get()
 }
 
 template <typename T>
-inline void LockableVector<T>::push_back(T& v)
+inline void LockableVector<T>::push_back(T v)
 {
 	lock guard(m_mutex);
 	m_contents.push_back(v);
@@ -136,4 +142,15 @@ inline T LockableVector<T>::at(size_type index)
 {
 	lock guard(m_mutex);
 	return m_contents.at(index);
+}
+
+//-----------------------------------
+// Copies vector contents by locking
+// underlying data structure.
+//-----------------------------------
+template <typename T>
+inline typename LockableVector<T>::my_vec LockableVector<T>::get_copy()
+{
+	lock guard(m_mutex);
+	return m_contents;
 }

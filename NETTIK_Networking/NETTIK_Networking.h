@@ -16,7 +16,6 @@
 #include "LoggingUtil.h"
 #include "INetworkCodes.hpp"
 #include "INetworkPacketFactory.hpp"
-#include "IThread.h"
 #include "SynchronousTimer.h"
 
 // Network interfaces.

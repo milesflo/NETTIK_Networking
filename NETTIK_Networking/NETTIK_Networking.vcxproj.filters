@@ -162,9 +162,6 @@
     <ClInclude Include="ControllerFlags.h">
       <Filter>Core\Controllers\headers</Filter>
     </ClInclude>
-    <ClInclude Include="IThread.h">
-      <Filter>Standard Libraries\headers</Filter>
-    </ClInclude>
     <ClInclude Include="NetBit.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -264,6 +261,9 @@
     <ClInclude Include="CMatrix2x2.h">
       <Filter>Standard Libraries\Common\headers</Filter>
     </ClInclude>
+    <ClInclude Include="INetworkThread.h">
+      <Filter>Standard Libraries\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SnapshotHeader.cpp">
@@ -277,9 +277,6 @@
     </ClCompile>
     <ClCompile Include="CPlayerRealm.cpp">
       <Filter>Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="IThread.cpp">
-      <Filter>Standard Libraries\source</Filter>
     </ClCompile>
     <ClCompile Include="NetVar.cpp">
       <Filter>Core\Network Object\source</Filter>
@@ -370,6 +367,9 @@
     </ClCompile>
     <ClCompile Include="Utility.cpp">
       <Filter>Standard Libraries\Common\source</Filter>
+    </ClCompile>
+    <ClCompile Include="INetworkThread.cpp">
+      <Filter>Standard Libraries\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

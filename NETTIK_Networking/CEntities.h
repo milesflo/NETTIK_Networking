@@ -231,10 +231,12 @@ public:
 	void SendObjectLists(ENetPeer* pOwner);
 
 private:
+
+	void FreeListEnt(EntityList& list, NetObject::NetID id);
+
 	//------------------------------------
 	// Internal object lists.
 	//------------------------------------
-	LockableVector<std::shared_ptr<NetObject>> m_MaintainedObjects;               // List of locally owned and maintained objects.
 	//std::unordered_map<NetObject::NetID, NetObject*> m_ObjectRefs; // List of object references to map NetObjects directly to.
 
 	//------------------------------------
@@ -299,7 +301,7 @@ GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::Build(ENetPeer* pOwner)
 	built_ent->m_pInstance = m_pBaseInstance;
 	built_ent->m_pManager = this;
 	built_ent->SetController( NET_CONTROLLER_LOCAL );
-	
+	built_ent->m_pPeer = pOwner;
 	NetSystemServer* pServer = dynamic_cast<NetSystemServer*>(m_pGlobalController);
 	if (!pServer)
 	{
@@ -404,10 +406,10 @@ GEN_TEMPLATE_FN(CEntities, void)::SendObjectLists(ENetPeer* pOwner)
 
 		std::uint32_t controllerStatus;
 
-		if (pObjectPeer == nullptr)
-			controllerStatus = NET_CONTROLLER_NONE;
-		else if (pObjectPeer == pOwner)
+		if (pOwner != nullptr && pObjectPeer == pOwner)
 			controllerStatus = NET_CONTROLLER_LOCAL;
+		else
+			controllerStatus = NET_CONTROLLER_NONE;
 
 		creationUpdate.set_netid(netObj->GetNetID());
 		creationUpdate.set_controller(controllerStatus);
@@ -444,7 +446,8 @@ GEN_TEMPLATE_FN(CEntities, std::shared_ptr<NetObject>)::BuildLocal(NetObject::Ne
 	m_NetworkObjects.get()->push_back(built_ent);
 	guard.unlock();
 
-	//m_MaintainedObjects.push_back(built_ent);
+	if (built_ent->IsNetworkLocal())
+		m_NetworkObjectsLocal.push_back(built_ent);
 
 	// Dispatch callback.
 	if (m_fCallbackCreate)
@@ -456,16 +459,16 @@ GEN_TEMPLATE_FN(CEntities, std::shared_ptr<NetObject>)::BuildLocal(NetObject::Ne
 	return built_ent;
 }
 
-GEN_TEMPLATE_FN(CEntities, void)::FreeLocal(NetObject::NetID netID)
+GEN_TEMPLATE_FN(CEntities, void)::FreeListEnt(EntityList& list, NetObject::NetID id)
 {
-	std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
-	auto net_list = m_NetworkObjects.get();
+	std::unique_lock<std::recursive_mutex> guard(list.mutex());
+	auto net_list = list.get();
 
 	for (auto obj_it = net_list->begin(); obj_it != net_list->end();)
 	{
 		std::shared_ptr<NetObject>& net_obj = (*obj_it);
 		
-		if (net_obj->GetNetID() == netID)
+		if (net_obj->GetNetID() == id)
 		{
 			obj_it = net_list->erase(obj_it);
 			return;
@@ -475,6 +478,12 @@ GEN_TEMPLATE_FN(CEntities, void)::FreeLocal(NetObject::NetID netID)
 			++ obj_it;
 		}
 	}
+}
+
+GEN_TEMPLATE_FN(CEntities, void)::FreeLocal(NetObject::NetID netID)
+{
+	FreeListEnt(m_NetworkObjects,      netID);
+	FreeListEnt(m_NetworkObjectsLocal, netID);
 
 	CMessageDispatcher::Add(kMessageType_Warn, "Tried to free local entity without it existing in local list (desync?)");
 }
@@ -482,8 +491,8 @@ GEN_TEMPLATE_FN(CEntities, void)::FreeLocal(NetObject::NetID netID)
 
 GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::GetControlled(std::uint32_t index)
 {
-	auto net_list = m_NetworkObjects.get();
-	std::unique_lock<std::recursive_mutex> guard(m_NetworkObjects.mutex());
+	auto net_list = m_NetworkObjectsLocal.get();
+	std::unique_lock<std::recursive_mutex> guard(m_NetworkObjectsLocal.mutex());
 
 	std::uint32_t current_index = 0;
 
@@ -498,6 +507,8 @@ GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::GetControlled(std::uint
 		
 		++ current_index;
 	}
+
+	return nullptr;
 }
 
 /*
@@ -695,15 +706,15 @@ template <class TypeObject>
 CEntities<TypeObject>::~CEntities()
 {
 	m_NetworkObjects.safe_lock();
-	m_MaintainedObjects.safe_lock();
+	m_NetworkObjectsLocal.safe_lock();
 
 	for (auto it = m_NetworkObjects.get()->begin(); it != m_NetworkObjects.get()->end();)
 		it = m_NetworkObjects.get()->erase(it);
 
-	for (auto it = m_MaintainedObjects.get()->begin(); it != m_MaintainedObjects.get()->end();)
-		it = m_MaintainedObjects.get()->erase(it);
+	for (auto it = m_NetworkObjectsLocal.get()->begin(); it != m_NetworkObjectsLocal.get()->end();)
+		it = m_NetworkObjectsLocal.get()->erase(it);
 
-	m_MaintainedObjects.safe_unlock();
+	m_NetworkObjectsLocal.safe_unlock();
 	m_NetworkObjects.safe_unlock();
 }
 
@@ -712,9 +723,9 @@ inline size_t CEntities<TypeObject>::CountMaintained()
 {
 	size_t result;
 	
-	m_MaintainedObjects.safe_lock();
-	result = m_MaintainedObjects.get()->size();
-	m_MaintainedObjects.safe_unlock();
+	m_NetworkObjectsLocal.safe_lock();
+	result = m_NetworkObjectsLocal.get()->size();
+	m_NetworkObjectsLocal.safe_unlock();
 	return result;
 }
 

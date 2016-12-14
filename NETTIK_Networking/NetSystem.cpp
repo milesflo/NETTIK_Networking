@@ -162,7 +162,7 @@ NetSystem::NetSystem(uint32_t tickRate) : m_iNetworkRate(tickRate)
 
 
 	// Processes the network stack.
-	m_pThread = new IThread([](void* pData, bool& bThreadStatus)
+	m_pThread = new INetworkThread([](void* pData, bool& bThreadStatus)
 	{
 		NetSystem* self = static_cast<NetSystem*>(pData);
 
@@ -170,7 +170,7 @@ NetSystem::NetSystem(uint32_t tickRate) : m_iNetworkRate(tickRate)
 	}, this);
 
 	// Process entity synch.
-	m_pSyncThread = new IThread([](void* pData, bool& bThreadStatus)
+	m_pSyncThread = new INetworkThread([](void* pData, bool& bThreadStatus)
 	{
 		NetSystem* self = static_cast<NetSystem*>(pData);
 
@@ -468,7 +468,6 @@ void NetSystem::ProcessRecv(const enet_uint8* data, size_t data_length, ENetPeer
 	if (data_length < sizeof(INetworkCodes::msg_t))
 		NETTIK_EXCEPTION("Cannot parse data that has less than the code data type size (out of bounds prevention)");
 
-	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	INetworkCodes::msg_t code = *(INetworkCodes::msg_t*)(data);
 
 	auto callbacks = m_Callbacks.find(code);
@@ -494,7 +493,6 @@ void NetSystem::FireEvent(ENetEventType evt, ENetEvent& evtFrame)
 	if (!m_bRunning)
 		return;
 
-	std::unique_lock<std::recursive_mutex> guard(m_CallbackMutex);
 	auto evts = m_EventCallbacks.find(evt);
 
 	if (evts != m_EventCallbacks.end())

@@ -229,7 +229,7 @@
     <ClInclude Include="INetworkCodes.hpp" />
     <ClInclude Include="INetworkPacketFactory.hpp" />
     <ClInclude Include="LoggingUtil.h" />
-    <ClInclude Include="IThread.h" />
+    <ClInclude Include="INetworkThread.h" />
     <ClInclude Include="LockableVector.h" />
     <ClInclude Include="NetBit.h" />
     <ClInclude Include="NETIDReserved.h" />
@@ -287,7 +287,7 @@
     <ClCompile Include="NetSystemClient.cpp" />
     <ClCompile Include="NetSystemServer.cpp" />
     <ClCompile Include="INetworkPacketFactory.cpp" />
-    <ClCompile Include="IThread.cpp" />
+    <ClCompile Include="INetworkThread.cpp" />
     <ClCompile Include="LoggingUtil.cpp" />
     <ClCompile Include="NetObject.cpp" />
     <ClCompile Include="NETTIK_Networking.cpp">
