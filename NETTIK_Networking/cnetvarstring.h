@@ -37,7 +37,7 @@ public:
 		}
 	}
 
-	void Set(S& data)
+	void Set(S data)
 	{
 		if (data.size() + 1 > N)
 		{

@@ -11,6 +11,13 @@ template <class VarType>
 class NetVarBufferBase : public CNetVarBase< VarType >
 {
 public:
+	NetVarBufferBase()
+	{
+		for (size_t i = 0; i < 4; ++i)
+		{
+			m_DataBuffers[i] = { 0.0f, 0.0f, 0.0f };
+		}
+	}
 	//--------------------------------------------------
 	// Overloads the binary set to buffer invalidation to allow
 	// interpolation between each snapshot.
@@ -26,12 +33,19 @@ public:
 		size_t index_new = mod_wrap(m_ActivePositionIndex + 1, static_cast<unsigned int>(4));
 
 		float* vector_data = reinterpret_cast<float*>(ptr);
+		m_iChanges ++;
+		m_bChanged = true;
+
+		// No interpolation on replication side.
+		if (m_pParent->IsNetworkLocal())
+		{
+			//m_DataBuffers[m_ActivePositionIndex].Set(vector_data);
+			m_Data.Set(vector_data);
+			return;
+		}
 		m_DataBuffers[index_new].Set(vector_data);
 		m_ActivePositionIndex = index_new;
 
-		m_iChanges++;
-		m_bChanged = true;
-		
 		std::chrono::milliseconds fCurrentTime = GetTime();
 
 		if ( m_bCalculatedPreviousFrameTime )
@@ -44,6 +58,16 @@ public:
 		m_fTimeFramePrevious = fCurrentTime;
 
 		m_fElaspedTime = std::chrono::milliseconds(0);
+	}
+
+	void Set(VarType data)
+	{
+		if (!SetGuard(data))
+		{
+			return;
+		}
+
+		m_Data = data;
 	}
 
 	//--------------------------------------------------
@@ -60,9 +84,21 @@ public:
 	// Returns the true most updated vector received
 	// from the server.
 	//--------------------------------------------------
+	VarType& get()
+	{
+		if (m_pParent->IsNetworkLocal())
+		{
+			return m_Data;
+		}
+		else
+		{
+			return m_DataBuffers[m_ActivePositionIndex];
+		}
+	}
+
 	VarType GetLive()
 	{
-		return m_DataBuffers[m_ActivePositionIndex];
+		return get();
 	}
 
 protected:

@@ -40,7 +40,7 @@ public:
 	void Unlock();
 
 	//! Returns the mutable variable stored in the netvar.
-	VarType& get();
+	virtual VarType& get();
 
 	//! Invalidates the contents and resends to clients.
 	void Invalidate();
@@ -163,7 +163,7 @@ void CNetVarBase<VarType>::Set(unsigned char* ptr, size_t size, ENetPeer* pWho)
 	m_iChanges++;
 
 	m_bChanged = true;
-	CMessageDispatcher::Add(kMessageType_Print, "Set_RawPtr()");
+	CMessageDispatcher::Add(kMessageType_Print, "Set_RawPtr<%s>()", m_Name);
 }
 
 template< class VarType >
@@ -175,7 +175,7 @@ void CNetVarBase<VarType>::Set(VarType data)
 	m_Data = data;
 	m_iChanges++; 
 	m_bChangeForced = true;
-	CMessageDispatcher::Add(kMessageType_Print, "Set<T>()");
+	CMessageDispatcher::Add(kMessageType_Print, "Set<T, %s>()", m_Name);
 }
 
 template< class VarType >

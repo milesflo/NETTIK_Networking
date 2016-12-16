@@ -26,19 +26,17 @@ gen_net::CQuaternion CNetVarBufferedQuat::GetInterpolated(std::chrono::milliseco
 	// Don't interpolate if the average time frame hasn't been adjusted.
 	if (!m_bCalculatedFrameTime || m_fTimeFrame.count() == 0)
 	{
-		CMessageDispatcher::Add(kMessageType_Print, "Skipping interpolation...");
 		return to;
 	}
 
 	// Get current time and evaluate distance in time the current call
 	// is from receiving the next vector update.
-	std::chrono::milliseconds fCurrentTime = GetTime();
 	m_fElaspedTime += (dtms / 2);
 
 	// Calculate interpolated values from A to B (lerp)
 	unsigned long long iDiff = m_fElaspedTime.count();
 	float fDT = static_cast<float>( iDiff ) / static_cast<float>( m_fTimeFrame.count() );
-		
+
 	// If the timescale is still within bounds of the average step time, 
 	// calculate the lerp value.
 	if (fDT <= 1.0f)
@@ -67,7 +65,6 @@ void CNetVarBufferedQuat::Set(float w, float x, float y, float z)
 	}
 
 	m_Data = compose;
-	CMessageDispatcher::Add(kMessageType_Print, "%f %f %f %f", w, x, y, z);
 }
 
 void CNetVarBufferedQuat::Rotate(float w, float x, float y, float z)

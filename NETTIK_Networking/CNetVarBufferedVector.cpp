@@ -34,7 +34,6 @@ gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::millisecon
 	// Don't interpolate if the average time frame hasn't been adjusted.
 	if (!m_bCalculatedFrameTime || m_fTimeFrame.count() == 0)
 	{
-		CMessageDispatcher::Add(kMessageType_Print, "Skipping interpolation...");
 		return to;
 	}
 
@@ -59,6 +58,7 @@ gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::millisecon
 	// destination.
 	return to;
 }
+
 //--------------------------------------------------
 // Standard vector manipulator.
 //--------------------------------------------------
