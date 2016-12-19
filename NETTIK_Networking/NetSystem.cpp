@@ -384,7 +384,7 @@ void NetSystem::Run(bool& bThreadStatus)
 void NetSystem::BroadcastStream(SnapshotStream& stream, bool reliable)
 {
 	uint32_t flags;
-	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : 0;
 
 	Broadcast(&stream.result()[0], stream.result().size(), flags, 0);
 }
@@ -396,7 +396,7 @@ void NetSystem::BroadcastStream(SnapshotStream& stream, bool reliable)
 void NetSystem::SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer)
 {
 	uint32_t flags;
-	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : 0;
 
 	if (peer == nullptr)
 		peer = GetFirstPeer();
