@@ -384,6 +384,8 @@ public:
 		const CVector3& vec
 	) const;
 
+	float DistanceTo(const CQuaternion& q);
+
 
 	/*---------------------------------------------------------------------------------------------
 		Data

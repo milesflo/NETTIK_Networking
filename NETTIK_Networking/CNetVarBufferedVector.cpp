@@ -45,10 +45,10 @@ gen_net::CVector3 CNetVarBufferedVector::GetInterpolated(std::chrono::millisecon
 	// Calculate interpolated values from A to B (lerp)
 	unsigned long long iDiff = m_fElaspedTime.count();
 	float fDT = static_cast<float>( iDiff ) / static_cast<float>( m_fTimeFrame.count() );
-		
+	
 	// If the timescale is still within bounds of the average step time, 
 	// calculate the lerp value.
-	if (fDT <= 1.0f)
+	if (fDT <= kMaxInterpolationScale)
 	{
 		return from + (heading * fDT);
 	}

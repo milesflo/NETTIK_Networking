@@ -39,7 +39,7 @@ gen_net::CQuaternion CNetVarBufferedQuat::GetInterpolated(std::chrono::milliseco
 
 	// If the timescale is still within bounds of the average step time, 
 	// calculate the lerp value.
-	if (fDT <= 1.0f)
+	if (fDT <= kMaxInterpolationScale)
 	{
 		gen_net::CQuaternion result;
 		gen_net::Slerp(from, to, fDT, result);

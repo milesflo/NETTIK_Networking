@@ -181,6 +181,10 @@ namespace gen_net
 		return CVector3((tmp*w - 1.0f)*p + (2.0f*gen_net::Dot(v, p))*v + tmp*Cross(v, p));
 	}
 
+	TFloat32 CQuaternion::DistanceTo(const CQuaternion& q)
+	{
+		return std::fabsf(q.w - w);
+	}
 
 	/*---------------------------------------------------------------------------------------------
 	Interpolation

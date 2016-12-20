@@ -69,12 +69,9 @@ void VirtualInstance::SendAllObjectLists(ENetPeer* pOwner)
 	for (std::pair<const std::string, IEntityManager*>& pManager : m_EntManagers)
 	{
 		IEntityManager* pInstance = pManager.second;
-		printf(" %p ", pInstance);
 		pInstance->SendObjectLists( pOwner );
-		printf(" fin ");
 	}
 }
-
 
 void VirtualInstance::DoSnapshot(SnapshotStream& stream, bool bReliableFlag, bool bForced)
 {

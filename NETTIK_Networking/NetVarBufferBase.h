@@ -3,6 +3,16 @@
 #include <chrono>
 
 //--------------------------------------------------
+// Distance interpolation should scale to before
+// waiting for next network update. 
+// 1.0f is resonable, but packet speed can be 
+// variable, so increasing this can predict the next
+// location.
+//--------------------------------------------------
+extern float kMaxInterpolationScale;
+extern float kMaxInterpolationBandingDist;
+
+//--------------------------------------------------
 // NetVarBufferBase: Generic class for interpolated
 // variable data. VarType must be a variable that
 // supports void Set(float* psData);
@@ -18,6 +28,9 @@ public:
 			m_DataBuffers[i] = { 0.0f, 0.0f, 0.0f };
 		}
 	}
+
+	virtual VarType GetInterpolated(std::chrono::milliseconds dtms) = 0;
+
 	//--------------------------------------------------
 	// Overloads the binary set to buffer invalidation to allow
 	// interpolation between each snapshot.
@@ -39,11 +52,27 @@ public:
 		// No interpolation on replication side.
 		if (m_pParent->IsNetworkLocal())
 		{
-			//m_DataBuffers[m_ActivePositionIndex].Set(vector_data);
 			m_Data.Set(vector_data);
 			return;
 		}
+
+		VarType renderPoint = GetInterpolated(std::chrono::milliseconds());
 		m_DataBuffers[index_new].Set(vector_data);
+
+		// Set the previous buffer to the current location to cause
+		// rubber-banding to stop stutter.
+
+		const VarType& currentPoint = m_DataBuffers[index_new];
+		float fInterpolationDist = renderPoint.DistanceTo( currentPoint );
+		if (fInterpolationDist <= kMaxInterpolationBandingDist)
+		{
+			m_DataBuffers[ m_ActivePositionIndex ] = renderPoint;
+		}
+		else
+		{
+			CMessageDispatcher::Add(kMessageType_Warn, "%S Dropping interpolation banding due to distance of %f", typeid(VarType).name(), fInterpolationDist);
+		}
+
 		m_ActivePositionIndex = index_new;
 
 		std::chrono::milliseconds fCurrentTime = GetTime();
