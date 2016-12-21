@@ -83,7 +83,18 @@ void NetSystem::ReadEntityUpdate(SnapshotEntList& frame, ENetPeer* owner)
 	}
 	else
 	{
-		pVar->Set(const_cast<unsigned char*>(frame.get_data()), 0, owner);
+		// Some variables may reject sequences less than currently processed
+		uint32_t sequence_id = frame.get_sequence();
+		if (pVar->CheckSequence(sequence_id))
+		{
+			pVar->SetSequence(sequence_id);
+			pVar->Set(const_cast<unsigned char*>(frame.get_data()), 0, owner);
+		}
+		else
+		{
+			CMessageDispatcher::Add(kMessageType_Warn, "Dropped variable update as sequence is out by %d",
+				pVar->GetSequence() - sequence_id);
+		}
 	}
 }
 
@@ -107,7 +118,6 @@ void NetSystem::Destroy()
 	{
 		std::this_thread::yield();
 	}
-
 }
 
 //-----------------------------------------
@@ -115,7 +125,6 @@ void NetSystem::Destroy()
 //-----------------------------------------
 void NetSystem::DeletePeerSingleton()
 {
-
 	if (s_PeerSingleton == nullptr)
 		NETTIK_EXCEPTION("Tried deleting invalid peer.");
 
@@ -384,7 +393,7 @@ void NetSystem::Run(bool& bThreadStatus)
 void NetSystem::BroadcastStream(SnapshotStream& stream, bool reliable)
 {
 	uint32_t flags;
-	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : 0;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
 
 	Broadcast(&stream.result()[0], stream.result().size(), flags, 0);
 }
@@ -396,7 +405,7 @@ void NetSystem::BroadcastStream(SnapshotStream& stream, bool reliable)
 void NetSystem::SendStream(SnapshotStream& stream, bool reliable, ENetPeer* peer)
 {
 	uint32_t flags;
-	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : 0;
+	flags = reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNSEQUENCED;
 
 	if (peer == nullptr)
 		peer = GetFirstPeer();
@@ -550,15 +559,6 @@ void NetSystem::ProcessNetStack()
 		case ENET_EVENT_TYPE_CONNECT:
 		{
 			m_PeerList.push_back(m_CurrentEvent.peer);
-
-			// Send current instance states to new player.
-			for (std::pair<const std::string, std::unique_ptr<VirtualInstance>>& pInstancePair : m_Instances)
-			{
-				std::unique_ptr<VirtualInstance>& pInstance = pInstancePair.second;
-
-				
-			}
-
 			m_bConnected = true;
 		}
 			break;

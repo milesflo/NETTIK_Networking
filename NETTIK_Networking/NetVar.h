@@ -42,6 +42,12 @@ public:
 	//--------------------------
 	virtual void Set( unsigned char* ptr, size_t size, ENetPeer* pWho ) = 0;
 
+	bool CheckSequence(uint32_t sequence_id) const;
+
+	void SetSequence(uint32_t sequence_id);
+
+	uint32_t GetSequence() const;
+
 	//------------------------------
 	// Implementation to return
 	// the data stored in the var
@@ -56,13 +62,15 @@ public:
 
 	virtual ~NetVar();
 
+	void SetSequenceCheck(bool bSequenceCheck);
 protected:
 	size_t      m_iChanges = 0;		// Number of changes performed to this variable.
+	uint32_t    m_iSequenceID = 0;
 	NetObject*  m_pParent;			// Parent object.
 	const char* m_Name;				// Name of variable.
 
-	bool        m_Reliable = true;	// Should be transported via reliable channels?
-
+	bool m_Reliable = true;	// Should be transported via reliable channels?
+	bool m_CheckSequence = false;
 };
 
 inline void NetVar::ClearChanges()

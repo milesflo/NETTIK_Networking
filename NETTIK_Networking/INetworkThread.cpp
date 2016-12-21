@@ -18,10 +18,10 @@ INetworkThread::~INetworkThread()
 	if (m_hThread)
 	{
 		if (m_bRunning)
+		{
+			m_bRunning = false;
 			TerminateThread(m_hThread, 0);
-		m_bRunning = false;
-
-//		CloseHandle(m_hThread);
+		}
 	}
 }
 

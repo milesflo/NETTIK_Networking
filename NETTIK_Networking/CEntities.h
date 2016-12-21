@@ -369,7 +369,7 @@ GEN_TEMPLATE_FN(CEntities, std::shared_ptr<TypeObject>)::Build(ENetPeer* pOwner)
 		if (reliableStream.modified())
 			pServer->SendStream(reliableStream, true, built_ent->m_pPeer);
 
-		// Reliable objects should be reliably sent as this is the first
+		// Unreliable objects should be reliably sent as this is the first
 		// initial floatation of the new entitiy.
 		if (unreliableStream.modified())
 			pServer->SendStream(unreliableStream, true, built_ent->m_pPeer);

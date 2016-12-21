@@ -70,21 +70,22 @@ public:
 		}
 		else
 		{
-			CMessageDispatcher::Add(kMessageType_Warn, "%S Dropping interpolation banding due to distance of %f", typeid(VarType).name(), fInterpolationDist);
+			CMessageDispatcher::Add(kMessageType_Warn, "%s Dropping interpolation banding due to distance of %f", typeid(VarType).name(), fInterpolationDist);
 		}
 
 		m_ActivePositionIndex = index_new;
 
-		std::chrono::milliseconds fCurrentTime = GetTime();
+		//std::chrono::milliseconds fCurrentTime = GetTime();
 
 		if ( m_bCalculatedPreviousFrameTime )
 		{
 			m_bCalculatedFrameTime = true;
-			m_fTimeFrame = (fCurrentTime - m_fTimeFramePrevious);
+			//m_fTimeFrame = (fCurrentTime - m_fTimeFramePrevious);
+			m_fTimeFrame = std::chrono::milliseconds( NetSystem::GetSingleton()->GetNetworkRate() );
 		}
 
 		m_bCalculatedPreviousFrameTime = true;
-		m_fTimeFramePrevious = fCurrentTime;
+		//m_fTimeFramePrevious = fCurrentTime;
 
 		m_fElaspedTime = std::chrono::milliseconds(0);
 	}

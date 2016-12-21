@@ -25,6 +25,26 @@ NetVar::NetVar(NetObject* parent, const char* name, bool reliable) : m_Name(name
 	}
 }
 
+void NetVar::SetSequenceCheck(bool bSequenceCheck)
+{
+	m_CheckSequence = bSequenceCheck;
+}
+
+bool NetVar::CheckSequence(uint32_t sequence_id) const
+{
+	return !m_CheckSequence || (m_iSequenceID <= sequence_id);
+}
+
+void NetVar::SetSequence(uint32_t sequence_id)
+{
+	m_iSequenceID = sequence_id;
+}
+
+uint32_t NetVar::GetSequence() const
+{
+	return m_iSequenceID;
+}
+
 NetVar::~NetVar()
 {
 	if (m_pParent != nullptr && m_pParent->m_Mutex.try_lock())

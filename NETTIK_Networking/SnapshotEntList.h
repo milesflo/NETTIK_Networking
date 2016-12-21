@@ -28,9 +28,9 @@ struct SnapshotEntListDataEntry
 
 	// NetID
 	uint32_t netID = 0;								// 0x04
-
 	uint32_t controller = NET_CONTROLLER_NONE;		// 0x08
-	
+	uint32_t sequence = 0;
+
 	// Forced flag.
 	bool forced = false;
 
@@ -45,7 +45,7 @@ struct SnapshotEntListDataEntry
 	bool padding_02 = false;
 	bool padding_03 = false;
 };
-static_assert(sizeof(SnapshotEntListDataEntry) == 68U + 128U + 4U + 4U + 4U, "SnapshotEntListDataEntry size not correct.");
+static_assert(sizeof(SnapshotEntListDataEntry) == 68U + 128U + 4U + 4U + 4U + 4U, "SnapshotEntListDataEntry size not correct.");
 
 inline void* add_ptr(void* in, size_t offset)
 {
@@ -71,11 +71,8 @@ public:
 	// 22.47%
 	void write(SnapshotStream::Stream& data)
 	{
-		unsigned char* base_ptr;
-		base_ptr = reinterpret_cast<unsigned char*>(&m_data);
-
-		unsigned char* stream;
-		stream = base_ptr;
+		unsigned char* base_ptr = reinterpret_cast<unsigned char*>(&m_data);
+		unsigned char* stream = base_ptr;
 
 		data.reserve(data.capacity() +  sizeof(SnapshotEntListDataEntry));
 
@@ -87,6 +84,10 @@ public:
 			data.push_back(stream[i]);
 		stream += sizeof(uint32_t);
 
+		for (size_t i = 0; i < sizeof(uint32_t); i++)
+			data.emplace_back(stream[i]);
+		stream += sizeof(uint32_t);
+		
 		for (size_t i = 0; i < sizeof(uint32_t); i++)
 			data.emplace_back(stream[i]);
 		stream += sizeof(uint32_t);
@@ -145,6 +146,12 @@ public:
 
 		m_data.controller = *controller_ptr;
 
+		uint32_t* sequence_ptr;
+		sequence_ptr = reinterpret_cast<uint32_t*>(current_ptr);
+		current_ptr += sizeof(uint32_t);
+
+		m_data.sequence = *sequence_ptr;
+
 		bool* forced_ptr;
 		forced_ptr = reinterpret_cast<bool*>(current_ptr);
 		current_ptr += sizeof(bool);
@@ -172,44 +179,54 @@ public:
 
 	}
 
-	inline bool get_forced() const
+	bool get_forced() const
 	{
 		return m_data.forced;
 	}
 
-	inline void set_forced(bool val)
+	void set_forced(bool val)
 	{
 		m_data.forced = val;
 	}
 
-	inline const void* get_ptr() const
+	const void* get_ptr() const
 	{
 		return m_dataPointer;
 	}
 
-	inline uint32_t get_netid() const
+	uint32_t get_netid() const
 	{
 		return m_data.netID;
 	}
 
-	inline const char* get_name() const
+	const char* get_name() const
 	{
 		return m_data.name;
 	}
 
-	inline const unsigned char* get_data() const
+	const unsigned char* get_data() const
 	{
 		return m_data.data;
 	}
 	
-	inline uint32_t get_controller() const
+	uint32_t get_controller() const
 	{
 		return m_data.controller;
 	}
 
-	inline FrameType get_frametype() const
+	FrameType get_frametype() const
 	{
 		return m_data.frameType;
+	}
+
+	uint32_t get_sequence() const
+	{
+		return m_data.sequence;
+	}
+
+	void set_sequence(uint32_t seq)
+	{
+		m_data.sequence = seq;
 	}
 
 	void set_name(std::string data)
@@ -220,22 +237,22 @@ public:
 		m_data.name[data.size() + 1] = 0; // null character
 	}
 
-	inline void set_netid(uint32_t netid)
+	void set_netid(uint32_t netid)
 	{
 		m_data.netID = netid;
 	}
 
-	inline void set_frametype(FrameType type)
+	void set_frametype(FrameType type)
 	{
 		m_data.frameType = type;
 	}
 
-	inline void set_controller(uint32_t cid)
+	void set_controller(uint32_t cid)
 	{
 		m_data.controller = cid;
 	}
 
-	inline void set_data(unsigned char* stream, size_t size)
+	void set_data(unsigned char* stream, size_t size)
 	{
 		for (size_t i = 0; i < size; i++)
 		{
@@ -245,7 +262,7 @@ public:
 		m_typesize = size;
 	}
 
-	inline void set_data_null()
+	void set_data_null()
 	{
 		m_typesize = 2;
 		m_data.data[0] = 0x01;
@@ -264,7 +281,7 @@ public:
 	}
 
 	// Static data.
-	inline size_t typesize()
+	size_t typesize()
 	{
 		return m_typesize;
 	}

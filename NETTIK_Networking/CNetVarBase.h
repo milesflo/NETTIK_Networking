@@ -112,12 +112,6 @@ size_t CNetVarBase<VarType>::TakeVariableSnapshot(SnapshotStream& buffers, bool 
 	if (!bForced && !m_bChanged)
 		return 0;
 
-	// This is slow AF.
-	// TODO: Pass character buffer and fill and update
-	// an index of the current stream length.
-	uint32_t code;
-	code = NETID_Reserved::RTTI_Object::OBJECT_FRAME;
-
 	SnapshotStream::Stream& buffer = buffers.create();
 
 	SnapshotEntList generator;
@@ -125,15 +119,8 @@ size_t CNetVarBase<VarType>::TakeVariableSnapshot(SnapshotStream& buffers, bool 
 	generator.set_name(m_Name);
 	generator.set_netid(m_pParent->GetNetID());
 	generator.set_data(reinterpret_cast<unsigned char*>(&m_Data), sizeof(VarType));
-
-	if (m_bChangeForced || bForced)
-	{
-		generator.set_forced(true);
-	}
-	else
-	{
-		generator.set_forced(false);
-	}
+	generator.set_sequence(++ m_iSequenceID);
+	generator.set_forced(m_bChangeForced || bForced);
 
 	generator.write(buffer);
 
