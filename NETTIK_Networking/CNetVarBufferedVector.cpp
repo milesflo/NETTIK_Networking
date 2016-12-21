@@ -2,7 +2,7 @@
 
 // Minimum amount of interpolation distance, anything less
 // will be directly applied.
-const float  CNetVarBufferedVector::kMaxInterpolationDistance = 10.0f;
+const float  CNetVarBufferedVector::kMaxInterpolationDistance = 18.0f;
 
 CNetVarBufferedVector::CNetVarBufferedVector(NetObject* parent, const char* name, bool reliable)
 	: NetVarBufferBase<gen_net::CVector3>(parent, name, reliable)
